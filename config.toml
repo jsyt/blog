@@ -1,5 +1,5 @@
 title = "Notre-Dame de Paris"
-baseURL = "goyth.cn"
+baseURL = "/"
 languageCode = "zh-cn"
 theme = "ananke"
 
