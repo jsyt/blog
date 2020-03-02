@@ -1,24 +1,30 @@
-title = "Notre-Dame de Paris"
-baseURL = "/"
-languageCode = "zh-cn"
+title = "GOYTH"
+baseURL = "https://goyth.cn/"
+languageCode = "en-us"
 theme = "ananke"
+footnoteReturnLinkContents = "↩"
 
+newContentEditor = "code"
 MetaDataFormat = "yaml"
-DefaultContentLanguage = "zh"
+DefaultContentLanguage = "en"
 SectionPagesMenu = "main"
-Paginate = 3 # this is set low for demonstrating with dummy content. Set to a higher number
-googleAnalytics = ""
+Paginate = 6 # this is set low for demonstrating with dummy content. Set to a higher number
+# googleAnalytics = "UA-159357603-1"
 enableRobotsTXT = true
-disqusShortname = "luke"
+# disqusShortname = "goyth"
 show_reading_time = true
+
+summaryLength = 30
+
 [sitemap]
   changefreq = "monthly"
   priority = 0.5
   filename = "sitemap.xml"
 
 [params]
-  favicon = ""
-  description = "The last theme you'll ever need. Maybe."
+  # favicon = "https://pic-x.oss-cn-shanghai.aliyuncs.com/imgs/apple-touch-icon.png"
+  favicon = "https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/favicon-red-bird.png"
+  description = "I hear and I forget, I see and I remember, I do and I understand."
   facebook = ""
   twitter = "https://twitter.com/goythz"
   instagram = ""
@@ -32,7 +38,33 @@ show_reading_time = true
   # choose a background color from any on this page: http://tachyons.io/docs/themes/skins/ and preface it with "bg-"
   background_color_class = "bg-black"
   featured_image = "/images/gohugo-default-sample-hero-image.jpg"
-  recent_posts_number = 2
-  commentoEnable = true
-  body_classes = "avenir bg-near-white"
+  recent_posts_number = 5
+  # commentoEnable = true
+  # body_classes = "avenir bg-near-white"
   post_content_classes = "avenir bg-near-white"
+  # pagination = 5
+
+  AuthorName = "Luke"
+  GitHubUser = "jsyt"
+  ListOfFoo = ["foo1", "foo2"]
+  SidebarRecentLimit = 5
+  Subtitle = "Hugo is Absurdly Fast!"
+
+[permalinks]
+  posts = "/:year/:month/:day/:filename/"
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ""
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = true
+    style = "dracula"
+    tabWidth = 4

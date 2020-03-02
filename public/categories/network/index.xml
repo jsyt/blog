@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Network on GOYTH</title>
+    <link>https://goyth.cn/categories/network/</link>
+    <description>Recent content in Network on GOYTH</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 11 Jul 2018 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/categories/network/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>HTTP知识点整理</title>
+      <link>https://goyth.cn/2018/07/11/http2/</link>
+      <pubDate>Wed, 11 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/07/11/http2/</guid>
+      <description>&lt;p&gt;HTTP/2是HTTP协议自1999年HTTP 1.1发布后的首个更新，主要基于SPDY协议。于2015年正式发布，HTTP/2解决了HTTP1.1线头阻塞、重复建立TCP连接等问题，充分利用TCP连接的高效传输，使得网络延迟大幅下降，网络传输速度大幅提升。&lt;/p&gt;
+&lt;h2 id=&#34;http09---1991&#34;&gt;HTTP/0.9 - 1991&lt;/h2&gt;
+&lt;p&gt;第一版的HTTP文档是1991年提出来的 HTTP/0.9。这是有史以来最简单的协议；它仅有一个GET方法。如果客户端要访问服务器上的一些网页，它会作出如下的简单请求：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;GET &lt;span style=&#34;color:#ff79c6&#34;&gt;/&lt;/span&gt;index.html
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>WebSocket知识点梳理</title>
+      <link>https://goyth.cn/2018/07/09/websocket/</link>
+      <pubDate>Mon, 09 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/07/09/websocket/</guid>
+      <description>&lt;h2 id=&#34;什么是websocket&#34;&gt;什么是WebSocket&lt;/h2&gt;
+&lt;p&gt;WebSocket是一种在单个TCP连接上进行全双工通讯的协议。它与HTTP协一样，同属于应用层协议。&lt;/p&gt;
+&lt;h2 id=&#34;websocket解决了什么问题&#34;&gt;WebSocket解决了什么问题&lt;/h2&gt;
+&lt;p&gt;WebSocket使得客户端和服务器之间的数据交换变得更加简单，&lt;strong&gt;允许服务端主动向客户端推送数据&lt;/strong&gt;。在WebSocket API中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建&lt;strong&gt;持久性的连接&lt;/strong&gt;，并进行&lt;strong&gt;双向数据传输&lt;/strong&gt;。
+简单说就是解决了浏览器和服务器之间双向数据传输的问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>DNS知识点梳理</title>
+      <link>https://goyth.cn/2018/07/07/dns/</link>
+      <pubDate>Sat, 07 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/07/07/dns/</guid>
+      <description>DNS 服务器 DNS( Domain Name System)是“域名系统”的英文缩写，是一种组织成域层次结构的计算机和网络服务命名系统，它用于TCP/IP网络，它所提供的服务是用来将主机名和域名转换为IP地址的工作。DNS就是这样的一位“翻译官”，它的基本工作原理可用下图来表示。
+全世界所有的人每天上网都会使用DNS服务器，如果大家都去同一个地方访问某一台服务器，时延将会非常大，所以DNS服务器的架构必须是分布式、高并发、高可用，如下图：
+ 根 DNS 服务器 ：返回顶级域 DNS 服务器的 IP 地址 顶级域 DNS 服务器：返回权威 DNS 服务器的 IP 地址 权威 DNS 服务器 ：返回相应主机的 IP 地址  DNS域名解析过程 当用户在浏览器中输入www.</description>
+    </item>
+    
+    <item>
+      <title>TCP/IP 协议知识点梳理</title>
+      <link>https://goyth.cn/2018/07/04/tcpip/</link>
+      <pubDate>Wed, 04 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/07/04/tcpip/</guid>
+      <description>&lt;h2 id=&#34;tcpip协议&#34;&gt;TCP/IP协议&lt;/h2&gt;
+&lt;p&gt;TCP/IP协议模型（Transmission Control Protocol/Internet Protocol），包含了一系列构成互联网基础的网络协议，是Internet的核心协议。&lt;/p&gt;
+&lt;h3 id=&#34;tcpip-协议分层模型&#34;&gt;TCP/IP 协议分层模型&lt;/h3&gt;
+&lt;p&gt;基于TCP/IP的参考模型将协议分成四个层次，它们分别是链路层、网络层、传输层和应用层。下图表示TCP/IP模型与OSI模型各层的对照关系。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/TcpIp-tcpip.webp&#34; alt=&#34;&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

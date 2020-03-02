@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>TCP/IP on GOYTH</title>
+    <link>https://goyth.cn/tags/tcp/ip/</link>
+    <description>Recent content in TCP/IP on GOYTH</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="https://goyth.cn/tags/tcp/ip/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>TCP/IP 协议知识点梳理</title>
+      <link>https://goyth.cn/2018/07/04/tcpip/</link>
+      <pubDate>Wed, 04 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/07/04/tcpip/</guid>
+      <description>&lt;h2 id=&#34;tcpip协议&#34;&gt;TCP/IP协议&lt;/h2&gt;
+&lt;p&gt;TCP/IP协议模型（Transmission Control Protocol/Internet Protocol），包含了一系列构成互联网基础的网络协议，是Internet的核心协议。&lt;/p&gt;
+&lt;h3 id=&#34;tcpip-协议分层模型&#34;&gt;TCP/IP 协议分层模型&lt;/h3&gt;
+&lt;p&gt;基于TCP/IP的参考模型将协议分成四个层次，它们分别是链路层、网络层、传输层和应用层。下图表示TCP/IP模型与OSI模型各层的对照关系。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/TcpIp-tcpip.webp&#34; alt=&#34;&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

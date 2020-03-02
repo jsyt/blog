@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Algorithm on GOYTH</title>
+    <link>https://goyth.cn/categories/algorithm/</link>
+    <description>Recent content in Algorithm on GOYTH</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 26 Feb 2020 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/categories/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>LeetCode 30. 串联所有单词的子串</title>
+      <link>https://goyth.cn/2020/02/26/leetcode30/</link>
+      <pubDate>Wed, 26 Feb 2020 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2020/02/26/leetcode30/</guid>
+      <description>给定一个字符串 &lt;strong&gt;s&lt;/strong&gt; 和一些长度相同的单词 &lt;strong&gt;words&lt;/strong&gt;找出 &lt;strong&gt;s&lt;/strong&gt; 中恰好可以由 &lt;strong&gt;words&lt;/strong&gt; 中所有单词串联形成的子串的起始位置。
+注意子串要与 &lt;strong&gt;words&lt;/strong&gt; 中的单词完全匹配，中间不能有其他字符，但不需要考虑 &lt;strong&gt;words&lt;/strong&gt;中单词串联的顺序。</description>
+    </item>
+    
+    <item>
+      <title>N-Sum 问题</title>
+      <link>https://goyth.cn/2018/05/25/nsum/</link>
+      <pubDate>Fri, 25 May 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/05/25/nsum/</guid>
+      <description>问题描述 给定一个包含多个整数且排好序的数组 nums 和一个目标值 target，判断 nums 中是否存在 N(N&amp;gt;1) 个元素，使得 N 个元素之和与 target 相等？找出所有满足条件且不重复的N元组。
+解题思路 通过递归降幂将 N-Sum问题 降幂到 2-Sum 问题，然后采用两边加逼的办法求解
+JavaScript 版本 /** * @param {number[]} nums * @param {number} target * @param {number} n * @param {number[]} result * @param {number[]} results 结果集 */ function findNsum(nums, target, n, result, results) { if(n&amp;lt;2 || nums.</description>
+    </item>
+    
+    <item>
+      <title>排序算法之堆排序</title>
+      <link>https://goyth.cn/2018/02/09/heapsort/</link>
+      <pubDate>Fri, 09 Feb 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/02/09/heapsort/</guid>
+      <description>排序算法总览：
+堆排序 二叉树 要了解堆首先得了解一下二叉树，在计算机科学中，二叉树是每个节点最多有两个子树的树结构。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。二叉树常被用于实现二叉查找树和二叉堆。
+二叉树的每个结点至多只有二棵子树（不存在度大于 2 的结点），二叉树的子树有左右之分，次序不能颠倒。二叉树的第 i 层至多有 2i - 1 个结点；深度为 k 的二叉树至多有 2k - 1 个结点；对任何一棵二叉树 T，如果其终端结点数为 n0，度为 2 的结点数为 n2，则n0 = n2 + 1。</description>
+    </item>
+    
+    <item>
+      <title>排序算法之归并排序</title>
+      <link>https://goyth.cn/2018/02/09/mergesort/</link>
+      <pubDate>Fri, 09 Feb 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/02/09/mergesort/</guid>
+      <description>归并排序（MERGE-SORT）是建立在归并操作上的一种有效的排序算法,该算法是采用分治法（Divide and Conquer）的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为二路归并。
+归并排序可以使用递归和迭代两种方式进行实现</description>
+    </item>
+    
+    <item>
+      <title>排序算法之快速排序</title>
+      <link>https://goyth.cn/2018/02/09/quicksort/</link>
+      <pubDate>Fri, 09 Feb 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/02/09/quicksort/</guid>
+      <description>快速排序是图灵奖得主 C. R. A. Hoare 于 1960 年提出的一种划分交换排序。它采用了一种分治的策略，通常称其为分治法(Divide-and-ConquerMethod)。
+分治法的基本思想是：将原问题分解为若干个规模更小但结构与原问题相似的子问题。递归地解这些子问题，然后将这些子问题的解组合为原问题的解。
+利用分治法可将快速排序的分为三步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在数据集之中，选择一个元素作为”基准”（pivot）。&lt;/li&gt;
+&lt;/ol&gt;</description>
+    </item>
+    
+    <item>
+      <title>排序算法之希尔排序</title>
+      <link>https://goyth.cn/2018/02/08/shellsort/</link>
+      <pubDate>Thu, 08 Feb 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/02/08/shellsort/</guid>
+      <description>希尔排序(Shell&amp;rsquo;s Sort)也称递减增量排序算法，是插入排序的一种更高效的改进版本。但希尔排序是非稳定排序算法。 希尔排序是基于插入排序的以下两点性质而提出改进方法的： * 插入排序在对几乎已经排好序的数据操作时，效率高，即可以达到线性排序的效率； * 但插入排序一般来说是低效的，因为插入排序每次只能将数据移动一位；
+希尔排序的基本思想是：先将整个待排序的记录序列分割成为若干子序列分别进行直接插入排序，待整个序列中的记录基本有序时，再对全体记录进行依次直接插入排序。</description>
+    </item>
+    
+    <item>
+      <title>排序算法之直接插入排序</title>
+      <link>https://goyth.cn/2018/02/08/straightinsertionsort/</link>
+      <pubDate>Thu, 08 Feb 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/02/08/straightinsertionsort/</guid>
+      <description>常见的内部排序算法有：冒泡排序、选择排序、插入排序、希尔排序、归并排序、快速排序、堆排序、基数排序等。这里主要介绍直接插入排序. 直接插入排序(Straight Insertion Sort)的基本思想是：把n个待排序的元素看成为一个有序表和一个无序表。开始时有序表中只包含1个元素，无序表中包含有n-1个元素，排序过程中每次从无序表中取出第一个元素，将它插入到有序表中的适当位置，使之成为新的有序表，重复n-1次可完成排序过程。</description>
+    </item>
+    
+    <item>
+      <title>排序算法之选择排序</title>
+      <link>https://goyth.cn/2018/02/08/selectionsort/</link>
+      <pubDate>Thu, 08 Feb 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/02/08/selectionsort/</guid>
+      <description>选择排序（Selection sort）是一种简单直观的排序算法。它的工作原理是每一次从待排序的数据元素中选出最小（或最大）的一个元素，存放在序列的起始位置，直到全部待排序的数据元素排完。 选择排序是不稳定的排序方法（比如序列[5， 5， 3]第一次就将第一个[5]与[3]交换，导致第一个5挪动到第二个5后面）。</description>
+    </item>
+    
+    <item>
+      <title>排序算法之冒泡排序</title>
+      <link>https://goyth.cn/2018/02/08/bubblesort/</link>
+      <pubDate>Thu, 08 Feb 2018 10:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/02/08/bubblesort/</guid>
+      <description>冒泡排序（Bubble Sort），是一种计算机科学领域的较简单的排序算法。 它重复地走访过要排序的数列，一次比较两个元素，如果他们的顺序错误就把他们交换过来。走访数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。 这个算法的名字由来是因为越大的元素会经由交换慢慢“浮”到数列的顶端，故名“冒泡排序”。</description>
+    </item>
+    
+  </channel>
+</rss>

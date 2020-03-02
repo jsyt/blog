@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>webSocket on GOYTH</title>
+    <link>https://goyth.cn/tags/websocket/</link>
+    <description>Recent content in webSocket on GOYTH</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 09 Jul 2018 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/tags/websocket/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>WebSocket知识点梳理</title>
+      <link>https://goyth.cn/2018/07/09/websocket/</link>
+      <pubDate>Mon, 09 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/07/09/websocket/</guid>
+      <description>&lt;h2 id=&#34;什么是websocket&#34;&gt;什么是WebSocket&lt;/h2&gt;
+&lt;p&gt;WebSocket是一种在单个TCP连接上进行全双工通讯的协议。它与HTTP协一样，同属于应用层协议。&lt;/p&gt;
+&lt;h2 id=&#34;websocket解决了什么问题&#34;&gt;WebSocket解决了什么问题&lt;/h2&gt;
+&lt;p&gt;WebSocket使得客户端和服务器之间的数据交换变得更加简单，&lt;strong&gt;允许服务端主动向客户端推送数据&lt;/strong&gt;。在WebSocket API中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建&lt;strong&gt;持久性的连接&lt;/strong&gt;，并进行&lt;strong&gt;双向数据传输&lt;/strong&gt;。
+简单说就是解决了浏览器和服务器之间双向数据传输的问题。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

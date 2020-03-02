@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>GOYTH  | LeetCode 30. 串联所有单词的子串</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.65.3" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.1cb140d8ba31d5b2f1114537dd04802a.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+<link rel="shortcut icon" href="/https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/favicon-red-bird.png" type="image/x-icon" />
+
+    
+
+    
+    
+    <meta property="og:title" content="LeetCode 30. 串联所有单词的子串" />
+<meta property="og:description" content="LeetCode 30. 串联所有单词的子串" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://goyth.cn/2020/02/26/leetcode30/" />
+<meta property="article:published_time" content="2020-02-26T21:53:54+08:00" />
+<meta property="article:modified_time" content="2020-02-26T21:53:54+08:00" />
+<meta itemprop="name" content="LeetCode 30. 串联所有单词的子串">
+<meta itemprop="description" content="LeetCode 30. 串联所有单词的子串">
+<meta itemprop="datePublished" content="2020-02-26T21:53:54&#43;08:00" />
+<meta itemprop="dateModified" content="2020-02-26T21:53:54&#43;08:00" />
+<meta itemprop="wordCount" content="483">
+
+
+
+<meta itemprop="keywords" content="Algorithm,LeetCode," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="LeetCode 30. 串联所有单词的子串"/>
+<meta name="twitter:description" content="LeetCode 30. 串联所有单词的子串"/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://goyth.cn/" class="f3 fw2 hover-white no-underline white-90 dib">
+      GOYTH
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/posts/" title="Articles page">
+              Articles
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+
+
+
+
+<a href="https://twitter.com/goythz" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/jsyt" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        ARTICLES
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    <a href="https://www.facebook.com/sharer.php?u=https://goyth.cn/2020/02/26/leetcode30/" class="facebook no-underline" aria-label="share on Facebook">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+
+    </a>
+
+    
+    
+    <a href="https://twitter.com/share?url=https://goyth.cn/2020/02/26/leetcode30/&amp;text=LeetCode%2030.%20%e4%b8%b2%e8%81%94%e6%89%80%e6%9c%89%e5%8d%95%e8%af%8d%e7%9a%84%e5%ad%90%e4%b8%b2" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://goyth.cn/2020/02/26/leetcode30/&amp;title=LeetCode%2030.%20%e4%b8%b2%e8%81%94%e6%89%80%e6%9c%89%e5%8d%95%e8%af%8d%e7%9a%84%e5%ad%90%e4%b8%b2" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+      <h1 class="f1 athelas mt3 mb1">LeetCode 30. 串联所有单词的子串</h1>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2020-02-26T21:53:54&#43;08:00">February 26, 2020</time>
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy avenir bg-near-white f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l"><h2 id="30-串联所有单词的子串httpsleetcode-cncomproblemssubstring-with-concatenation-of-all-words"><a href="https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/">30. 串联所有单词的子串</a></h2>
+<p>难度: <strong>困难</strong></p>
+<p>给定一个字符串 <strong>s</strong> 和一些长度相同的单词 <strong>words</strong>找出 <strong>s</strong> 中恰好可以由 <strong>words</strong> 中所有单词串联形成的子串的起始位置。</p>
+<p>注意子串要与 <strong>words</strong> 中的单词完全匹配，中间不能有其他字符，但不需要考虑 <strong>words</strong>中单词串联的顺序。</p>
+<p><strong>示例 1：</strong></p>
+<pre><code>输入：
+  s = &quot;barfoothefoobarman&quot;,
+  words = [&quot;foo&quot;,&quot;bar&quot;]
+输出：[0,9]
+解释：
+从索引 0 和 9 开始的子串分别是 &quot;barfoo&quot; 和 &quot;foobar&quot; 。
+输出的顺序不重要, [9,0] 也是有效答案。
+</code></pre><p><strong>示例 2：</strong></p>
+<pre><code>输入：
+  s = &quot;wordgoodgoodgoodbestword&quot;,
+  words = [&quot;word&quot;,&quot;good&quot;,&quot;best&quot;,&quot;word&quot;]
+输出：[]
+</code></pre><h3 id="solution">Solution</h3>
+<p>Language: <strong>JavaScript</strong></p>
+<h4 id="解法一暴力求解">解法一：暴力求解</h4>
+<p><strong>解题思路：</strong></p>
+<ol>
+<li>由于子串不需要考虑 <code>words</code> 中单词出现的顺序，并且<code>words</code>中可能会出现重复单词，所以不能用 <code>set</code> 来存储<code>words</code>，我们可以用<code>map</code>来存储<code>words</code>，把<code>words</code>中的单词作为<code>key</code>，单词出现的次数作为<code>value</code></li>
+<li>循环字符串<code>s</code>，然后每次从字符串<code>s</code>中截取一段长度为 <code>words</code> 单词总长的字符串，然后按照单个<code>words</code>单词的长度，对其进行拆分成单词</li>
+<li>使用拆分后的单词去<code>map</code>中查询，如果存在，则将其 <code>value - 1</code>，否则表明当前字符串不符合要求，直接<code>break</code>跳出当前循环</li>
+<li>内层循环结束后，如果<code>map</code>所有的 <code>value</code> 都为<code>0</code>，则表明当前子字符串符合要求，将其起始索引放入结果集中</li>
+<li>最后返回结果集</li>
+</ol>
+<p><strong>代码：</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript">​<span style="color:#6272a4">/**
+</span><span style="color:#6272a4"> * @param {string} s
+</span><span style="color:#6272a4"> * @param {string[]} words
+</span><span style="color:#6272a4"> * @return {number[]}
+</span><span style="color:#6272a4"> */</span>
+<span style="color:#8be9fd;font-style:italic">var</span> findSubstring <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(s, words) {
+    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>words <span style="color:#ff79c6">||</span> <span style="color:#ff79c6">!</span>words.length) <span style="color:#ff79c6">return</span>[];
+    <span style="color:#8be9fd;font-style:italic">let</span> wordLen <span style="color:#ff79c6">=</span> words[<span style="color:#bd93f9">0</span>].length;
+    <span style="color:#8be9fd;font-style:italic">let</span> allWordsLen <span style="color:#ff79c6">=</span> wordLen <span style="color:#ff79c6">*</span> words.length;
+    <span style="color:#8be9fd;font-style:italic">let</span> ans <span style="color:#ff79c6">=</span> [], wordMap <span style="color:#ff79c6">=</span> {};
+    <span style="color:#ff79c6">for</span> (<span style="color:#8be9fd;font-style:italic">let</span> w <span style="color:#ff79c6">of</span> words) {
+        wordMap[w] <span style="color:#ff79c6">?</span> wordMap[w]<span style="color:#ff79c6">++</span> <span style="color:#ff79c6">:</span>wordMap[w] <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>
+    }
+    <span style="color:#ff79c6">for</span> (<span style="color:#8be9fd;font-style:italic">let</span> i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> s.length <span style="color:#ff79c6">-</span> allWordsLen <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>; i<span style="color:#ff79c6">++</span>) {
+        <span style="color:#8be9fd;font-style:italic">let</span> wm <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Object</span>.assign({}, wordMap);
+        <span style="color:#ff79c6">for</span> (<span style="color:#8be9fd;font-style:italic">let</span> j <span style="color:#ff79c6">=</span> i; j <span style="color:#ff79c6">&lt;</span> i <span style="color:#ff79c6">+</span> allWordsLen <span style="color:#ff79c6">-</span> wordLen <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>; j <span style="color:#ff79c6">+=</span> wordLen) {
+            <span style="color:#8be9fd;font-style:italic">let</span> w <span style="color:#ff79c6">=</span> s.slice(j, j <span style="color:#ff79c6">+</span> wordLen);
+            <span style="color:#ff79c6">if</span> (wm[w]) {
+                wm[w]<span style="color:#ff79c6">--</span>
+            } <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">break</span>;
+            }
+        }
+        <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">Object</span>.values(wm).every(n =&gt; n <span style="color:#ff79c6">===</span> <span style="color:#bd93f9">0</span>)) ans.push(i);
+    }
+    <span style="color:#ff79c6">return</span> ans;
+};
+</code></pre></div><p><strong>时间复杂度</strong>：<code>O(KN)</code>
+<code>N</code> 为 <code>s</code> 的长度，<code>K</code> 为 <code>words</code> 一个单词的长度</p>
+<p><strong>空间复杂度</strong>：<code>O(N + M)</code>
+<code>N</code> 为 <code>s</code> 的长度，<code>M</code> 为 <code>words</code> 的长度</p>
+<h4 id="解法二滑动窗口">解法二：滑动窗口</h4>
+<p><strong>解题思路：</strong></p>
+<ol>
+<li>在暴力求解的基础上进一步优化，我使用两个 <code>map</code>，<code>windows</code> 和 <code>needs</code>，<code>windows</code>存储<code>s</code>的子串，<code>needs</code>存储<code>words</code>，并且使用两个指针 <code>l</code> 和 <code>r</code>,表示一个窗口的左右两边的索引</li>
+<li>外层循环索引 <code>i</code> 从 <code>0</code> 开始，并且 <code>i &lt; oneWordLen</code> 只用循环一个单词的长度</li>
+<li>内层循环从 <code>i</code> 开始，<code>l = r = i</code>，依次进行截取 <code>let w = s.slice(i, i + oneWordLen)</code>，判断截取的单词 <code>w</code> 是否存在于存储 <code>needs</code> 中，如果不存在，则直接<code>continue</code>跳过当前循环</li>
+<li>如果存在则将其添加到 <code>windows</code> 中，如果 <code>windows[w] === needs[w]</code>则将<code>count++</code>，表示一个单词已经准备就绪</li>
+<li>如果 <code>count === Object.key(needs).length</code>，则表示所有的单词都已经准备就绪，由于有可能会出现多个重复的符合要求的单词，所以此时还需要判断 <code>r - l === words所有单词的长度和</code></li>
+<li>如果条件成立则表示当前子字符串符合要求，将子字符串的起始索引<code>l</code>，放入结果集中 <code>ans.push(l)</code></li>
+<li>从窗口的左边截取子字符串 <code>let w2 = s.slice(l, l + oneWordLen)</code>，如果 <code>w2</code> 存在于 <code>needs</code> 中，则<code>windows[w2]--</code>，并且如果 <code>windows[w2] &lt; needs[w2]</code>，则<code>count--</code></li>
+<li>最后返回结果集<code>ans</code></li>
+</ol>
+<p><strong>代码：</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#6272a4">/**
+</span><span style="color:#6272a4"> * @param {string} s
+</span><span style="color:#6272a4"> * @param {string[]} words
+</span><span style="color:#6272a4"> * @return {number[]}
+</span><span style="color:#6272a4"> */</span>
+<span style="color:#8be9fd;font-style:italic">var</span> findSubstring <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(s, words) {
+    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>s <span style="color:#ff79c6">||</span> <span style="color:#ff79c6">!</span>words <span style="color:#ff79c6">||</span> <span style="color:#ff79c6">!</span>words.length) <span style="color:#ff79c6">return</span> [];
+    <span style="color:#8be9fd;font-style:italic">let</span> windows <span style="color:#ff79c6">=</span> {}, needs <span style="color:#ff79c6">=</span> {}, oneWordLen <span style="color:#ff79c6">=</span> words[<span style="color:#bd93f9">0</span>].length;
+    <span style="color:#ff79c6">for</span> (<span style="color:#8be9fd;font-style:italic">let</span> w <span style="color:#ff79c6">of</span> words) {
+        needs[w] <span style="color:#ff79c6">?</span> needs[w]<span style="color:#ff79c6">++</span> <span style="color:#ff79c6">:</span> needs[w] <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>;
+    }
+    <span style="color:#8be9fd;font-style:italic">let</span> l <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>, r <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>, count <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>, needsKeyLen <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Object</span>.keys(needs).length, ans <span style="color:#ff79c6">=</span> [];
+    <span style="color:#ff79c6">for</span> (<span style="color:#8be9fd;font-style:italic">let</span> i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> oneWordLen; i<span style="color:#ff79c6">++</span>) {
+        windows <span style="color:#ff79c6">=</span> {};
+        r <span style="color:#ff79c6">=</span> l <span style="color:#ff79c6">=</span> i;
+        count <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>;
+        <span style="color:#ff79c6">while</span> (r <span style="color:#ff79c6">&lt;=</span> s.length <span style="color:#ff79c6">-</span> oneWordLen) {
+            <span style="color:#8be9fd;font-style:italic">let</span> w1 <span style="color:#ff79c6">=</span> s.slice(r, r <span style="color:#ff79c6">+</span> oneWordLen);
+            r <span style="color:#ff79c6">+=</span> oneWordLen;
+            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>needs[w1]) {
+                windows <span style="color:#ff79c6">=</span> {};
+                l <span style="color:#ff79c6">=</span> r;
+                count <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>;
+                <span style="color:#ff79c6">continue</span>;
+            }
+            windows[w1] <span style="color:#ff79c6">?</span> windows[w1]<span style="color:#ff79c6">++</span> <span style="color:#ff79c6">:</span> windows[w1] <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>;
+            <span style="color:#ff79c6">if</span> (windows[w1] <span style="color:#ff79c6">===</span> needs[w1]) count<span style="color:#ff79c6">++</span>;
+            <span style="color:#ff79c6">while</span> (count <span style="color:#ff79c6">===</span> needsKeyLen) {
+                <span style="color:#ff79c6">if</span> (r <span style="color:#ff79c6">-</span> l <span style="color:#ff79c6">===</span> oneWordLen <span style="color:#ff79c6">*</span> words.length) ans.push(l);
+                <span style="color:#8be9fd;font-style:italic">let</span> w2 <span style="color:#ff79c6">=</span> s.slice(l, l <span style="color:#ff79c6">+</span> oneWordLen);
+                l <span style="color:#ff79c6">+=</span> oneWordLen;
+                <span style="color:#ff79c6">if</span> (needs[w2]) {
+                    windows[w2]<span style="color:#ff79c6">--</span>;
+                    <span style="color:#ff79c6">if</span> (windows[w2] <span style="color:#ff79c6">&lt;</span> needs[w2]) count<span style="color:#ff79c6">--</span>;
+                }
+            }
+        }
+    }
+    <span style="color:#ff79c6">return</span> ans;
+};
+</code></pre></div><p><strong>时间复杂度</strong>：<code>O(N)</code>
+外层循环时间复杂度为<code>O(K)</code>，<code>K</code> 为 <code>words</code> 一个单词的长度
+内层循环时间复杂度为 <code>O(2 * N / K)</code>，即 <code>l</code>和<code>r</code>从字符串起始索引遍历到结束索引，每次递加<code>K</code>
+所以，时间复杂度为 <code>O(K * 2 * N / K) = O(2N) =&gt; O(N)</code></p>
+<p><strong>空间复杂度</strong>：<code>O(N + M)</code>
+<code>N</code> 为 <code>s</code> 的长度，<code>M</code> 为 <code>words</code> 的长度</p>
+<ul class="pa0">
+  
+   <li class="list">
+     <a href="/tags/algorithm" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Algorithm</a>
+   </li>
+  
+   <li class="list">
+     <a href="/tags/leetcode" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">LeetCode</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">What&#39;s in this posts</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#30-串联所有单词的子串httpsleetcode-cncomproblemssubstring-with-concatenation-of-all-words"><a href="https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/">30. 串联所有单词的子串</a></a>
+      <ul>
+        <li><a href="#solution">Solution</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/2018/05/25/nsum/">N-Sum 问题</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/02/09/heapsort/">排序算法之堆排序</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/02/09/mergesort/">排序算法之归并排序</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/02/09/quicksort/">排序算法之快速排序</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/02/08/shellsort/">排序算法之希尔排序</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/02/08/straightinsertionsort/">排序算法之直接插入排序</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/02/08/selectionsort/">排序算法之选择排序</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/02/08/bubblesort/">排序算法之冒泡排序</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://goyth.cn/" >
+    &copy;  GOYTH 2020 
+  </a>
+    <div>
+
+
+
+
+<a href="https://twitter.com/goythz" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/jsyt" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

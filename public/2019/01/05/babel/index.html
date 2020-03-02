@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>GOYTH  | Babel 核心模块介绍</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.65.3" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.1cb140d8ba31d5b2f1114537dd04802a.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+<link rel="shortcut icon" href="/https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/favicon-red-bird.png" type="image/x-icon" />
+
+    
+
+    
+    
+    <meta property="og:title" content="Babel 核心模块介绍" />
+<meta property="og:description" content="Babel 核心模块介绍" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://goyth.cn/2019/01/05/babel/" />
+<meta property="article:published_time" content="2019-01-05T21:53:54+08:00" />
+<meta property="article:modified_time" content="2019-01-05T21:53:54+08:00" />
+<meta itemprop="name" content="Babel 核心模块介绍">
+<meta itemprop="description" content="Babel 核心模块介绍">
+<meta itemprop="datePublished" content="2019-01-05T21:53:54&#43;08:00" />
+<meta itemprop="dateModified" content="2019-01-05T21:53:54&#43;08:00" />
+<meta itemprop="wordCount" content="291">
+
+
+
+<meta itemprop="keywords" content="JavaScript,Babel," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Babel 核心模块介绍"/>
+<meta name="twitter:description" content="Babel 核心模块介绍"/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://goyth.cn/" class="f3 fw2 hover-white no-underline white-90 dib">
+      GOYTH
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/posts/" title="Articles page">
+              Articles
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+
+
+
+
+<a href="https://twitter.com/goythz" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/jsyt" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        ARTICLES
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    <a href="https://www.facebook.com/sharer.php?u=https://goyth.cn/2019/01/05/babel/" class="facebook no-underline" aria-label="share on Facebook">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+
+    </a>
+
+    
+    
+    <a href="https://twitter.com/share?url=https://goyth.cn/2019/01/05/babel/&amp;text=Babel%20%e6%a0%b8%e5%bf%83%e6%a8%a1%e5%9d%97%e4%bb%8b%e7%bb%8d" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://goyth.cn/2019/01/05/babel/&amp;title=Babel%20%e6%a0%b8%e5%bf%83%e6%a8%a1%e5%9d%97%e4%bb%8b%e7%bb%8d" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+      <h1 class="f1 athelas mt3 mb1">Babel 核心模块介绍</h1>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2019-01-05T21:53:54&#43;08:00">January 5, 2019</time>
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy avenir bg-near-white f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l"><h2 id="babel-介绍">Babel 介绍</h2>
+<p>Babel 是一个通用的多用途 JavaScript 编译器。通过 Babel 你可以使用（并创建）下一代的 JavaScript，以及下一代的 JavaScript 工具。
+Babel 把用最新标准编写的 JavaScript 代码向下编译成可以在今天随处可用的版本。 这一过程叫做“源码到源码”编译， 也被称为转换编译（transpiling，是一个自造合成词，即转换＋编译。以下也简称为转译）。</p>
+<p>例如，Babel 能够将新的 ES2015 箭头函数语法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">const</span> square <span style="color:#ff79c6">=</span> n =&gt; n <span style="color:#ff79c6">*</span> n;
+</code></pre></div><p>转译为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">const</span> square <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span> square(n) {
+  <span style="color:#ff79c6">return</span> n <span style="color:#ff79c6">*</span> n;
+};
+</code></pre></div><h2 id="babel核心模块介绍">Babel核心模块介绍</h2>
+<h3 id="babel-core">Babel-core</h3>
+<p>可以看做 babel 的编译器。babel 的核心 api 都在这里面。它可以把 js 代码，抽象成 AST，然后修改 AST ，再根据AST生成新的js代码，这就是Babel 转译的过程。但是如何转译、转译哪些内容，着需要我们事先设置好的 plugin，plugin 就是如何转译的规则。</p>
+<h3 id="babel-register">babel-register</h3>
+<p>它在底层改写了node的require方法，引入babel-register之后所有require并以.es6, .es, .jsx 和 .js为后缀的模块都会经过babel的转译。</p>
+<h3 id="babel-polyfill">babel-polyfill</h3>
+<p>它同样是引用了 <code>core-js</code> 和 <code>regenerator</code>，垫片支持是一样的。<code>babel-polyfill</code> 是为了模拟一个完整的ES2015 +环境，旨在用于应用程序而不是库/工具。
+它会让我们程序的执行环境，模拟成完美支持 es6+ 的环境，毕竟无论是浏览器环境还是 node 环境对 <code>es6+</code> 的支持都不一样。它是以重载全局变量 （E.g: <code>Promise</code>）,还有原型和类上的静态方法（E.g：<code>Array.prototype.reduce/Array.form</code>），从而达到对 <code>es6+</code> 的支持。不同于 <code>babel-runtime</code> 的是，<code>babel-polyfill</code> 是一次性引入你的项目中的，就像是 React 包一样，同项目代码一起编译到生产环境。</p>
+<h2 id="plugins">plugins</h2>
+<p>要说 plugins 就不得不提 babel 编译的过程。babel 编译分为三步：</p>
+<ol>
+<li>parser：通过 babylon 解析成 AST。</li>
+<li>transform[s]：All the plugins/presets ，进一步的做语法等自定义的转译，仍然是 AST。</li>
+<li>generator： 最后通过 babel-generator 生成  output string。</li>
+</ol>
+<p>所以 plugins 是在第二步加强转译的，所以假如我们自己写个 plugin，应该就是对 ast 结构做一个遍历，操作。</p>
+<h3 id="babel-runtime">babel-runtime</h3>
+<p>这个包引用了 <code>core-js</code> 和 <code>regenerator</code>，那么什么是 core-js 和 regenerator 呢。
+首先我们要知道上面提到的 babel-core 是对语法进行 transform 的，但是它不支持 build-ints（Eg: <code>promise</code>，<code>Set</code>，<code>Map</code>），prototype function（Eg: <code>array.reduce</code>,<code>string.trim</code>），<code>class</code> <code>static function</code> （Eg：<code>Array.form</code>，<code>Object.assgin</code>），regenerator （Eg：<code>generator</code>，<code>async</code>）等等拓展的编译。所以才要用到 core-js 和 regenerator。</p>
+<h4 id="core-js">core-js</h4>
+<p>core-js 是用于 JavaScript 的组合式标准化库，它包含 es5 （e.g: object.freeze）, es6的 promise，symbols, collections, iterators, typed arrays， es7+提案等等的 polyfills 实现。也就是说，它几乎包含了所有 JavaScript 最新标准的垫片。但是不包含 generator。</p>
+<h4 id="regenerator">regenerator</h4>
+<p>regenerator 实现了 generator/yeild， async/await。</p>
+<h3 id="babel-plugin-transform-runtime">babel-plugin-transform-runtime</h3>
+<p>transform-runtime 是为了方便使用 babel-runtime 的，它会分析我们的 AST 中，是否有引用 babel-rumtime 中的垫片（通过映射关系），如果有，就会在当前模块顶部插入我们需要的垫片。</p>
+<h2 id="transform-runtime-对比-babel-polyfill">transform-runtime 对比 babel-polyfill</h2>
+<p>其实通过上面的介绍我们已经了解他们是干什么的了，这里再稍微总结区分一下吧。我在这里把 babel-runtime 和 babel-plugin-transform-runtime 统称为 transform-runtime，因为一起用才比较好。</p>
+<p>babel-polyfill 是当前环境注入这些 es6+ 标准的垫片，好处是引用一次，不再担心兼容，而且它就是全局下的包，代码的任何地方都可以使用。缺点也很明显，它可能会污染原生的一些方法而把原生的方法重写。如果当前项目已经有一个 polyfill 的包了，那你只能保留其一。而且一次性引入这么一个包，会大大增加体积。如果你只是用几个特性，就没必要了，如果你是开发较大的应用，而且会频繁使用新特性并考虑兼容，那就直接引入吧。
+transform-runtime 是利用 plugin 自动识别并替换代码中的新特性，你不需要再引入，只需要装好 babel-runtime 和 配好 plugin 就可以了。好处是按需替换，检测到你需要哪个，就引入哪个 polyfill，如果只用了一部分，打包完的文件体积对比 babel-polyfill 会小很多。而且 transform-runtime 不会污染原生的对象，方法，也不会对其他 polyfill 产生影响。所以 transform-runtime 的方式更适合开发工具包，库，一方面是体积够小，另一方面是用户（开发者）不会因为引用了我们的工具，包而污染了全局的原生方法，产生副作用，还是应该留给用户自己去选择。缺点是随着应用的增大，相同的 polyfill 每个模块都要做重复的工作（检测，替换），虽然 polyfill 只是引用，编译效率不够高效。</p>
+<h2 id="presets">presets</h2>
+<p>显然这样一个一个配置插件会非常的麻烦，为了方便，babel为我们提供了一个配置项叫做persets（预设）。</p>
+<p>预设就是一系列插件的集合，</p>
+<h3 id="babel-preset-env">babel-preset-env</h3>
+<p>它能根据当前的运行环境，自动确定你需要的 plugins 和 polyfills。通过各个 es标准 feature 在不同浏览器以及 node 版本的支持情况，再去维护一个 feature 跟 plugins 之间的映射关系，最终确定需要的 plugins。</p>
+<h4 id="preset-env-配置">preset-env 配置</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  <span style="color:#f1fa8c">&#34;presets&#34;</span><span style="color:#ff79c6">:</span> [
+    [
+      <span style="color:#f1fa8c">&#34;env&#34;</span>,
+      {
+        <span style="color:#f1fa8c">&#34;targets&#34;</span><span style="color:#ff79c6">:</span> { <span style="color:#6272a4">// 配支持的环境
+</span><span style="color:#6272a4"></span>          <span style="color:#f1fa8c">&#34;browsers&#34;</span><span style="color:#ff79c6">:</span> [ <span style="color:#6272a4">// 浏览器
+</span><span style="color:#6272a4"></span>            <span style="color:#f1fa8c">&#34;last 2 versions&#34;</span>,
+            <span style="color:#f1fa8c">&#34;safari &gt;= 7&#34;</span>
+          ],
+          <span style="color:#f1fa8c">&#34;node&#34;</span><span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;current&#34;</span>
+        },
+        <span style="color:#f1fa8c">&#34;modules&#34;</span><span style="color:#ff79c6">:</span> <span style="color:#ff79c6">true</span>,  <span style="color:#6272a4">//设置ES6 模块转译的模块格式 默认是 commonjs
+</span><span style="color:#6272a4"></span>        <span style="color:#f1fa8c">&#34;debug&#34;</span><span style="color:#ff79c6">:</span> <span style="color:#ff79c6">true</span>, <span style="color:#6272a4">// debug，编译的时候 console
+</span><span style="color:#6272a4"></span>        <span style="color:#f1fa8c">&#34;useBuiltIns&#34;</span><span style="color:#ff79c6">:</span> <span style="color:#ff79c6">false</span>, <span style="color:#6272a4">// 是否开启自动支持 polyfill
+</span><span style="color:#6272a4"></span>        <span style="color:#f1fa8c">&#34;include&#34;</span><span style="color:#ff79c6">:</span> [], <span style="color:#6272a4">// 总是启用哪些 plugins
+</span><span style="color:#6272a4"></span>        <span style="color:#f1fa8c">&#34;exclude&#34;</span><span style="color:#ff79c6">:</span> []  <span style="color:#6272a4">// 强制不启用哪些 plugins，用来防止某些插件被启用
+</span><span style="color:#6272a4"></span>      }
+    ]
+  ],
+  plugins<span style="color:#ff79c6">:</span> [
+    <span style="color:#f1fa8c">&#34;transform-react-jsx&#34;</span> <span style="color:#6272a4">//如果是需要支持 jsx 这个东西要单独装一下。
+</span><span style="color:#6272a4"></span>  ]
+}
+</code></pre></div><ul class="pa0">
+  
+   <li class="list">
+     <a href="/tags/javascript" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">JavaScript</a>
+   </li>
+  
+   <li class="list">
+     <a href="/tags/babel" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Babel</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">What&#39;s in this posts</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#babel-介绍">Babel 介绍</a></li>
+    <li><a href="#babel核心模块介绍">Babel核心模块介绍</a>
+      <ul>
+        <li><a href="#babel-core">Babel-core</a></li>
+        <li><a href="#babel-register">babel-register</a></li>
+        <li><a href="#babel-polyfill">babel-polyfill</a></li>
+      </ul>
+    </li>
+    <li><a href="#plugins">plugins</a>
+      <ul>
+        <li><a href="#babel-runtime">babel-runtime</a></li>
+        <li><a href="#babel-plugin-transform-runtime">babel-plugin-transform-runtime</a></li>
+      </ul>
+    </li>
+    <li><a href="#transform-runtime-对比-babel-polyfill">transform-runtime 对比 babel-polyfill</a></li>
+    <li><a href="#presets">presets</a>
+      <ul>
+        <li><a href="#babel-preset-env">babel-preset-env</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/2018/12/23/ast/">抽象语法树AST介绍</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/12/02/v8gc/">JavaScript垃圾回收机制与内存泄漏</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/08/03/promise/">Promise实现原理</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/07/01/browsecache/">浏览器的缓存机制梳理</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/06/29/crossdomain/">浏览器常见跨域方式梳理</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/05/27/applyandcall/">JavaScript之apply、call和bind的模拟实现</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/05/25/reflowandrepaint/">浏览器渲染之回流（Reflow）与重绘（Repaint）</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/05/23/browserrendering/">浏览器页面渲染流程梳理</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/05/10/debounceandthrottle/">JavaScript 之函数防抖与节流</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/04/23/prototypeandextend/">JavaScript 原型链与继承</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/04/01/jsregexp/">JavaScript 正则表达式</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://goyth.cn/" >
+    &copy;  GOYTH 2020 
+  </a>
+    <div>
+
+
+
+
+<a href="https://twitter.com/goythz" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/jsyt" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

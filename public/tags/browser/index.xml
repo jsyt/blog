@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Browser on GOYTH</title>
+    <link>https://goyth.cn/tags/browser/</link>
+    <description>Recent content in Browser on GOYTH</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 02 Dec 2018 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/tags/browser/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>JavaScript垃圾回收机制与内存泄漏</title>
+      <link>https://goyth.cn/2018/12/02/v8gc/</link>
+      <pubDate>Sun, 02 Dec 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/12/02/v8gc/</guid>
+      <description>程序的运行需要分配内存，内存资源是有限的，当程序运行结束后，就应该回收其内存资源。JavaScript使用自动内存管理，也称为垃圾回收机制（garbage collector）。自动垃圾回收的优点是可以简化开发，不用时刻惦记着回收不再使用的变量，降低内存泄漏的可能性；缺点是无法完全的掌握内存的分配以及回收的具体过程。</description>
+    </item>
+    
+    <item>
+      <title>浏览器的缓存机制梳理</title>
+      <link>https://goyth.cn/2018/07/01/browsecache/</link>
+      <pubDate>Sun, 01 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/07/01/browsecache/</guid>
+      <description>&lt;h2 id=&#34;概述&#34;&gt;概述&lt;/h2&gt;
+&lt;p&gt;浏览器的缓存机制也就是我们说的HTTP缓存机制，其机制是根据HTTP报文的缓存标识进行的，所以在分析浏览器缓存机制之前，我们先使用图文简单介绍一下HTTP报文，HTTP报文分为两种：&lt;/p&gt;
+&lt;p&gt;HTTP请求(Request)报文，报文格式为：请求行 – HTTP头(通用信息头，请求头，实体头) – 请求报文主体(只有POST才有报文主体)，如下图&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-01.webp&#34; alt=&#34;&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>浏览器常见跨域方式梳理</title>
+      <link>https://goyth.cn/2018/06/29/crossdomain/</link>
+      <pubDate>Fri, 29 Jun 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/06/29/crossdomain/</guid>
+      <description>&lt;p&gt;跨域是由于&lt;a href=&#34;http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html&#34;&gt;浏览器同源策略&lt;/a&gt;导致的，所以跨域只存在于浏览器端，非浏览器端不存在跨域问题，浏览器对跨域的请求、应答都能正常发送接收，只是浏览器在接收跨域应答时，将应答拦截了，所以我们需要一些额外的处理或设置让浏览器将跨域的应答返回给我们。&lt;/p&gt;
+&lt;h4 id=&#34;常见的跨域处理方式有&#34;&gt;常见的跨域处理方式有：&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;jsonp&lt;/li&gt;
+&lt;li&gt;CORS&lt;/li&gt;
+&lt;li&gt;iframe + postMessage&lt;/li&gt;
+&lt;li&gt;iframe + window.name&lt;/li&gt;
+&lt;li&gt;iframe + location.hash&lt;/li&gt;
+&lt;li&gt;iframe + domain&lt;/li&gt;
+&lt;li&gt;nginx代理&lt;/li&gt;
+&lt;li&gt;Nodejs中间件&lt;/li&gt;
+&lt;li&gt;WebSocket&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>浏览器渲染之回流（Reflow）与重绘（Repaint）</title>
+      <link>https://goyth.cn/2018/05/25/reflowandrepaint/</link>
+      <pubDate>Fri, 25 May 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/05/25/reflowandrepaint/</guid>
+      <description>回流（Reflow）和重绘（Repaint）的定义 回流（Reflow） 对于DOM结构中的各个元素都有自己的盒子（模型），这些都需要浏览器根据各种样式（浏览器的、开发人员定义的等）来计算，并根据计算结果将元素放到它该出现的位置，这个过程称之为reflow。 重绘（Repaint） 当各种盒子的位置、大小以及其他属性，例如颜色、字体大小等都确定下来后，浏览器于是便把这些元素都按照各自的特性绘制了一遍，于是页面的内容出现了，这个过程称之为 repaint。</description>
+    </item>
+    
+    <item>
+      <title>浏览器页面渲染流程梳理</title>
+      <link>https://goyth.cn/2018/05/23/browserrendering/</link>
+      <pubDate>Wed, 23 May 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/05/23/browserrendering/</guid>
+      <description>&lt;h2 id=&#34;浏览器渲染基本流程&#34;&gt;浏览器渲染基本流程&lt;/h2&gt;
+&lt;p&gt;浏览器渲染流程如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browserRendering-webkitflow.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;大概可以划分成以下几个步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;通过HTML解析器解析HTML文本并构建DOM tree&lt;/li&gt;
+&lt;li&gt;通过CSS解析器解析CSS样式表并构建CSSOM tree&lt;/li&gt;
+&lt;li&gt;根据DOM tree 和 CSSOM tree 构建 Render tree&lt;/li&gt;
+&lt;/ol&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

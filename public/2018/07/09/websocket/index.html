@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>GOYTH  | WebSocket知识点梳理</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.65.3" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.1cb140d8ba31d5b2f1114537dd04802a.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+<link rel="shortcut icon" href="/https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/favicon-red-bird.png" type="image/x-icon" />
+
+    
+
+    
+    
+    <meta property="og:title" content="WebSocket知识点梳理" />
+<meta property="og:description" content="WebSocket知识点梳理" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://goyth.cn/2018/07/09/websocket/" />
+<meta property="article:published_time" content="2018-07-09T21:53:54+08:00" />
+<meta property="article:modified_time" content="2018-07-09T21:53:54+08:00" />
+<meta itemprop="name" content="WebSocket知识点梳理">
+<meta itemprop="description" content="WebSocket知识点梳理">
+<meta itemprop="datePublished" content="2018-07-09T21:53:54&#43;08:00" />
+<meta itemprop="dateModified" content="2018-07-09T21:53:54&#43;08:00" />
+<meta itemprop="wordCount" content="613">
+
+
+
+<meta itemprop="keywords" content="Network,webSocket," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="WebSocket知识点梳理"/>
+<meta name="twitter:description" content="WebSocket知识点梳理"/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://goyth.cn/" class="f3 fw2 hover-white no-underline white-90 dib">
+      GOYTH
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/posts/" title="Articles page">
+              Articles
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+
+
+
+
+<a href="https://twitter.com/goythz" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/jsyt" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        ARTICLES
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    <a href="https://www.facebook.com/sharer.php?u=https://goyth.cn/2018/07/09/websocket/" class="facebook no-underline" aria-label="share on Facebook">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+
+    </a>
+
+    
+    
+    <a href="https://twitter.com/share?url=https://goyth.cn/2018/07/09/websocket/&amp;text=WebSocket%e7%9f%a5%e8%af%86%e7%82%b9%e6%a2%b3%e7%90%86" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://goyth.cn/2018/07/09/websocket/&amp;title=WebSocket%e7%9f%a5%e8%af%86%e7%82%b9%e6%a2%b3%e7%90%86" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+      <h1 class="f1 athelas mt3 mb1">WebSocket知识点梳理</h1>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2018-07-09T21:53:54&#43;08:00">July 9, 2018</time>
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy avenir bg-near-white f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l"><h2 id="什么是websocket">什么是WebSocket</h2>
+<p>WebSocket是一种在单个TCP连接上进行全双工通讯的协议。它与HTTP协一样，同属于应用层协议。</p>
+<h2 id="websocket解决了什么问题">WebSocket解决了什么问题</h2>
+<p>WebSocket使得客户端和服务器之间的数据交换变得更加简单，<strong>允许服务端主动向客户端推送数据</strong>。在WebSocket API中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建<strong>持久性的连接</strong>，并进行<strong>双向数据传输</strong>。
+简单说就是解决了浏览器和服务器之间双向数据传输的问题。</p>
+<h2 id="http协议可以实现双向数据传输吗">HTTP协议可以实现双向数据传输吗</h2>
+<p>答案肯定是可以的，在HTTP协议中我们通常使用<strong>轮询</strong>来实现双向通信。
+轮询是通过在特定的的时间间隔（如每1秒），由浏览器对服务器发出HTTP请求，然后由服务器返回最新的数据给客户端的浏览器。这种传统的模式带来很明显的缺点，即浏览器需要不断的向服务器发出请求，然而HTTP请求可能包含较长的头部，其中真正有效的数据可能只是很小的一部分，显然这样会浪费很多的带宽等资源。</p>
+<h2 id="http11长连接与websocket长连接有什么区别">HTTP1.1长连接与WebSocket长连接有什么区别</h2>
+<p>HTTP1.1默认启用&quot;Connection: Keep-Alive&rdquo;，使得在发送完http请求和应答后，不会立刻将连接关闭，在后续的http请求和应答可以继续使用这个连接，避免创建新的TCP连接时三次握手及断开连接时四次挥手的额外消耗。这个keep-alive一般会有固定的时间限制。如Apache是5s，而nginx默认是75s，超过这个时间服务器就会主动把TCP连接关闭了，因为不关闭的话会有大量的TCP连接占用系统资源。所以这个keep-alive并不是为了长连接设计的，只是为了提高http请求的效率。而WebSocket长连接的关闭可以由通过调用相应的API，主动控制。
+HTTP1.1长连接是无状态的，每一个请求对应一个应答，并且每个请求和应答里面都包含了完整的头部信息；而WebSocket长连接是有状态的，在建立连接后，WebSocket只用携带少量头部字段信息（如数据包长度、掩码），不用携带状态信息。</p>
+<h2 id="websocket的优点">WebSocket的优点</h2>
+<ul>
+<li>较少的控制开销。在连接创建后，服务器和客户端之间交换数据时，用于协议控制的数据包头部相对较小。在不包含扩展的情况下，对于服务器到客户端的内容，此头部大小只有2至10字节（和数据包长度有关）；对于客户端到服务器的内容，此头部还需要加上额外的4字节的掩码。相对于HTTP请求每次都要携带完整的头部，此项开销显著减少了。</li>
+<li>更强的实时性。由于协议是全双工的，所以服务器可以随时主动给客户端下发数据。相对于HTTP请求需要等待客户端发起请求服务端才能响应，延迟明显更少；即使是和Comet等类似的长轮询比较，其也能在短时间内更多次地传递数据。</li>
+<li>保持连接状态。与HTTP不同的是，Websocket需要先创建连接，这就使得其成为一种有状态的协议，之后通信时可以省略部分状态信息。而HTTP请求可能需要在每个请求都携带状态信息（如身份认证等）。</li>
+<li>更好的二进制支持。Websocket定义了二进制帧，相对HTTP，可以更轻松地处理二进制内容。</li>
+<li>可以支持扩展。Websocket定义了扩展，用户可以扩展协议、实现部分自定义的子协议。如部分浏览器支持压缩等。</li>
+<li>更好的压缩效果。相对于HTTP压缩，Websocket在适当的扩展支持下，可以沿用之前内容的上下文，在传递类似的数据时，可以显著地提高压缩率。</li>
+</ul>
+<h2 id="websocket兼容性情况">WebSocket兼容性情况</h2>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/webSocket-ws01.png" alt=""></p>
+<!-- raw HTML omitted -->
+<h2 id="websocket握手协议">WebSocket握手协议</h2>
+<p>WebSocket 是独立的、创建在 TCP 上的协议。</p>
+<p>Websocket 通过 HTTP/1.1 协议的101状态码进行握手。</p>
+<p>为了创建Websocket连接，需要通过浏览器发出请求，之后服务器进行回应，这个过程通常称为“握手”（handshaking）。</p>
+<h3 id="例子">例子</h3>
+<p>一个典型的Websocket握手请求如下：</p>
+<p>客户端请求</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">GET <span style="color:#ff79c6">/</span> HTTP<span style="color:#ff79c6">/</span><span style="color:#bd93f9">1.1</span>
+Upgrade<span style="color:#ff79c6">:</span> websocket
+Connection<span style="color:#ff79c6">:</span> Upgrade
+Host<span style="color:#ff79c6">:</span> example.com
+Origin<span style="color:#ff79c6">:</span> http<span style="color:#ff79c6">:</span><span style="color:#6272a4">//example.com
+</span><span style="color:#6272a4"></span>Sec<span style="color:#ff79c6">-</span>WebSocket<span style="color:#ff79c6">-</span>Key<span style="color:#ff79c6">:</span> sN9cRrP<span style="color:#ff79c6">/</span>n9NdMgdcy2VJFQ<span style="color:#ff79c6">==</span>
+Sec<span style="color:#ff79c6">-</span>WebSocket<span style="color:#ff79c6">-</span>Version<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">13</span>
+</code></pre></div><p>服务器回应</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">HTTP<span style="color:#ff79c6">/</span><span style="color:#bd93f9">1.1</span> <span style="color:#bd93f9">101</span> Switching Protocols
+Upgrade<span style="color:#ff79c6">:</span> websocket
+Connection<span style="color:#ff79c6">:</span> Upgrade
+Sec<span style="color:#ff79c6">-</span>WebSocket<span style="color:#ff79c6">-</span>Accept<span style="color:#ff79c6">:</span> fFBooB7FAkLlXgRSz0BT3v4hq5s<span style="color:#ff79c6">=</span>
+Sec<span style="color:#ff79c6">-</span>WebSocket<span style="color:#ff79c6">-</span>Location<span style="color:#ff79c6">:</span> ws<span style="color:#ff79c6">:</span><span style="color:#6272a4">//example.com/
+</span></code></pre></div><h3 id="字段说明">字段说明</h3>
+<ul>
+<li>Connection必须设置Upgrade，表示客户端希望连接升级。</li>
+<li>Upgrade字段必须设置Websocket，表示希望升级到Websocket协议。</li>
+<li>Sec-WebSocket-Key是随机的字符串，服务器端会用这些数据来构造出一个SHA-1的信息摘要。把“Sec-WebSocket-Key”加上一个特殊字符串“258EAFA5-E914-47DA-95CA-C5AB0DC85B11”，然后计算SHA-1摘要，之后进行BASE-64编码，将结果做为“Sec-WebSocket-Accept”头的值，返回给客户端。如此操作，可以尽量避免普通HTTP请求被误认为Websocket协议。</li>
+<li>Sec-WebSocket-Version 表示支持的Websocket版本。RFC6455要求使用的版本是13，之前草案的版本均应当弃用。</li>
+<li>Origin字段是可选的，通常用来表示在浏览器中发起此Websocket连接所在的页面，类似于Referer。但是，与Referer不同的是，Origin只包含了协议和主机名称。</li>
+<li>其他一些定义在HTTP协议中的字段，如Cookie等，也可以在Websocket中使用。</li>
+</ul>
+<h2 id="帧协议">帧协议</h2>
+<p>客户端、服务端数据的交换，离不开数据帧格式的定义。因此，在实际讲解数据交换之前，我们先来看下WebSocket的数据帧格式。</p>
+<p>WebSocket客户端、服务端通信的最小单位是帧（frame），由1个或多个帧组成一条完整的消息（message）。</p>
+<p>发送端：将消息切割成多个帧，并发送给服务端；
+接收端：接收消息帧，并将关联的帧重新组装成完整的消息；
+本节的重点，就是讲解数据帧的格式。详细定义可参考 <a href="https://tools.ietf.org/html/rfc6455#section-5.2">RFC6455 5.2节</a> 。
+<img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/webSocket-ws02.webp" alt=""></p>
+<p><strong>FIN</strong>：1个比特。</p>
+<p>如果是1，表示这是消息（message）的最后一个分片（fragment），如果是0，表示不是是消息（message）的最后一个分片（fragment）。</p>
+<p><strong>RSV1, RSV2, RSV3</strong>：各占1个比特。</p>
+<p>一般情况下全为0。当客户端、服务端协商采用WebSocket扩展时，这三个标志位可以非0，且值的含义由扩展进行定义。如果出现非零的值，且并没有采用WebSocket扩展，连接出错。</p>
+<p><strong>Opcode</strong>: 4个比特。</p>
+<p>操作代码，Opcode的值决定了应该如何解析后续的数据载荷（data payload）。如果操作代码是不认识的，那么接收端应该断开连接（fail the connection）。可选的操作代码如下：</p>
+<ul>
+<li>%x0：表示一个延续帧。当Opcode为0时，表示本次数据传输采用了数据分片，当前收到的数据帧为其中一个数据分片。</li>
+<li>%x1：表示这是一个文本帧（frame）</li>
+<li>%x2：表示这是一个二进制帧（frame）</li>
+<li>%x3-7：保留的操作代码，用于后续定义的非控制帧。</li>
+<li>%x8：表示连接断开。</li>
+<li>%x9：表示这是一个ping操作。</li>
+<li>%xA：表示这是一个pong操作。</li>
+<li>%xB-F：保留的操作代码，用于后续定义的控制帧。</li>
+</ul>
+<p><strong>Mask</strong>: 1个比特。</p>
+<p>表示是否要对数据载荷进行掩码操作。从客户端向服务端发送数据时，需要对数据进行掩码操作；从服务端向客户端发送数据时，不需要对数据进行掩码操作。</p>
+<p>如果服务端接收到的数据没有进行过掩码操作，服务端需要断开连接。</p>
+<p>如果Mask是1，那么在Masking-key中会定义一个掩码键（masking key），并用这个掩码键来对数据载荷进行反掩码。所有客户端发送到服务端的数据帧，Mask都是1。</p>
+<p>掩码的算法、用途在下一小节讲解。</p>
+<p><strong>Payload length</strong>：数据载荷的长度，单位是字节。为7位，或7+16位，或1+64位。</p>
+<p>假设数Payload length === x，如果</p>
+<ul>
+<li>x为0~126：数据的长度为x字节。</li>
+<li>x为126：后续2个字节代表一个16位的无符号整数，该无符号整数的值为数据的长度。</li>
+<li>x为127：后续8个字节代表一个64位的无符号整数（最高位为0），该无符号整数的值为数据的长度。</li>
+</ul>
+<p>此外，如果payload length占用了多个字节的话，payload length的二进制表达采用网络序（big endian，重要的位在前）。</p>
+<p><strong>Masking-key</strong>：0或4字节（32位）</p>
+<p>所有从客户端传送到服务端的数据帧，数据载荷都进行了掩码操作，Mask为1，且携带了4字节的Masking-key。如果Mask为0，则没有Masking-key。</p>
+<p>备注：载荷数据的长度，不包括mask key的长度。</p>
+<p><strong>Payload data</strong>：(x+y) 字节</p>
+<p>载荷数据：包括了扩展数据、应用数据。其中，扩展数据x字节，应用数据y字节。</p>
+<p>扩展数据：如果没有协商使用扩展的话，扩展数据数据为0字节。所有的扩展都必须声明扩展数据的长度，或者可以如何计算出扩展数据的长度。此外，扩展如何使用必须在握手阶段就协商好。如果扩展数据存在，那么载荷数据长度必须将扩展数据的长度包含在内。</p>
+<p>应用数据：任意的应用数据，在扩展数据之后（如果存在扩展数据），占据了数据帧剩余的位置。载荷数据长度 减去 扩展数据长度，就得到应用数据的长度。</p>
+<h3 id="掩码算法">掩码算法</h3>
+<p>掩码键（Masking-key）是由客户端挑选出来的32位的随机数。掩码操作不会影响数据载荷的长度。掩码、反掩码操作都采用如下算法：</p>
+<p>首先，假设：</p>
+<ul>
+<li>original-octet-i：为原始数据的第i字节。</li>
+<li>transformed-octet-i：为转换后的数据的第i字节。</li>
+<li>j：为i mod 4的结果。</li>
+<li>masking-key-octet-j：为mask key第j字节。</li>
+<li></li>
+</ul>
+<p>算法描述为： original-octet-i 与 masking-key-octet-j 异或后，得到 transformed-octet-i。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">j <span style="color:#ff79c6">=</span> i MOD <span style="color:#bd93f9">4</span>
+transformed<span style="color:#ff79c6">-</span>octet<span style="color:#ff79c6">-</span>i <span style="color:#ff79c6">=</span> original<span style="color:#ff79c6">-</span>octet<span style="color:#ff79c6">-</span>i XOR masking<span style="color:#ff79c6">-</span>key<span style="color:#ff79c6">-</span>octet<span style="color:#ff79c6">-</span>j
+</code></pre></div><h3 id="数据掩码的作用">数据掩码的作用</h3>
+<p>WebSocket协议中，数据掩码的作用是增强协议的安全性。但数据掩码并不是为了保护数据本身，因为算法本身是公开的，运算也不复杂。除了加密通道本身，似乎没有太多有效的保护通信安全的办法。</p>
+<p>那么为什么还要引入掩码计算呢，除了增加计算机器的运算量外似乎并没有太多的收益（这也是不少同学疑惑的点）。</p>
+<p>答案还是两个字：安全。但并不是为了防止数据泄密，而是为了防止早期版本的协议中存在的代理缓存污染攻击（proxy cache poisoning attacks）等问题。</p>
+<h3 id="跳动检测">跳动检测</h3>
+<p>在握手之后的任何时候，客户端或者服务器都可以选择向对方发送 ping 帧。 当收到一个 ping 帧，收件人必须尽快发回一个 pong 帧。 这是一次跳动。 你可以使用它来确保客户端保持着连接。</p>
+<p>ping 帧或 pong 帧只是一个常规的帧，但它是一个控制帧。 ping 帧具有 0x9 的操作码，并且 pong 帧具有 0xA 的操作码。 当你得到一个 ping 帧，发回一个 pong 帧与 ping 帧完全相同的有效载荷数据（对于 pings 和 pongs ，最大有效载荷长度是 125 ）。 你也可能会得到一个 pong 帧返回，而无需再发送一个 ping 帧。如果它发生就忽略它。</p>
+<p>跳动检测可能是非常有用的。 有些服务（如负载均衡器）会终止空闲连接。 另外，接收方无法查看远端是否已经终止。 只有在下一个发送时你会意识到出了问题。</p>
+<h3 id="sec-websocket-keyaccept的作用">Sec-WebSocket-Key/Accept的作用</h3>
+<p>前面提到了，<code>Sec-WebSocket-Key/Sec-WebSocket-Accept</code>在主要作用在于提供基础的防护，减少恶意连接、意外连接。</p>
+<p>作用大致归纳如下：</p>
+<ul>
+<li>避免服务端收到非法的websocket连接（比如http客户端不小心请求连接websocket服务，此时服务端可以直接拒绝连接）</li>
+<li>确保服务端理解websocket连接。因为ws握手阶段采用的是http协议，因此可能ws连接是被一个http服务器处理并返回的，此时客户端可以通过Sec-WebSocket-Key来确保服务端认识ws协议。（并非百分百保险，比如总是存在那么些无聊的http服务器，光处理Sec-WebSocket-Key，但并没有实现ws协议。。。）</li>
+<li>用浏览器里发起ajax请求，设置header时，Sec-WebSocket-Key以及其他相关的header是被禁止的。这样可以避免客户端发送ajax请求时，意外请求协议升级（websocket upgrade）</li>
+<li>可以防止反向代理（不理解ws协议）返回错误的数据。比如反向代理前后收到两次ws连接的升级请求，反向代理把第一次请求的返回给cache住，然后第二次请求到来时直接把cache住的请求给返回（无意义的返回）。</li>
+<li>Sec-WebSocket-Key主要目的并不是确保数据的安全性，因为Sec-WebSocket-Key、Sec-WebSocket-Accept的转换计算公式是公开的，而且非常简单，最主要的作用是预防一些常见的意外情况（非故意的）。</li>
+</ul>
+<p><strong>强调：Sec-WebSocket-Key/Sec-WebSocket-Accept 的换算，只能带来基本的保障，但连接是否安全、数据是否安全、客户端/服务端是否合法的 ws客户端、ws服务端，其实并没有实际性的保证。</strong></p>
+<h3 id="数据传递">数据传递</h3>
+<p>一旦WebSocket客户端、服务端建立连接后，后续的操作都是基于数据帧的传递。</p>
+<p>WebSocket根据<code>opcode</code>来区分操作的类型。比如<code>0x8</code>表示断开连接，<code>0x0</code>-<code>0x2</code>表示数据交互。</p>
+<h4 id="1数据分片">1、数据分片</h4>
+<p>WebSocket的每条消息可能被切分成多个数据帧。当WebSocket的接收方收到一个数据帧时，会根据<code>FIN</code>的值来判断，是否已经收到消息的最后一个数据帧。</p>
+<p>FIN=1表示当前数据帧为消息的最后一个数据帧，此时接收方已经收到完整的消息，可以对消息进行处理。FIN=0，则接收方还需要继续监听接收其余的数据帧。</p>
+<p>此外，<code>opcode</code>在数据交换的场景下，表示的是数据的类型。<code>0x01</code>表示文本，<code>0x02</code>表示二进制。而<code>0x00</code>比较特殊，表示延续帧（continuation frame），顾名思义，就是完整消息对应的数据帧还没接收完。</p>
+<h4 id="2数据分片例子">2、数据分片例子</h4>
+<p>直接看例子更形象些。下面例子来自<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers">MDN</a>，可以很好地演示数据的分片。客户端向服务端两次发送消息，服务端收到消息后回应客户端，这里主要看客户端往服务端发送的消息。</p>
+<p><strong>第一条消息</strong></p>
+<p>FIN=1, 表示是当前消息的最后一个数据帧。服务端收到当前数据帧后，可以处理消息。opcode=0x1，表示客户端发送的是文本类型。</p>
+<p><strong>第二条消息</strong></p>
+<ol>
+<li>FIN=0，opcode=0x1，表示发送的是文本类型，且消息还没发送完成，还有后续的数据帧。</li>
+<li>FIN=0，opcode=0x0，表示消息还没发送完成，还有后续的数据帧，当前的数据帧需要接在上一条数据帧之后。</li>
+<li>FIN=1，opcode=0x0，表示消息已经发送完成，没有后续的数据帧，当前的数据帧需要接在上一条数据帧之后。服务端可以将关联的数据帧组装成完整的消息。</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">Client<span style="color:#ff79c6">:</span> FIN<span style="color:#ff79c6">=</span><span style="color:#bd93f9">1</span>, opcode<span style="color:#ff79c6">=</span><span style="color:#bd93f9">0x1</span>, msg<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;hello&#34;</span>
+Server<span style="color:#ff79c6">:</span> (process complete message immediately) Hi.
+Client<span style="color:#ff79c6">:</span> FIN<span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>, opcode<span style="color:#ff79c6">=</span><span style="color:#bd93f9">0x1</span>, msg<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;and a&#34;</span>
+Server<span style="color:#ff79c6">:</span> (listening, <span style="color:#ff79c6">new</span> message containing text started)
+Client<span style="color:#ff79c6">:</span> FIN<span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>, opcode<span style="color:#ff79c6">=</span><span style="color:#bd93f9">0x0</span>, msg<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;happy new&#34;</span>
+Server<span style="color:#ff79c6">:</span> (listening, payload concatenated to previous message)
+Client<span style="color:#ff79c6">:</span> FIN<span style="color:#ff79c6">=</span><span style="color:#bd93f9">1</span>, opcode<span style="color:#ff79c6">=</span><span style="color:#bd93f9">0x0</span>, msg<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;year!&#34;</span>
+Server<span style="color:#ff79c6">:</span> (process complete message) Happy <span style="color:#ff79c6">new</span> year to you too<span style="color:#ff79c6">!</span>
+</code></pre></div><h2 id="websocket-api">Websocket API</h2>
+<h3 id="websocket-的用法示例">WebSocket 的用法示例</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#8be9fd;font-style:italic">var</span> ws <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> WebSocket(<span style="color:#f1fa8c">&#34;wss://echo.websocket.org&#34;</span>);
+
+ws.onopen <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(evt) {
+  console.log(<span style="color:#f1fa8c">&#34;Connection open ...&#34;</span>);
+  ws.send(<span style="color:#f1fa8c">&#34;Hello WebSockets!&#34;</span>);
+};
+
+ws.onmessage <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(evt) {
+  console.log( <span style="color:#f1fa8c">&#34;Received Message: &#34;</span> <span style="color:#ff79c6">+</span> evt.data);
+  ws.close();
+};
+
+ws.onclose <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(evt) {
+  console.log(<span style="color:#f1fa8c">&#34;Connection closed.&#34;</span>);
+};
+</code></pre></div><h3 id="websocket-构造函数">WebSocket 构造函数</h3>
+<p>WebSocket 对象作为一个构造函数，用于新建 WebSocket 实例。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#8be9fd;font-style:italic">var</span> ws <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> WebSocket(<span style="color:#f1fa8c">&#39;ws://localhost:8080&#39;</span>);
+</code></pre></div><p>执行上面语句之后，客户端就会与服务器进行连接。</p>
+<p>实例对象的所有属性和方法清单，参见这里。</p>
+<h3 id="websocketreadystate">webSocket.readyState</h3>
+<p>readyState属性返回实例对象的当前状态，共有四种。</p>
+<ul>
+<li>CONNECTING：值为0，表示正在连接。</li>
+<li>OPEN：值为1，表示连接成功，可以通信了。</li>
+<li>CLOSING：值为2，表示连接正在关闭。</li>
+<li>CLOSED：值为3，表示连接已经关闭，或者打开连接失败。</li>
+</ul>
+<p>下面是一个示例。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">switch</span> (ws.readyState) {
+  <span style="color:#ff79c6">case</span> WebSocket.CONNECTING<span style="color:#ff79c6">:</span>
+    <span style="color:#6272a4">// do something
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">break</span>;
+  <span style="color:#ff79c6">case</span> WebSocket.OPEN<span style="color:#ff79c6">:</span>
+    <span style="color:#6272a4">// do something
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">break</span>;
+  <span style="color:#ff79c6">case</span> WebSocket.CLOSING<span style="color:#ff79c6">:</span>
+    <span style="color:#6272a4">// do something
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">break</span>;
+  <span style="color:#ff79c6">case</span> WebSocket.CLOSED<span style="color:#ff79c6">:</span>
+    <span style="color:#6272a4">// do something
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">break</span>;
+  <span style="color:#ff79c6">default</span><span style="color:#ff79c6">:</span>
+    <span style="color:#6272a4">// this never happens
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">break</span>;
+}
+</code></pre></div><h3 id="websocketonopen">webSocket.onopen</h3>
+<p>实例对象的onopen属性，用于指定连接成功后的回调函数。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">ws.onopen <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span> () {
+  ws.send(<span style="color:#f1fa8c">&#39;Hello Server!&#39;</span>);
+}
+</code></pre></div><p>如果要指定多个回调函数，可以使用addEventListener方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">ws.addEventListener(<span style="color:#f1fa8c">&#39;open&#39;</span>, <span style="color:#8be9fd;font-style:italic">function</span> (event) {
+  ws.send(<span style="color:#f1fa8c">&#39;Hello Server!&#39;</span>);
+});
+</code></pre></div><h3 id="websocketonclose">webSocket.onclose</h3>
+<p>实例对象的onclose属性，用于指定连接关闭后的回调函数。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">ws.onclose <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(event) {
+  <span style="color:#8be9fd;font-style:italic">var</span> code <span style="color:#ff79c6">=</span> event.code;
+  <span style="color:#8be9fd;font-style:italic">var</span> reason <span style="color:#ff79c6">=</span> event.reason;
+  <span style="color:#8be9fd;font-style:italic">var</span> wasClean <span style="color:#ff79c6">=</span> event.wasClean;
+  <span style="color:#6272a4">// handle close event
+</span><span style="color:#6272a4"></span>};
+
+ws.addEventListener(<span style="color:#f1fa8c">&#34;close&#34;</span>, <span style="color:#8be9fd;font-style:italic">function</span>(event) {
+  <span style="color:#8be9fd;font-style:italic">var</span> code <span style="color:#ff79c6">=</span> event.code;
+  <span style="color:#8be9fd;font-style:italic">var</span> reason <span style="color:#ff79c6">=</span> event.reason;
+  <span style="color:#8be9fd;font-style:italic">var</span> wasClean <span style="color:#ff79c6">=</span> event.wasClean;
+  <span style="color:#6272a4">// handle close event
+</span><span style="color:#6272a4"></span>});
+</code></pre></div><h3 id="websocketonmessage">webSocket.onmessage</h3>
+<p>实例对象的onmessage属性，用于指定收到服务器数据后的回调函数。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">ws.onmessage <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(event) {
+  <span style="color:#8be9fd;font-style:italic">var</span> data <span style="color:#ff79c6">=</span> event.data;
+  <span style="color:#6272a4">// 处理数据
+</span><span style="color:#6272a4"></span>};
+
+ws.addEventListener(<span style="color:#f1fa8c">&#34;message&#34;</span>, <span style="color:#8be9fd;font-style:italic">function</span>(event) {
+  <span style="color:#8be9fd;font-style:italic">var</span> data <span style="color:#ff79c6">=</span> event.data;
+  <span style="color:#6272a4">// 处理数据
+</span><span style="color:#6272a4"></span>});
+</code></pre></div><p>注意，服务器数据可能是文本，也可能是二进制数据（blob对象或Arraybuffer对象）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">ws.onmessage <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(event){
+  <span style="color:#ff79c6">if</span>(<span style="color:#ff79c6">typeof</span> event.data <span style="color:#ff79c6">===</span> <span style="color:#8be9fd;font-style:italic">String</span>) {
+    console.log(<span style="color:#f1fa8c">&#34;Received data string&#34;</span>);
+  }
+
+  <span style="color:#ff79c6">if</span>(event.data <span style="color:#ff79c6">instanceof</span> ArrayBuffer){
+    <span style="color:#8be9fd;font-style:italic">var</span> buffer <span style="color:#ff79c6">=</span> event.data;
+    console.log(<span style="color:#f1fa8c">&#34;Received arraybuffer&#34;</span>);
+  }
+}
+</code></pre></div><p>除了动态判断收到的数据类型，也可以使用binaryType属性，显式指定收到的二进制数据类型。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#6272a4">// 收到的是 blob 数据
+</span><span style="color:#6272a4"></span>ws.binaryType <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;blob&#34;</span>;
+ws.onmessage <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(e) {
+  console.log(e.data.size);
+};
+
+<span style="color:#6272a4">// 收到的是 ArrayBuffer 数据
+</span><span style="color:#6272a4"></span>ws.binaryType <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;arraybuffer&#34;</span>;
+ws.onmessage <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(e) {
+  console.log(e.data.byteLength);
+};
+</code></pre></div><h3 id="websocketsend">webSocket.send()</h3>
+<p>实例对象的send()方法用于向服务器发送数据。</p>
+<p>发送文本的例子。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">ws.send(<span style="color:#f1fa8c">&#39;your message&#39;</span>);
+</code></pre></div><p>发送 Blob 对象的例子。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#8be9fd;font-style:italic">var</span> file <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">document</span>
+  .querySelector(<span style="color:#f1fa8c">&#39;input[type=&#34;file&#34;]&#39;</span>)
+  .files[<span style="color:#bd93f9">0</span>];
+ws.send(file);
+</code></pre></div><p>发送 ArrayBuffer 对象的例子。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#6272a4">// Sending canvas ImageData as ArrayBuffer
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">var</span> img <span style="color:#ff79c6">=</span> canvas_context.getImageData(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">400</span>, <span style="color:#bd93f9">320</span>);
+<span style="color:#8be9fd;font-style:italic">var</span> binary <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> Uint8Array(img.data.length);
+<span style="color:#ff79c6">for</span> (<span style="color:#8be9fd;font-style:italic">var</span> i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> img.data.length; i<span style="color:#ff79c6">++</span>) {
+  binary[i] <span style="color:#ff79c6">=</span> img.data[i];
+}
+ws.send(binary.buffer);
+</code></pre></div><h3 id="websocketbufferedamount">webSocket.bufferedAmount</h3>
+<p>实例对象的bufferedAmount属性，表示还有多少字节的二进制数据没有发送出去。它可以用来判断发送是否结束。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#8be9fd;font-style:italic">var</span> data <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> ArrayBuffer(<span style="color:#bd93f9">10000000</span>);
+socket.send(data);
+
+<span style="color:#ff79c6">if</span> (socket.bufferedAmount <span style="color:#ff79c6">===</span> <span style="color:#bd93f9">0</span>) {
+  <span style="color:#6272a4">// 发送完毕
+</span><span style="color:#6272a4"></span>} <span style="color:#ff79c6">else</span> {
+  <span style="color:#6272a4">// 发送还没结束
+</span><span style="color:#6272a4"></span>}
+</code></pre></div><h3 id="websocketonerror">webSocket.onerror</h3>
+<p>实例对象的onerror属性，用于指定报错时的回调函数。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">socket.onerror <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(event) {
+  <span style="color:#6272a4">// handle error event
+</span><span style="color:#6272a4"></span>};
+
+socket.addEventListener(<span style="color:#f1fa8c">&#34;error&#34;</span>, <span style="color:#8be9fd;font-style:italic">function</span>(event) {
+  <span style="color:#6272a4">// handle error event
+</span><span style="color:#6272a4"></span>});
+</code></pre></div><hr>
+<p><em>参考链接：
+<a href="https://zh.wikipedia.org/zh-cn/WebSocket">https://zh.wikipedia.org/zh-cn/WebSocket</a>
+<a href="https://juejin.im/post/5b0a31f851882538bb0cfae2">https://juejin.im/post/5b0a31f851882538bb0cfae2</a>
+<a href="https://cloud.tencent.com/document/product/214/4150?fromSource=gwzcw.93403.93403.93403">https://cloud.tencent.com/document/product/214/4150?fromSource=gwzcw.93403.93403.93403</a>
+<a href="https://www.cnblogs.com/chyingp/p/websocket-deep-in.html">https://www.cnblogs.com/chyingp/p/websocket-deep-in.html</a>
+<a href="https://www.zhihu.com/question/20215561">https://www.zhihu.com/question/20215561</a>
+<a href="https://mp.weixin.qq.com/s/7aXMdnajINt0C5dcJy2USg">https://mp.weixin.qq.com/s/7aXMdnajINt0C5dcJy2USg</a>
+<a href="https://www.oschina.net/translate/how-does-javascript-actually-work-part-5">https://www.oschina.net/translate/how-does-javascript-actually-work-part-5</a>
+<a href="http://www.ruanyifeng.com/blog/2017/05/websocket.html">http://www.ruanyifeng.com/blog/2017/05/websocket.html</a></em></p><ul class="pa0">
+  
+   <li class="list">
+     <a href="/tags/network" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Network</a>
+   </li>
+  
+   <li class="list">
+     <a href="/tags/websocket" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">webSocket</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">What&#39;s in this posts</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是websocket">什么是WebSocket</a></li>
+    <li><a href="#websocket解决了什么问题">WebSocket解决了什么问题</a></li>
+    <li><a href="#http协议可以实现双向数据传输吗">HTTP协议可以实现双向数据传输吗</a></li>
+    <li><a href="#http11长连接与websocket长连接有什么区别">HTTP1.1长连接与WebSocket长连接有什么区别</a></li>
+    <li><a href="#websocket的优点">WebSocket的优点</a></li>
+    <li><a href="#websocket兼容性情况">WebSocket兼容性情况</a></li>
+    <li><a href="#websocket握手协议">WebSocket握手协议</a>
+      <ul>
+        <li><a href="#例子">例子</a></li>
+        <li><a href="#字段说明">字段说明</a></li>
+      </ul>
+    </li>
+    <li><a href="#帧协议">帧协议</a>
+      <ul>
+        <li><a href="#掩码算法">掩码算法</a></li>
+        <li><a href="#数据掩码的作用">数据掩码的作用</a></li>
+        <li><a href="#跳动检测">跳动检测</a></li>
+        <li><a href="#sec-websocket-keyaccept的作用">Sec-WebSocket-Key/Accept的作用</a></li>
+        <li><a href="#数据传递">数据传递</a></li>
+      </ul>
+    </li>
+    <li><a href="#websocket-api">Websocket API</a>
+      <ul>
+        <li><a href="#websocket-的用法示例">WebSocket 的用法示例</a></li>
+        <li><a href="#websocket-构造函数">WebSocket 构造函数</a></li>
+        <li><a href="#websocketreadystate">webSocket.readyState</a></li>
+        <li><a href="#websocketonopen">webSocket.onopen</a></li>
+        <li><a href="#websocketonclose">webSocket.onclose</a></li>
+        <li><a href="#websocketonmessage">webSocket.onmessage</a></li>
+        <li><a href="#websocketsend">webSocket.send()</a></li>
+        <li><a href="#websocketbufferedamount">webSocket.bufferedAmount</a></li>
+        <li><a href="#websocketonerror">webSocket.onerror</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/2018/07/07/dns/">DNS知识点梳理</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/07/04/tcpip/">TCP/IP 协议知识点梳理</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://goyth.cn/" >
+    &copy;  GOYTH 2020 
+  </a>
+    <div>
+
+
+
+
+<a href="https://twitter.com/goythz" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/jsyt" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

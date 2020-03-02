@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>GOYTH  | 抽象语法树AST介绍</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.65.3" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.1cb140d8ba31d5b2f1114537dd04802a.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+<link rel="shortcut icon" href="/https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/favicon-red-bird.png" type="image/x-icon" />
+
+    
+
+    
+    
+    <meta property="og:title" content="抽象语法树AST介绍" />
+<meta property="og:description" content="抽象语法树AST介绍" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://goyth.cn/2018/12/23/ast/" />
+<meta property="article:published_time" content="2018-12-23T21:53:54+08:00" />
+<meta property="article:modified_time" content="2018-12-23T21:53:54+08:00" />
+<meta itemprop="name" content="抽象语法树AST介绍">
+<meta itemprop="description" content="抽象语法树AST介绍">
+<meta itemprop="datePublished" content="2018-12-23T21:53:54&#43;08:00" />
+<meta itemprop="dateModified" content="2018-12-23T21:53:54&#43;08:00" />
+<meta itemprop="wordCount" content="1373">
+
+
+
+<meta itemprop="keywords" content="JavaScript,AST," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="抽象语法树AST介绍"/>
+<meta name="twitter:description" content="抽象语法树AST介绍"/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://goyth.cn/" class="f3 fw2 hover-white no-underline white-90 dib">
+      GOYTH
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/posts/" title="Articles page">
+              Articles
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+
+
+
+
+<a href="https://twitter.com/goythz" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/jsyt" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        ARTICLES
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    <a href="https://www.facebook.com/sharer.php?u=https://goyth.cn/2018/12/23/ast/" class="facebook no-underline" aria-label="share on Facebook">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+
+    </a>
+
+    
+    
+    <a href="https://twitter.com/share?url=https://goyth.cn/2018/12/23/ast/&amp;text=%e6%8a%bd%e8%b1%a1%e8%af%ad%e6%b3%95%e6%a0%91AST%e4%bb%8b%e7%bb%8d" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://goyth.cn/2018/12/23/ast/&amp;title=%e6%8a%bd%e8%b1%a1%e8%af%ad%e6%b3%95%e6%a0%91AST%e4%bb%8b%e7%bb%8d" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+      <h1 class="f1 athelas mt3 mb1">抽象语法树AST介绍</h1>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2018-12-23T21:53:54&#43;08:00">December 23, 2018</time>
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy avenir bg-near-white f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l"><h3 id="javascript-编译执行流程">JavaScript 编译执行流程</h3>
+<p>js编译执行的第一步是读取 js 文件中的字符流，然后通过词法分析生成token，之后再通过语法分析生成 AST（Abstract Syntax Tree），最后生成机器码执行。</p>
+<h3 id="词法分析">词法分析</h3>
+<p>词法分析，也称之为扫描（scanner），简单来说就是调用 next() 方法，一个一个字母的来读取字符，然后与定义好的 JavaScript 关键字符做比较，生成对应的Token。Token 是一个不可分割的最小单元，例如 var 这三个字符，它只能作为一个整体，语义上不能再被分解，因此它是一个 Token。词法分析器里，每个关键字是一个 Token ，每个标识符是一个 Token，每个操作符是一个 Token，每个标点符号也都是一个 Token。除此之外，还会过滤掉源程序中的注释和空白字符（换行符、空格、制表符等）。
+最终，整个代码将被分割进一个tokens列表（或者说一维数组）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">
+n <span style="color:#ff79c6">*</span> n;
+
+[
+  { type<span style="color:#ff79c6">:</span> { ... }, value<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;n&#34;</span>,  loc<span style="color:#ff79c6">:</span> { ... } },
+  { type<span style="color:#ff79c6">:</span> { ... }, value<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;*&#34;</span>,  loc<span style="color:#ff79c6">:</span> { ... } },
+  { type<span style="color:#ff79c6">:</span> { ... }, value<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;n&#34;</span>,  loc<span style="color:#ff79c6">:</span> { ... } },
+  ...
+]
+
+</code></pre></div><p>每一个 type 有一组属性来描述该令牌：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  type<span style="color:#ff79c6">:</span> {
+    label<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#39;name&#39;</span>,
+    keyword<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">undefined</span>,
+    beforeExpr<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">false</span>,
+    startsExpr<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">true</span>,
+    rightAssociative<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">false</span>,
+    isLoop<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">false</span>,
+    isAssign<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">false</span>,
+    prefix<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">false</span>,
+    postfix<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">false</span>,
+    binop<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">null</span>,
+    updateContext<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">null</span>
+  },
+  ...
+}
+</code></pre></div><h3 id="语法分析">语法分析</h3>
+<p>语法分析会将词法分析出来的 Token 转化成有语法含义的抽象语法树结构。同时，验证语法，语法如果有错的话，抛出语法错误。</p>
+<h3 id="什么是ast抽象语法树">什么是AST（抽象语法树）</h3>
+<p>抽象语法树（Abstract Syntax Tree，AST），或简称语法树（Syntax tree），是源代码语法结构的一种抽象表示。它以树状的形式表现编程语言的语法结构，树上的每个节点都表示源代码中的一种结构。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#8be9fd;font-style:italic">function</span> square(n) {
+  <span style="color:#ff79c6">return</span> n <span style="color:#ff79c6">*</span> n;
+}
+</code></pre></div><p>上面的程序可以被表示成如下的一棵树：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">-</span> FunctionDeclaration<span style="color:#ff79c6">:</span>
+  <span style="color:#ff79c6">-</span> id<span style="color:#ff79c6">:</span>
+    <span style="color:#ff79c6">-</span> Identifier<span style="color:#ff79c6">:</span>
+      <span style="color:#ff79c6">-</span> name<span style="color:#ff79c6">:</span> square
+  <span style="color:#ff79c6">-</span> params [<span style="color:#bd93f9">1</span>]
+    <span style="color:#ff79c6">-</span> Identifier
+      <span style="color:#ff79c6">-</span> name<span style="color:#ff79c6">:</span> n
+  <span style="color:#ff79c6">-</span> body<span style="color:#ff79c6">:</span>
+    <span style="color:#ff79c6">-</span> BlockStatement
+      <span style="color:#ff79c6">-</span> body [<span style="color:#bd93f9">1</span>]
+        <span style="color:#ff79c6">-</span> ReturnStatement
+          <span style="color:#ff79c6">-</span> argument
+            <span style="color:#ff79c6">-</span> BinaryExpression
+              <span style="color:#ff79c6">-</span> operator<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">*</span>
+              <span style="color:#ff79c6">-</span> left
+                <span style="color:#ff79c6">-</span> Identifier
+                  <span style="color:#ff79c6">-</span> name<span style="color:#ff79c6">:</span> n
+              <span style="color:#ff79c6">-</span> right
+                <span style="color:#ff79c6">-</span> Identifier
+                  <span style="color:#ff79c6">-</span> name<span style="color:#ff79c6">:</span> n
+</code></pre></div><p>或是如下所示的 JavaScript Object（对象）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;FunctionDeclaration&#34;</span>,
+  id<span style="color:#ff79c6">:</span> {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Identifier&#34;</span>,
+    name<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;square&#34;</span>
+  },
+  params<span style="color:#ff79c6">:</span> [{
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Identifier&#34;</span>,
+    name<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;n&#34;</span>
+  }],
+  body<span style="color:#ff79c6">:</span> {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;BlockStatement&#34;</span>,
+    body<span style="color:#ff79c6">:</span> [{
+      type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ReturnStatement&#34;</span>,
+      argument<span style="color:#ff79c6">:</span> {
+        type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;BinaryExpression&#34;</span>,
+        operator<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;*&#34;</span>,
+        left<span style="color:#ff79c6">:</span> {
+          type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Identifier&#34;</span>,
+          name<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;n&#34;</span>
+        },
+        right<span style="color:#ff79c6">:</span> {
+          type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Identifier&#34;</span>,
+          name<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;n&#34;</span>
+        }
+      }
+    }]
+  }
+}
+</code></pre></div><p>你会留意到 AST 的每一层都拥有相同的结构：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;FunctionDeclaration&#34;</span>,
+  id<span style="color:#ff79c6">:</span> {...},
+  params<span style="color:#ff79c6">:</span> [...],
+  body<span style="color:#ff79c6">:</span> {...}
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Identifier&#34;</span>,
+  name<span style="color:#ff79c6">:</span> ...
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;BinaryExpression&#34;</span>,
+  operator<span style="color:#ff79c6">:</span> ...,
+  left<span style="color:#ff79c6">:</span> {...},
+  right<span style="color:#ff79c6">:</span> {...}
+}
+</code></pre></div><p>这样的每一层结构也被叫做 <strong>节点（Node）</strong>。 一个 AST 可以由单一的节点或是成百上千个节点构成。 它们组合在一起可以描述用于静态分析的程序语法。</p>
+<p>每一个节点都有如下所示的接口（Interface）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> Node {
+  type<span style="color:#ff79c6">:</span> string;
+}
+</code></pre></div><p>字符串形式的 <code>type</code> 字段表示节点的类型（如： &ldquo;<code>FunctionDeclaration</code>&rdquo;，&ldquo;<code>Identifier</code>&rdquo;，或 &ldquo;<code>BinaryExpression</code>&rdquo;）。 每一种类型的节点定义了一些附加属性用来进一步描述该节点类型。</p>
+<h3 id="ast-节点介绍">AST 节点介绍</h3>
+<h4 id="identifier">Identifier</h4>
+<p>标识符，就是我们写 JS 时自定义的名称，如变量名，函数名，属性名，都归为标识符。相应的接口是这样的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> Identifier <span style="color:#ff79c6">&lt;:</span> Expression, Pattern {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Identifier&#34;</span>;
+    name<span style="color:#ff79c6">:</span> string;
+}
+</code></pre></div><p>一个标识符可能是一个表达式，或者是解构的模式（ES6 中的解构语法）。我们等会会看到 <code>Expression</code> 和 <code>Pattern</code> 相关的内容的。</p>
+<h4 id="literal">Literal</h4>
+<p>字面量，这里不是指 <code>[]</code> 或者 <code>{}</code> 这些，而是本身语义就代表了一个值的字面量，如 <code>1</code>，<code>“hello”</code>, <code>true</code> 这些，还有正则表达式（有一个扩展的 Node 来表示正则表达式），如 <code>/\d?/</code>。我们看一下文档的定义：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> Literal <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Literal&#34;</span>;
+    value<span style="color:#ff79c6">:</span> string <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">boolean</span> <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span> <span style="color:#ff79c6">|</span> number <span style="color:#ff79c6">|</span> <span style="color:#8be9fd;font-style:italic">RegExp</span>;
+}
+</code></pre></div><p>这里即对应了字面量的值，我们可以看出字面量值的类型，字符串，布尔，数值，null 和正则。</p>
+<h4 id="regexpliteral">RegExpLiteral</h4>
+<p>这个针对正则字面量的，为了更好地来解析正则表达式的内容，添加多一个 <code>regex</code> 字段，里边会包括正则本身，以及正则的 <code>flags</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> RegExpLiteral <span style="color:#ff79c6">&lt;:</span> Literal {
+  regex<span style="color:#ff79c6">:</span> {
+    pattern<span style="color:#ff79c6">:</span> string;
+    flags<span style="color:#ff79c6">:</span> string;
+  };
+}
+</code></pre></div><h4 id="programs">Programs</h4>
+<p>一般这个是作为跟节点的，即代表了一棵完整的程序代码树。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> Program <span style="color:#ff79c6">&lt;:</span> Node {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Program&#34;</span>;
+    body<span style="color:#ff79c6">:</span> [ Statement ];
+}
+</code></pre></div><p><code>body</code> 属性是一个数组，包含了多个 <code>Statement</code>（即语句）节点。</p>
+<h4 id="functions">Functions</h4>
+<p>函数声明或者函数表达式节点。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> <span style="color:#8be9fd;font-style:italic">Function</span> <span style="color:#ff79c6">&lt;:</span> Node {
+    id<span style="color:#ff79c6">:</span> Identifier <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+    params<span style="color:#ff79c6">:</span> [ Pattern ];
+    body<span style="color:#ff79c6">:</span> BlockStatement;
+}
+</code></pre></div><p><code>id</code> 是函数名，<code>params</code> 属性是一个数组，表示函数的参数。<code>body</code> 是一个块语句。
+有一个值得留意的点是，你在测试过程中，是不会找到 <code>type: &quot;Function&quot;</code> 的节点的，但是你可以找到 <code>type: &quot;FunctionDeclaration&quot;</code> 和 <code>type: &quot;FunctionExpression&quot;</code>，因为函数要么以声明语句出现，要么以函数表达式出现，都是节点类型的组合类型，后边会再提及 <code>FunctionDeclaration</code> 和 <code>FunctionExpression</code> 的相关内容。
+这让人感觉这个文档规划得蛮细致的，函数名，参数和函数块是属于函数部分的内容，而声明或者表达式则有它自己需要的东西。</p>
+<h4 id="statement">Statement</h4>
+<p>语句节点没什么特别的，它只是一个节点，一种区分，但是语句有很多种，下边会详述。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> Statement <span style="color:#ff79c6">&lt;:</span> Node { }ExpressionStatement
+</code></pre></div><h4 id="expressionstatement">ExpressionStatement</h4>
+<p>表达式语句节点，<code>a = a + 1</code> 或者 <code>a++</code> 里边会有一个 <code>expression</code> 属性指向一个表达式节点对象（后边会提及表达式）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ExpressionStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ExpressionStatement&#34;</span>;
+    expression<span style="color:#ff79c6">:</span> Expression;
+}
+</code></pre></div><h4 id="blockstatement">BlockStatement</h4>
+<p>块语句节点，举个例子：<code>if (...) { // 这里是块语句的内容 }</code>，块里边可以包含多个其他的语句，所以有一个 <code>body</code> 属性，是一个数组，表示了块里边的多个语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> BlockStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;BlockStatement&#34;</span>;
+    body<span style="color:#ff79c6">:</span> [ Statement ];
+}
+</code></pre></div><h4 id="emptystatement">EmptyStatement</h4>
+<p>一个空的语句节点，没有执行任何有用的代码，例如一个单独的分号 ;</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> EmptyStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;EmptyStatement&#34;</span>;
+}
+</code></pre></div><h4 id="debuggerstatement">DebuggerStatement</h4>
+<p><code>debugger</code>，就是表示这个，没有其他了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> DebuggerStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;DebuggerStatement&#34;</span>;
+}
+</code></pre></div><h4 id="withstatement">WithStatement</h4>
+<p><code>with</code> 语句节点，里边有两个特别的属性，<code>object</code> 表示 <code>with</code> 要使用的那个对象（可以是一个表达式），<code>body</code> 则是对应 <code>with</code> 后边要执行的语句，一般会是一个块语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> WithStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;WithStatement&#34;</span>;
+    object<span style="color:#ff79c6">:</span> Expression;
+    body<span style="color:#ff79c6">:</span> Statement;
+}
+</code></pre></div><p>下边是控制流的语句：</p>
+<h4 id="returnstatement">ReturnStatement</h4>
+<p>返回语句节点，<code>argument</code> 属性是一个表达式，代表返回的内容。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ReturnStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ReturnStatement&#34;</span>;
+    argument<span style="color:#ff79c6">:</span> Expression <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+}
+</code></pre></div><h4 id="labeledstatement">LabeledStatement</h4>
+<p><code>label</code> 语句，平时可能会比较少接触到，举个例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">loop<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">for</span>(<span style="color:#8be9fd;font-style:italic">let</span> i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> len; i<span style="color:#ff79c6">++</span>) {
+    <span style="color:#6272a4">// ...
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">for</span> (<span style="color:#8be9fd;font-style:italic">let</span> j <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; j <span style="color:#ff79c6">&lt;</span> min; j<span style="color:#ff79c6">++</span>) {
+        <span style="color:#6272a4">// ...
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">break</span> loop;
+    }
+}
+</code></pre></div><p>这里的 <code>loop</code> 就是一个 <code>label</code> 了，我们可以在循环嵌套中使用 <code>break loop</code> 来指定跳出哪个循环。所以这里的 <code>label</code> 语句指的就是 <code>loop: ...</code> 这个。
+一个 <code>label</code> 语句节点会有两个属性，一个 <code>label</code> 属性表示 <code>label</code> 的名称，另外一个 <code>body</code> 属性指向对应的语句，通常是一个循环语句或者 <code>switch</code> 语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> LabeledStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;LabeledStatement&#34;</span>;
+    label<span style="color:#ff79c6">:</span> Identifier;
+    body<span style="color:#ff79c6">:</span> Statement;
+}
+</code></pre></div><h4 id="breakstatement">BreakStatement</h4>
+<p><code>break</code> 语句节点，会有一个 <code>label</code> 属性表示需要的 <code>label</code> 名称，当不需要 <code>label</code> 的时候（通常都不需要），便是 <code>null</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> BreakStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;BreakStatement&#34;</span>;
+    label<span style="color:#ff79c6">:</span> Identifier <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+}
+</code></pre></div><h4 id="continuestatement">ContinueStatement</h4>
+<p><code>continue</code> 语句节点，和 <code>break</code> 类似。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ContinueStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ContinueStatement&#34;</span>;
+    label<span style="color:#ff79c6">:</span> Identifier <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+}
+</code></pre></div><p>下边是条件语句：</p>
+<h4 id="ifstatement">IfStatement</h4>
+<p><code>if</code> 语句节点，很常见，会带有三个属性，test 属性表示 <code>if (...)</code> 括号中的表达式。
+<code>consequent</code> 属性是表示条件为 <code>true</code> 时的执行语句，通常会是一个块语句。
+<code>alternate</code> 属性则是用来表示 <code>else</code> 后跟随的语句节点，通常也会是块语句，但也可以又是一个 <code>if</code> 语句节点，即类似这样的结构：<code>if (a) { //... } else if (b) { // ... }</code>。<code>alternate</code> 当然也可以为 <code>null</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> IfStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;IfStatement&#34;</span>;
+    test<span style="color:#ff79c6">:</span> Expression;
+    consequent<span style="color:#ff79c6">:</span> Statement;
+    alternate<span style="color:#ff79c6">:</span> Statement <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+}
+</code></pre></div><h4 id="switchstatement">SwitchStatement</h4>
+<p><code>switch</code> 语句节点，有两个属性，<code>discriminant</code>属性表示 <code>switch</code> 语句后紧随的表达式，通常会是一个变量，<code>cases</code> 属性是一个 <code>case</code> 节点的数组，用来表示各个 <code>case</code> 语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> SwitchStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;SwitchStatement&#34;</span>;
+    discriminant<span style="color:#ff79c6">:</span> Expression;
+    cases<span style="color:#ff79c6">:</span> [ SwitchCase ];
+}
+</code></pre></div><h4 id="switchcase">SwitchCase</h4>
+<p><code>switch</code> 的 <code>case</code> 节点。<code>test</code> 属性代表这个 <code>case</code> 的判断表达式，<code>consequent</code> 则是这个 <code>case</code> 的执行语句。
+当 <code>test</code> 属性是 <code>null</code> 时，则是表示 <code>default</code> 这个 <code>case</code> 节点。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> SwitchCase <span style="color:#ff79c6">&lt;:</span> Node {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;SwitchCase&#34;</span>;
+    test<span style="color:#ff79c6">:</span> Expression <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+    consequent<span style="color:#ff79c6">:</span> [ Statement ];
+}
+</code></pre></div><p>下边是异常相关的语句：</p>
+<h4 id="throwstatement">ThrowStatement</h4>
+<p><code>throw</code> 语句节点，<code>argument</code> 属性用以表示 <code>throw</code> 后边紧跟的表达式。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ThrowStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ThrowStatement&#34;</span>;
+    argument<span style="color:#ff79c6">:</span> Expression;
+}
+</code></pre></div><h4 id="trystatement">TryStatement</h4>
+<p><code>try</code> 语句节点，<code>block</code> 属性表示 <code>try</code> 的执行语句，通常是一个块语句。
+<code>hanlder</code> 属性是指 <code>catch</code> 节点，<code>finalizer</code> 是指 <code>finally</code> 语句节点，当 <code>hanlder</code> 为 <code>null</code> 时，<code>finalizer</code> 必须是一个块语句节点。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> TryStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;TryStatement&#34;</span>;
+    block<span style="color:#ff79c6">:</span> BlockStatement;
+    handler<span style="color:#ff79c6">:</span> CatchClause <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+    finalizer<span style="color:#ff79c6">:</span> BlockStatement <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+}
+</code></pre></div><h4 id="catchclause">CatchClause</h4>
+<p><code>catch</code> 节点，<code>param</code> 用以表示 <code>catch</code> 后的参数，<code>body</code> 则表示 <code>catch</code> 后的执行语句，通常是一个块语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> CatchClause <span style="color:#ff79c6">&lt;:</span> Node {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;CatchClause&#34;</span>;
+    param<span style="color:#ff79c6">:</span> Pattern;
+    body<span style="color:#ff79c6">:</span> BlockStatement;
+}
+</code></pre></div><p>下边是循环语句：</p>
+<h4 id="whilestatement">WhileStatement</h4>
+<p><code>while</code> 语句节点，<code>test</code> 表示括号中的表达式，<code>body</code> 是表示要循环执行的语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> WhileStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;WhileStatement&#34;</span>;
+    test<span style="color:#ff79c6">:</span> Expression;
+    body<span style="color:#ff79c6">:</span> Statement;
+}
+</code></pre></div><h4 id="dowhilestatement">DoWhileStatement</h4>
+<p><code>do/while</code> 语句节点，和 <code>while</code> 语句类似。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> DoWhileStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;DoWhileStatement&#34;</span>;
+    body<span style="color:#ff79c6">:</span> Statement;
+    test<span style="color:#ff79c6">:</span> Expression;
+}
+</code></pre></div><h4 id="forstatement">ForStatement</h4>
+<p><code>for</code> 循环语句节点，属性 <code>init/test/update</code> 分别表示了 <code>for</code> 语句括号中的三个表达式，初始化值，循环判断条件，每次循环执行的变量更新语句（<code>init</code> 可以是变量声明或者表达式）。这三个属性都可以为 <code>null</code>，即 <code>for(;;){}</code>。<code>body</code> 属性用以表示要循环执行的语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ForStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ForStatement&#34;</span>;
+    init<span style="color:#ff79c6">:</span> VariableDeclaration <span style="color:#ff79c6">|</span> Expression <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+    test<span style="color:#ff79c6">:</span> Expression <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+    update<span style="color:#ff79c6">:</span> Expression <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+    body<span style="color:#ff79c6">:</span> Statement;
+}
+</code></pre></div><h4 id="forinstatement">ForInStatement</h4>
+<p><code>for/in</code> 语句节点，<code>left</code> 和 <code>right</code> 属性分别表示在 <code>in</code> 关键词左右的语句（左侧可以是一个变量声明或者表达式）。<code>body</code> 依旧是表示要循环执行的语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ForInStatement <span style="color:#ff79c6">&lt;:</span> Statement {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ForInStatement&#34;</span>;
+    left<span style="color:#ff79c6">:</span> VariableDeclaration <span style="color:#ff79c6">|</span>  Pattern;
+    right<span style="color:#ff79c6">:</span> Expression;
+    body<span style="color:#ff79c6">:</span> Statement;
+}
+</code></pre></div><h4 id="declarations">Declarations</h4>
+<p>声明语句节点，同样也是语句，只是一个类型的细化。下边会介绍各种声明语句类型。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> Declaration <span style="color:#ff79c6">&lt;:</span> Statement { }
+</code></pre></div><h4 id="functiondeclaration">FunctionDeclaration</h4>
+<p>函数声明，和之前提到的 <code>Function</code> 不同的是，<code>id</code> 不能为 <code>null</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> FunctionDeclaration <span style="color:#ff79c6">&lt;:</span> <span style="color:#8be9fd;font-style:italic">Function</span>, Declaration {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;FunctionDeclaration&#34;</span>;
+    id<span style="color:#ff79c6">:</span> Identifier;
+}
+</code></pre></div><h4 id="variabledeclaration">VariableDeclaration</h4>
+<p>变量声明，<code>kind</code> 属性表示是什么类型的声明，因为 ES6 引入了 <code>const/let</code>。<code>declarations</code>表示声明的多个描述，因为我们可以这样：<code>let a = 1, b = 2;</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> VariableDeclaration <span style="color:#ff79c6">&lt;:</span> Declaration {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;VariableDeclaration&#34;</span>;
+    declarations<span style="color:#ff79c6">:</span> [ VariableDeclarator ];
+    kind<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;var&#34;</span>;
+}
+</code></pre></div><h4 id="variabledeclarator">VariableDeclarator</h4>
+<p>变量声明的描述，<code>id</code> 表示变量名称节点，<code>init</code> 表示初始值的表达式，可以为 <code>null</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> VariableDeclarator <span style="color:#ff79c6">&lt;:</span> Node {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;VariableDeclarator&#34;</span>;
+    id<span style="color:#ff79c6">:</span> Pattern;
+    init<span style="color:#ff79c6">:</span> Expression <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span>;
+}
+</code></pre></div><h4 id="expressions">Expressions</h4>
+<p>表达式节点。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> Expression <span style="color:#ff79c6">&lt;:</span> Node { }
+</code></pre></div><h4 id="thisexpression">ThisExpression</h4>
+<p>表示 <code>this</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ThisExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ThisExpression&#34;</span>;
+}
+</code></pre></div><h4 id="arrayexpression">ArrayExpression</h4>
+<p>数组表达式节点，<code>elements</code> 属性是一个数组，表示数组的多个元素，每一个元素都是一个表达式节点。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ArrayExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ArrayExpression&#34;</span>;
+    elements<span style="color:#ff79c6">:</span> [ Expression <span style="color:#ff79c6">|</span> <span style="color:#ff79c6">null</span> ];
+}
+</code></pre></div><h4 id="objectexpression">ObjectExpression</h4>
+<p>对象表达式节点，<code>property</code> 属性是一个数组，表示对象的每一个键值对，每一个元素都是一个属性节点。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ObjectExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ObjectExpression&#34;</span>;
+    properties<span style="color:#ff79c6">:</span> [ Property ];
+}
+</code></pre></div><h4 id="property">Property</h4>
+<p>对象表达式中的属性节点。<code>key</code> 表示键，<code>value</code> 表示值，由于 ES5 语法中有 <code>get/set</code> 的存在，所以有一个 <code>kind</code> 属性，用来表示是普通的初始化，或者是 <code>get/set</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> Property <span style="color:#ff79c6">&lt;:</span> Node {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;Property&#34;</span>;
+    key<span style="color:#ff79c6">:</span> Literal <span style="color:#ff79c6">|</span> Identifier;
+    value<span style="color:#ff79c6">:</span> Expression;
+    kind<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;init&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;get&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;set&#34;</span>;
+}
+</code></pre></div><h4 id="functionexpression">FunctionExpression</h4>
+<p>函数表达式节点。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> FunctionExpression <span style="color:#ff79c6">&lt;:</span> <span style="color:#8be9fd;font-style:italic">Function</span>, Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;FunctionExpression&#34;</span>;
+}
+</code></pre></div><p>下边是一元运算符相关的表达式部分：</p>
+<h4 id="unaryexpression">UnaryExpression</h4>
+<p>一元运算表达式节点（<code>++/--</code> 是 <code>update</code> 运算符，不在这个范畴内），<code>operator</code> 表示运算符，<code>prefix</code> 表示是否为前缀运算符。<code>argument</code> 是要执行运算的表达式。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> UnaryExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;UnaryExpression&#34;</span>;
+    operator<span style="color:#ff79c6">:</span> UnaryOperator;
+    prefix<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">boolean</span>;
+    argument<span style="color:#ff79c6">:</span> Expression;
+}
+</code></pre></div><h4 id="unaryoperator">UnaryOperator</h4>
+<p>一元运算符，枚举类型，所有值如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">enum</span> UnaryOperator {
+    <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;+&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;!&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;~&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;typeof&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;void&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;delete&#34;</span>
+}
+</code></pre></div><h4 id="updateexpression">UpdateExpression</h4>
+<p><code>update</code> 运算表达式节点，即 <code>++/--</code>，和一元运算符类似，只是 <code>operator</code> 指向的节点对象类型不同，这里是 <code>update</code> 运算符。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> UpdateExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;UpdateExpression&#34;</span>;
+    operator<span style="color:#ff79c6">:</span> UpdateOperator;
+    argument<span style="color:#ff79c6">:</span> Expression;
+    prefix<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">boolean</span>;
+}
+</code></pre></div><h4 id="updateoperator">UpdateOperator</h4>
+<p><code>update</code> 运算符，值为 <code>++</code> 或 <code>--</code>，配合 <code>update</code> 表达式节点的 <code>prefix</code> 属性来表示前后。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">enum</span> UpdateOperator {
+    <span style="color:#f1fa8c">&#34;++&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;--&#34;</span>
+}
+</code></pre></div><p>下边是二元运算符相关的表达式部分：</p>
+<h4 id="binaryexpression">BinaryExpression</h4>
+<p>二元运算表达式节点，<code>left</code> 和 <code>right</code> 表示运算符左右的两个表达式，<code>operator</code> 表示一个二元运算符。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> BinaryExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;BinaryExpression&#34;</span>;
+    operator<span style="color:#ff79c6">:</span> BinaryOperator;
+    left<span style="color:#ff79c6">:</span> Expression;
+    right<span style="color:#ff79c6">:</span> Expression;
+}
+</code></pre></div><h4 id="binaryoperator">BinaryOperator</h4>
+<p>二元运算符，所有值如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">enum</span> BinaryOperator {
+    <span style="color:#f1fa8c">&#34;==&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;!=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;===&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;!==&#34;</span>
+         <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&lt;&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&lt;=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&gt;&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&gt;=&#34;</span>
+         <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&lt;&lt;&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&gt;&gt;&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&gt;&gt;&gt;&#34;</span>
+         <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;+&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;*&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;/&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;%&#34;</span>
+         <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;|&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;^&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&amp;&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;in&#34;</span>
+         <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;instanceof&#34;</span>
+}
+</code></pre></div><h4 id="assignmentexpression">AssignmentExpression</h4>
+<p>赋值表达式节点，<code>operator</code> 属性表示一个赋值运算符，<code>left</code> 和 <code>right</code> 是赋值运算符左右的表达式。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> AssignmentExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;AssignmentExpression&#34;</span>;
+    operator<span style="color:#ff79c6">:</span> AssignmentOperator;
+    left<span style="color:#ff79c6">:</span> Pattern <span style="color:#ff79c6">|</span> Expression;
+    right<span style="color:#ff79c6">:</span> Expression;
+}
+</code></pre></div><h4 id="assignmentoperator">AssignmentOperator</h4>
+<p>赋值运算符，所有值如下：（常用的并不多）</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">enum</span> AssignmentOperator {
+    <span style="color:#f1fa8c">&#34;=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;+=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;-=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;*=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;/=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;%=&#34;</span>
+        <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&lt;&lt;=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&gt;&gt;=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&gt;&gt;&gt;=&#34;</span>
+        <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;|=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;^=&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&amp;=&#34;</span>
+}
+</code></pre></div><h4 id="logicalexpression">LogicalExpression</h4>
+<p>逻辑运算表达式节点，和赋值或者二元运算类型，只不过 <code>operator</code> 是逻辑运算符类型。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> LogicalExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;LogicalExpression&#34;</span>;
+    operator<span style="color:#ff79c6">:</span> LogicalOperator;
+    left<span style="color:#ff79c6">:</span> Expression;
+    right<span style="color:#ff79c6">:</span> Expression;
+}
+</code></pre></div><h4 id="logicaloperator">LogicalOperator</h4>
+<p>逻辑运算符，两种值，即<code>与</code> <code>或</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">enum</span> LogicalOperator {
+    <span style="color:#f1fa8c">&#34;||&#34;</span> <span style="color:#ff79c6">|</span> <span style="color:#f1fa8c">&#34;&amp;&amp;&#34;</span>
+}
+</code></pre></div><h4 id="memberexpression">MemberExpression</h4>
+<p>成员表达式节点，即表示引用对象成员的语句，<code>object</code> 是引用对象的表达式节点，<code>property</code> 是表示属性名称，<code>computed</code> 如果为 <code>false</code>，是表示 <code>.</code> 来引用成员，<code>property</code> 应该为一个 <code>Identifier</code> 节点，如果 <code>computed</code> 属性为 <code>true</code>，则是 <code>[]</code> 来进行引用，即 <code>property</code> 是一个 <code>Expression</code> 节点，名称是表达式的结果值。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> MemberExpression <span style="color:#ff79c6">&lt;:</span> Expression, Pattern {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;MemberExpression&#34;</span>;
+    object<span style="color:#ff79c6">:</span> Expression;
+    property<span style="color:#ff79c6">:</span> Expression;
+    computed<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">boolean</span>;
+}
+</code></pre></div><p>下边是其他的一些表达式：</p>
+<h4 id="conditionalexpression">ConditionalExpression</h4>
+<p>条件表达式，通常我们称之为三元运算表达式，即 <code>boolean ? true : false</code>。属性参考条件语句。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> ConditionalExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;ConditionalExpression&#34;</span>;
+    test<span style="color:#ff79c6">:</span> Expression;
+    alternate<span style="color:#ff79c6">:</span> Expression;
+    consequent<span style="color:#ff79c6">:</span> Expression;
+}
+</code></pre></div><h4 id="callexpression">CallExpression</h4>
+<p>函数调用表达式，即表示了 <code>func(1, 2)</code> 这一类型的语句。callee 属性是一个表达式节点，表示函数，arguments 是一个数组，元素是表达式节点，表示函数参数列表。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> CallExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;CallExpression&#34;</span>;
+    callee<span style="color:#ff79c6">:</span> Expression;
+    arguments<span style="color:#ff79c6">:</span> [ Expression ];
+}
+</code></pre></div><h4 id="newexpression">NewExpression</h4>
+<p><code>new</code> 表达式。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> NewExpression <span style="color:#ff79c6">&lt;:</span> CallExpression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;NewExpression&#34;</span>;
+}
+</code></pre></div><h4 id="sequenceexpression">SequenceExpression</h4>
+<p>这个就是逗号运算符构建的表达式（不知道确切的名称），<code>expressions</code> 属性为一个数组，即表示构成整个表达式，被逗号分割的多个表达式。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#ff79c6">interface</span> SequenceExpression <span style="color:#ff79c6">&lt;:</span> Expression {
+    type<span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">&#34;SequenceExpression&#34;</span>;
+    expressions<span style="color:#ff79c6">:</span> [ Expression ];
+}
+</code></pre></div><ul class="pa0">
+  
+   <li class="list">
+     <a href="/tags/javascript" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">JavaScript</a>
+   </li>
+  
+   <li class="list">
+     <a href="/tags/ast" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">AST</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">What&#39;s in this posts</p>
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#javascript-编译执行流程">JavaScript 编译执行流程</a></li>
+        <li><a href="#词法分析">词法分析</a></li>
+        <li><a href="#语法分析">语法分析</a></li>
+        <li><a href="#什么是ast抽象语法树">什么是AST（抽象语法树）</a></li>
+        <li><a href="#ast-节点介绍">AST 节点介绍</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/2018/05/27/applyandcall/">JavaScript之apply、call和bind的模拟实现</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/05/10/debounceandthrottle/">JavaScript 之函数防抖与节流</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/04/23/prototypeandextend/">JavaScript 原型链与继承</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/04/01/jsregexp/">JavaScript 正则表达式</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/12/02/v8gc/">JavaScript垃圾回收机制与内存泄漏</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/08/03/promise/">Promise实现原理</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/07/01/browsecache/">浏览器的缓存机制梳理</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/06/29/crossdomain/">浏览器常见跨域方式梳理</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/05/25/reflowandrepaint/">浏览器渲染之回流（Reflow）与重绘（Repaint）</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/2018/05/23/browserrendering/">浏览器页面渲染流程梳理</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://goyth.cn/" >
+    &copy;  GOYTH 2020 
+  </a>
+    <div>
+
+
+
+
+<a href="https://twitter.com/goythz" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/jsyt" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

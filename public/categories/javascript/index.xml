@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JavaScript on GOYTH</title>
+    <link>https://goyth.cn/categories/javascript/</link>
+    <description>Recent content in JavaScript on GOYTH</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 25 May 2019 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/categories/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>单页面（SPA）路由实现原理</title>
+      <link>https://goyth.cn/2019/05/25/sparouter/</link>
+      <pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2019/05/25/sparouter/</guid>
+      <description>什么是单页面应用 ? 单页面应用（SPA）即single page application，目前在前后端分离的项目中，一般都是采用 SPA 的模式，整个应用只有一个 html 页面。后端接口只负责提供数据，而页面路由则需要前端自己完成。单页面应用的优势：1. 减少 http 请求数，降低服务器压力；2. 有利于前后端分离；3. 页面流畅度更高，用户体验更加友好。</description>
+    </item>
+    
+    <item>
+      <title>编写一个 Babel 插件</title>
+      <link>https://goyth.cn/2019/01/06/babelplugin/</link>
+      <pubDate>Sun, 06 Jan 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2019/01/06/babelplugin/</guid>
+      <description>Babel转译流程 Babel 对源码进行转译时，主要有三个步骤  首先通过Babylon 将源码转化成 AST 然后再通过babel-traverse遍历 AST，找到需要更改的 AST 节点，对其进行修改 根据修改后的 AST，通过babel-generator将修改后的 AST重新生成源码 Babel插件主要是处理第二步。  Babylon Babylon 是 Babel 的解析器，主要负责将源码转化成 AST。
+import * as babylon from &amp;#34;babylon&amp;#34;; const code = `function square(n) { return n * n; }`; babylon.</description>
+    </item>
+    
+    <item>
+      <title>Babel 核心模块介绍</title>
+      <link>https://goyth.cn/2019/01/05/babel/</link>
+      <pubDate>Sat, 05 Jan 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2019/01/05/babel/</guid>
+      <description>Babel 介绍 Babel 是一个通用的多用途 JavaScript 编译器。通过 Babel 你可以使用（并创建）下一代的 JavaScript，以及下一代的 JavaScript 工具。 Babel 把用最新标准编写的 JavaScript 代码向下编译成可以在今天随处可用的版本。 这一过程叫做“源码到源码”编译， 也被称为转换编译（transpiling，是一个自造合成词，即转换＋编译。以下也简称为转译）。
+例如，Babel 能够将新的 ES2015 箭头函数语法：
+const square = n =&amp;gt; n * n; 转译为：</description>
+    </item>
+    
+    <item>
+      <title>抽象语法树AST介绍</title>
+      <link>https://goyth.cn/2018/12/23/ast/</link>
+      <pubDate>Sun, 23 Dec 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/12/23/ast/</guid>
+      <description>js编译执行的第一步是读取 js 文件中的字符流，然后通过词法分析生成token，之后再通过语法分析生成 AST（Abstract Syntax Tree），最后生成机器码执行。词法分析，也称之为扫描（scanner），简单来说就是调用 next() 方法，一个一个字母的来读取字符，然后与定义好的 JavaScript 关键字符做比较，生成对应的Token。Token 是一个不可分割的最小单元，例如 var 这三个字符，它只能作为一个整体，语义上不能再被分解，因此它是一个 Token。</description>
+    </item>
+    
+    <item>
+      <title>JavaScript垃圾回收机制与内存泄漏</title>
+      <link>https://goyth.cn/2018/12/02/v8gc/</link>
+      <pubDate>Sun, 02 Dec 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/12/02/v8gc/</guid>
+      <description>程序的运行需要分配内存，内存资源是有限的，当程序运行结束后，就应该回收其内存资源。JavaScript使用自动内存管理，也称为垃圾回收机制（garbage collector）。自动垃圾回收的优点是可以简化开发，不用时刻惦记着回收不再使用的变量，降低内存泄漏的可能性；缺点是无法完全的掌握内存的分配以及回收的具体过程。</description>
+    </item>
+    
+    <item>
+      <title>Promise实现原理</title>
+      <link>https://goyth.cn/2018/08/03/promise/</link>
+      <pubDate>Fri, 03 Aug 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/08/03/promise/</guid>
+      <description>1.&lt;code&gt;promise&lt;/code&gt; 函数的参数（executor）是一个函数，这个函数有两个参数&lt;code&gt;resolve&lt;/code&gt;和&lt;code&gt;reject&lt;/code&gt;，这两个参数也都是函数，分别在&lt;code&gt;promise&lt;/code&gt;成功和失败时调用。 2. 当构建一个&lt;code&gt;promise&lt;/code&gt;实例时，会自动调用这个函数（executor） 3. 每个&lt;code&gt;promise&lt;/code&gt;对象都有一个&lt;code&gt;onFulfilledCallback&lt;/code&gt;队列和一个&lt;code&gt;onRejectedCallback&lt;/code&gt;队列，用来分别存储成功和失败时调用的回调函数</description>
+    </item>
+    
+    <item>
+      <title>浏览器的缓存机制梳理</title>
+      <link>https://goyth.cn/2018/07/01/browsecache/</link>
+      <pubDate>Sun, 01 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/07/01/browsecache/</guid>
+      <description>&lt;h2 id=&#34;概述&#34;&gt;概述&lt;/h2&gt;
+&lt;p&gt;浏览器的缓存机制也就是我们说的HTTP缓存机制，其机制是根据HTTP报文的缓存标识进行的，所以在分析浏览器缓存机制之前，我们先使用图文简单介绍一下HTTP报文，HTTP报文分为两种：&lt;/p&gt;
+&lt;p&gt;HTTP请求(Request)报文，报文格式为：请求行 – HTTP头(通用信息头，请求头，实体头) – 请求报文主体(只有POST才有报文主体)，如下图&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-01.webp&#34; alt=&#34;&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>浏览器常见跨域方式梳理</title>
+      <link>https://goyth.cn/2018/06/29/crossdomain/</link>
+      <pubDate>Fri, 29 Jun 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/06/29/crossdomain/</guid>
+      <description>&lt;p&gt;跨域是由于&lt;a href=&#34;http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html&#34;&gt;浏览器同源策略&lt;/a&gt;导致的，所以跨域只存在于浏览器端，非浏览器端不存在跨域问题，浏览器对跨域的请求、应答都能正常发送接收，只是浏览器在接收跨域应答时，将应答拦截了，所以我们需要一些额外的处理或设置让浏览器将跨域的应答返回给我们。&lt;/p&gt;
+&lt;h4 id=&#34;常见的跨域处理方式有&#34;&gt;常见的跨域处理方式有：&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;jsonp&lt;/li&gt;
+&lt;li&gt;CORS&lt;/li&gt;
+&lt;li&gt;iframe + postMessage&lt;/li&gt;
+&lt;li&gt;iframe + window.name&lt;/li&gt;
+&lt;li&gt;iframe + location.hash&lt;/li&gt;
+&lt;li&gt;iframe + domain&lt;/li&gt;
+&lt;li&gt;nginx代理&lt;/li&gt;
+&lt;li&gt;Nodejs中间件&lt;/li&gt;
+&lt;li&gt;WebSocket&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>JavaScript之apply、call和bind的模拟实现</title>
+      <link>https://goyth.cn/2018/05/27/applyandcall/</link>
+      <pubDate>Sun, 27 May 2018 22:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/05/27/applyandcall/</guid>
+      <description>apply() apply 方法传入两个参数：一个是作为函数上下文的对象，另外一个是作为函数参数所组成的数组。当第一个参数为 null 时，函数上下文为 window。
+var obj = { name : &amp;#39;luke&amp;#39; } function func(age, gender){ console.log(this.name + &amp;#39; &amp;#39; + age + &amp;#39; &amp;#39; + gender); } func.apply(obj, [18, &amp;#39;male&amp;#39;]); // luke 18 male apply模拟实现 Function.</description>
+    </item>
+    
+    <item>
+      <title>浏览器渲染之回流（Reflow）与重绘（Repaint）</title>
+      <link>https://goyth.cn/2018/05/25/reflowandrepaint/</link>
+      <pubDate>Fri, 25 May 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/05/25/reflowandrepaint/</guid>
+      <description>回流（Reflow）和重绘（Repaint）的定义 回流（Reflow） 对于DOM结构中的各个元素都有自己的盒子（模型），这些都需要浏览器根据各种样式（浏览器的、开发人员定义的等）来计算，并根据计算结果将元素放到它该出现的位置，这个过程称之为reflow。 重绘（Repaint） 当各种盒子的位置、大小以及其他属性，例如颜色、字体大小等都确定下来后，浏览器于是便把这些元素都按照各自的特性绘制了一遍，于是页面的内容出现了，这个过程称之为 repaint。</description>
+    </item>
+    
+    <item>
+      <title>浏览器页面渲染流程梳理</title>
+      <link>https://goyth.cn/2018/05/23/browserrendering/</link>
+      <pubDate>Wed, 23 May 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/05/23/browserrendering/</guid>
+      <description>&lt;h2 id=&#34;浏览器渲染基本流程&#34;&gt;浏览器渲染基本流程&lt;/h2&gt;
+&lt;p&gt;浏览器渲染流程如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browserRendering-webkitflow.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;大概可以划分成以下几个步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;通过HTML解析器解析HTML文本并构建DOM tree&lt;/li&gt;
+&lt;li&gt;通过CSS解析器解析CSS样式表并构建CSSOM tree&lt;/li&gt;
+&lt;li&gt;根据DOM tree 和 CSSOM tree 构建 Render tree&lt;/li&gt;
+&lt;/ol&gt;</description>
+    </item>
+    
+    <item>
+      <title>JavaScript 之函数防抖与节流</title>
+      <link>https://goyth.cn/2018/05/10/debounceandthrottle/</link>
+      <pubDate>Thu, 10 May 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/05/10/debounceandthrottle/</guid>
+      <description>函数防抖（debounce) 函数防抖是指在函数调用动作触发n秒后才开始执行，n秒内若再次触发，则重新开始计时，再次等待n秒后才开始执行。如果n秒内不断触发，那就不断重新开始计时，一直等到有一个n秒内没有触发，才开始执行此函数。
+根据描述，我们可以用setTimeout来实现一个简单版的防抖函数
+第一版 ／** * @ fn 回调函数 * @ delay 延迟时间 *／ function debounce(fn, delay){ let timer = null; return function(){ clearTimeout(timer); timer = setTimeout(fn, delay); } } 由于setTimeout的回调函数内的this是指向window，如果不传参数则argument对象为空，所以我们得修复this的指向，并将argument对象也传给回调函数</description>
+    </item>
+    
+    <item>
+      <title>JavaScript 原型链与继承</title>
+      <link>https://goyth.cn/2018/04/23/prototypeandextend/</link>
+      <pubDate>Mon, 23 Apr 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/04/23/prototypeandextend/</guid>
+      <description>&lt;h3 id=&#34;原型对象&#34;&gt;原型对象&lt;/h3&gt;
+&lt;p&gt;无论什么时候，只要创建一个新函数，就会根据一组特定的规则为该函数创建一个 &lt;code&gt;prototype&lt;/code&gt; 属性，这个属性指向函数的原型对象。默认情况下，所有原型对象都会自动获得一个 &lt;code&gt;constructor&lt;/code&gt;（构造函数）属性，这个属性指向 &lt;code&gt;prototype&lt;/code&gt; 属性所在的函数。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;function&lt;/span&gt; Person(){
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>JavaScript 正则表达式</title>
+      <link>https://goyth.cn/2018/04/01/jsregexp/</link>
+      <pubDate>Sun, 01 Apr 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/2018/04/01/jsregexp/</guid>
+      <description>正则表达式 一种几乎可以在所有的程序设计语言里和所有的计算机平台上使用的文字处理工具。它可以用来查找特定的信息（搜索），也可以用来查找并编辑特定的信息（替换）。 核心是 匹配，匹配位置或者匹配字符
+先简单的介绍一下语法 基本元字符   .： 匹配除了换行符之外的任何单个字符
+  \ ： 在非特殊字符之前的反斜杠表示下一个字符是特殊的，不能从字面上解释。例如，没有前\的&#39;b&#39;通常匹配小写&#39;b&#39;，无论它们出现在哪里。如果加了&#39;\&#39;,这个字符变成了一个特殊意义的字符，反斜杠也可以将其后的特殊字符，转义为字面量。例如，模式 /a*/ 代表会匹配 0 a。相反，模式 /a\*/ 将 &#39; * &#39; 的特殊性移除，从而可以匹配像 &amp;quot;a*&amp;quot; 这样的字符串。
+  | ： 逻辑或操作符</description>
+    </item>
+    
+  </channel>
+</rss>
