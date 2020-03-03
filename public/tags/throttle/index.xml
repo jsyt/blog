@@ -1,26 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Throttle on GOYTH</title>
-    <link>https://goyth.cn/tags/throttle/</link>
-    <description>Recent content in Throttle on GOYTH</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Thu, 10 May 2018 21:53:54 +0800</lastBuildDate>
-    
-	<atom:link href="https://goyth.cn/tags/throttle/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>JavaScript 之函数防抖与节流</title>
-      <link>https://goyth.cn/2018/05/10/debounceandthrottle/</link>
-      <pubDate>Thu, 10 May 2018 21:53:54 +0800</pubDate>
-      
-      <guid>https://goyth.cn/2018/05/10/debounceandthrottle/</guid>
-      <description>函数防抖（debounce) 函数防抖是指在函数调用动作触发n秒后才开始执行，n秒内若再次触发，则重新开始计时，再次等待n秒后才开始执行。如果n秒内不断触发，那就不断重新开始计时，一直等到有一个n秒内没有触发，才开始执行此函数。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Throttle on luke's blog</title><link>https://goyth.cn/tags/throttle/</link><description>Recent content in Throttle on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><lastBuildDate>Thu, 10 May 2018 21:53:54 +0800</lastBuildDate><atom:link href="https://goyth.cn/tags/throttle/index.xml" rel="self" type="application/rss+xml"/><item><title>JavaScript 之函数防抖与节流</title><link>https://goyth.cn/post/debounceandthrottle/</link><pubDate>Thu, 10 May 2018 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/debounceandthrottle/</guid><description>函数防抖（debounce) 函数防抖是指在函数调用动作触发n秒后才开始执行，n秒内若再次触发，则重新开始计时，再次等待n秒后才开始执行。如果n秒内不断触发，那就不断重新开始计时，一直等到有一个n秒内没有触发，才开始执行此函数。
 根据描述，我们可以用setTimeout来实现一个简单版的防抖函数
-第一版 ／** * @ fn 回调函数 * @ delay 延迟时间 *／ function debounce(fn, delay){ let timer = null; return function(){ clearTimeout(timer); timer = setTimeout(fn, delay); } } 由于setTimeout的回调函数内的this是指向window，如果不传参数则argument对象为空，所以我们得修复this的指向，并将argument对象也传给回调函数</description>
-    </item>
-    
-  </channel>
-</rss>
+第一版 1 2 3 4 5 6 7 8 9 10 11 12 ／** * @ fn 回调函数 * @ delay 延迟时间 *／ function debounce(fn, delay){ let timer = null; return function(){ clearTimeout(timer); timer = setTimeout(fn, delay); } } 由于setTimeout的回调函数内的this是指向window，如果不传参数则argument对象为空，所以我们得修复this的指向，并将argument对象也传给回调函数
+第二版 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 ／** * @ fn 回调函数 * @ delay 延迟时间 *／ function debounce(fn, delay){ let timer = null; return function(){ let context = this, arg = arguments; clearTimeout(timer); timer = setTimeout(function(){ fn.</description></item></channel></rss>

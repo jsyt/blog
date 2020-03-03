@@ -1,0 +1,673 @@
+<!doctype html><html lang=en><head><title>抽象语法树 a s t介绍 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="抽象语法树AST介绍"><meta property="og:description" content="js编译执行的第一步是读取 js 文件中的字符流，然后通过词法分析生成token，之后再通过语法分析生成 AST（Abstract Syntax Tree），最后生成机器码执行。词法分析，也称之为扫描（scanner），简单来说就是调用 next() 方法，一个一个字母的来读取字符， …"><meta property="og:url" content="https://goyth.cn/post/ast/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/ast/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
+<a href=https://goyth.cn/categories class=nav_item>Category</a>
+<a href=https://goyth.cn/tags class=nav_item>Tag</a>
+<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
+<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">23. December 2018</p><h1 class=post_title>抽象语法树AST介绍</h1><div class=post_body><div class=post_inner><h3 id=javascript-编译执行流程>JavaScript 编译执行流程</h3><p>js编译执行的第一步是读取 js 文件中的字符流，然后通过词法分析生成token，之后再通过语法分析生成 AST（Abstract Syntax Tree），最后生成机器码执行。</p><h3 id=词法分析>词法分析</h3><p>词法分析，也称之为扫描（scanner），简单来说就是调用 next() 方法，一个一个字母的来读取字符，然后与定义好的 JavaScript 关键字符做比较，生成对应的Token。Token 是一个不可分割的最小单元，例如 var 这三个字符，它只能作为一个整体，语义上不能再被分解，因此它是一个 Token。词法分析器里，每个关键字是一个 Token ，每个标识符是一个 Token，每个操作符是一个 Token，每个标点符号也都是一个 Token。除此之外，还会过滤掉源程序中的注释和空白字符（换行符、空格、制表符等）。
+最终，整个代码将被分割进一个tokens列表（或者说一维数组）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js>
+<span class=nx>n</span> <span class=o>*</span> <span class=nx>n</span><span class=p>;</span>
+
+<span class=p>[</span>
+  <span class=p>{</span> <span class=nx>type</span><span class=o>:</span> <span class=p>{</span> <span class=p>...</span> <span class=p>},</span> <span class=nx>value</span><span class=o>:</span> <span class=s2>&#34;n&#34;</span><span class=p>,</span>  <span class=nx>loc</span><span class=o>:</span> <span class=p>{</span> <span class=p>...</span> <span class=p>}</span> <span class=p>},</span>
+  <span class=p>{</span> <span class=nx>type</span><span class=o>:</span> <span class=p>{</span> <span class=p>...</span> <span class=p>},</span> <span class=nx>value</span><span class=o>:</span> <span class=s2>&#34;*&#34;</span><span class=p>,</span>  <span class=nx>loc</span><span class=o>:</span> <span class=p>{</span> <span class=p>...</span> <span class=p>}</span> <span class=p>},</span>
+  <span class=p>{</span> <span class=nx>type</span><span class=o>:</span> <span class=p>{</span> <span class=p>...</span> <span class=p>},</span> <span class=nx>value</span><span class=o>:</span> <span class=s2>&#34;n&#34;</span><span class=p>,</span>  <span class=nx>loc</span><span class=o>:</span> <span class=p>{</span> <span class=p>...</span> <span class=p>}</span> <span class=p>},</span>
+  <span class=p>...</span>
+<span class=p>]</span>
+
+</code></pre></td></tr></table></div></div><p>每一个 type 有一组属性来描述该令牌：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=p>{</span>
+  <span class=nx>type</span><span class=o>:</span> <span class=p>{</span>
+    <span class=nx>label</span><span class=o>:</span> <span class=s1>&#39;name&#39;</span><span class=p>,</span>
+    <span class=nx>keyword</span><span class=o>:</span> <span class=kc>undefined</span><span class=p>,</span>
+    <span class=nx>beforeExpr</span><span class=o>:</span> <span class=kc>false</span><span class=p>,</span>
+    <span class=nx>startsExpr</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span>
+    <span class=nx>rightAssociative</span><span class=o>:</span> <span class=kc>false</span><span class=p>,</span>
+    <span class=nx>isLoop</span><span class=o>:</span> <span class=kc>false</span><span class=p>,</span>
+    <span class=nx>isAssign</span><span class=o>:</span> <span class=kc>false</span><span class=p>,</span>
+    <span class=nx>prefix</span><span class=o>:</span> <span class=kc>false</span><span class=p>,</span>
+    <span class=nx>postfix</span><span class=o>:</span> <span class=kc>false</span><span class=p>,</span>
+    <span class=nx>binop</span><span class=o>:</span> <span class=kc>null</span><span class=p>,</span>
+    <span class=nx>updateContext</span><span class=o>:</span> <span class=kc>null</span>
+  <span class=p>},</span>
+  <span class=p>...</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h3 id=语法分析>语法分析</h3><p>语法分析会将词法分析出来的 Token 转化成有语法含义的抽象语法树结构。同时，验证语法，语法如果有错的话，抛出语法错误。</p><h3 id=什么是ast抽象语法树>什么是AST（抽象语法树）</h3><p>抽象语法树（Abstract Syntax Tree，AST），或简称语法树（Syntax tree），是源代码语法结构的一种抽象表示。它以树状的形式表现编程语言的语法结构，树上的每个节点都表示源代码中的一种结构。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>square</span><span class=p>(</span><span class=nx>n</span><span class=p>)</span> <span class=p>{</span>
+  <span class=k>return</span> <span class=nx>n</span> <span class=o>*</span> <span class=nx>n</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面的程序可以被表示成如下的一棵树：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=o>-</span> <span class=nx>FunctionDeclaration</span><span class=o>:</span>
+  <span class=o>-</span> <span class=nx>id</span><span class=o>:</span>
+    <span class=o>-</span> <span class=nx>Identifier</span><span class=o>:</span>
+      <span class=o>-</span> <span class=nx>name</span><span class=o>:</span> <span class=nx>square</span>
+  <span class=o>-</span> <span class=nx>params</span> <span class=p>[</span><span class=mi>1</span><span class=p>]</span>
+    <span class=o>-</span> <span class=nx>Identifier</span>
+      <span class=o>-</span> <span class=nx>name</span><span class=o>:</span> <span class=nx>n</span>
+  <span class=o>-</span> <span class=nx>body</span><span class=o>:</span>
+    <span class=o>-</span> <span class=nx>BlockStatement</span>
+      <span class=o>-</span> <span class=nx>body</span> <span class=p>[</span><span class=mi>1</span><span class=p>]</span>
+        <span class=o>-</span> <span class=nx>ReturnStatement</span>
+          <span class=o>-</span> <span class=nx>argument</span>
+            <span class=o>-</span> <span class=nx>BinaryExpression</span>
+              <span class=o>-</span> <span class=nx>operator</span><span class=o>:</span> <span class=o>*</span>
+              <span class=o>-</span> <span class=nx>left</span>
+                <span class=o>-</span> <span class=nx>Identifier</span>
+                  <span class=o>-</span> <span class=nx>name</span><span class=o>:</span> <span class=nx>n</span>
+              <span class=o>-</span> <span class=nx>right</span>
+                <span class=o>-</span> <span class=nx>Identifier</span>
+                  <span class=o>-</span> <span class=nx>name</span><span class=o>:</span> <span class=nx>n</span>
+</code></pre></td></tr></table></div></div><p>或是如下所示的 JavaScript Object（对象）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=p>{</span>
+  <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;FunctionDeclaration&#34;</span><span class=p>,</span>
+  <span class=nx>id</span><span class=o>:</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Identifier&#34;</span><span class=p>,</span>
+    <span class=nx>name</span><span class=o>:</span> <span class=s2>&#34;square&#34;</span>
+  <span class=p>},</span>
+  <span class=nx>params</span><span class=o>:</span> <span class=p>[{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Identifier&#34;</span><span class=p>,</span>
+    <span class=nx>name</span><span class=o>:</span> <span class=s2>&#34;n&#34;</span>
+  <span class=p>}],</span>
+  <span class=nx>body</span><span class=o>:</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;BlockStatement&#34;</span><span class=p>,</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=p>[{</span>
+      <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ReturnStatement&#34;</span><span class=p>,</span>
+      <span class=nx>argument</span><span class=o>:</span> <span class=p>{</span>
+        <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;BinaryExpression&#34;</span><span class=p>,</span>
+        <span class=nx>operator</span><span class=o>:</span> <span class=s2>&#34;*&#34;</span><span class=p>,</span>
+        <span class=nx>left</span><span class=o>:</span> <span class=p>{</span>
+          <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Identifier&#34;</span><span class=p>,</span>
+          <span class=nx>name</span><span class=o>:</span> <span class=s2>&#34;n&#34;</span>
+        <span class=p>},</span>
+        <span class=nx>right</span><span class=o>:</span> <span class=p>{</span>
+          <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Identifier&#34;</span><span class=p>,</span>
+          <span class=nx>name</span><span class=o>:</span> <span class=s2>&#34;n&#34;</span>
+        <span class=p>}</span>
+      <span class=p>}</span>
+    <span class=p>}]</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>你会留意到 AST 的每一层都拥有相同的结构：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=p>{</span>
+  <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;FunctionDeclaration&#34;</span><span class=p>,</span>
+  <span class=nx>id</span><span class=o>:</span> <span class=p>{...},</span>
+  <span class=nx>params</span><span class=o>:</span> <span class=p>[...],</span>
+  <span class=nx>body</span><span class=o>:</span> <span class=p>{...}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=p>{</span>
+  <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Identifier&#34;</span><span class=p>,</span>
+  <span class=nx>name</span><span class=o>:</span> <span class=p>...</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=p>{</span>
+  <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;BinaryExpression&#34;</span><span class=p>,</span>
+  <span class=nx>operator</span><span class=o>:</span> <span class=p>...,</span>
+  <span class=nx>left</span><span class=o>:</span> <span class=p>{...},</span>
+  <span class=nx>right</span><span class=o>:</span> <span class=p>{...}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>这样的每一层结构也被叫做 <strong>节点（Node）</strong>。 一个 AST 可以由单一的节点或是成百上千个节点构成。 它们组合在一起可以描述用于静态分析的程序语法。</p><p>每一个节点都有如下所示的接口（Interface）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>Node</span> <span class=p>{</span>
+  <span class=nx>type</span><span class=o>:</span> <span class=nx>string</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>字符串形式的 <code>type</code> 字段表示节点的类型（如： &ldquo;<code>FunctionDeclaration</code>&rdquo;，&ldquo;<code>Identifier</code>&rdquo;，或 &ldquo;<code>BinaryExpression</code>&rdquo;）。 每一种类型的节点定义了一些附加属性用来进一步描述该节点类型。</p><h3 id=ast-节点介绍>AST 节点介绍</h3><h4 id=identifier>Identifier</h4><p>标识符，就是我们写 JS 时自定义的名称，如变量名，函数名，属性名，都归为标识符。相应的接口是这样的：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>Identifier</span> <span class=o>&lt;:</span> <span class=nx>Expression</span><span class=p>,</span> <span class=nx>Pattern</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Identifier&#34;</span><span class=p>;</span>
+    <span class=nx>name</span><span class=o>:</span> <span class=nx>string</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>一个标识符可能是一个表达式，或者是解构的模式（ES6 中的解构语法）。我们等会会看到 <code>Expression</code> 和 <code>Pattern</code> 相关的内容的。</p><h4 id=literal>Literal</h4><p>字面量，这里不是指 <code>[]</code> 或者 <code>{}</code> 这些，而是本身语义就代表了一个值的字面量，如 <code>1</code>，<code>“hello”</code>, <code>true</code> 这些，还有正则表达式（有一个扩展的 Node 来表示正则表达式），如 <code>/\d?/</code>。我们看一下文档的定义：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>Literal</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Literal&#34;</span><span class=p>;</span>
+    <span class=nx>value</span><span class=o>:</span> <span class=nx>string</span> <span class=o>|</span> <span class=kr>boolean</span> <span class=o>|</span> <span class=kc>null</span> <span class=o>|</span> <span class=nx>number</span> <span class=o>|</span> <span class=nb>RegExp</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>这里即对应了字面量的值，我们可以看出字面量值的类型，字符串，布尔，数值，null 和正则。</p><h4 id=regexpliteral>RegExpLiteral</h4><p>这个针对正则字面量的，为了更好地来解析正则表达式的内容，添加多一个 <code>regex</code> 字段，里边会包括正则本身，以及正则的 <code>flags</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>RegExpLiteral</span> <span class=o>&lt;:</span> <span class=nx>Literal</span> <span class=p>{</span>
+  <span class=nx>regex</span><span class=o>:</span> <span class=p>{</span>
+    <span class=nx>pattern</span><span class=o>:</span> <span class=nx>string</span><span class=p>;</span>
+    <span class=nx>flags</span><span class=o>:</span> <span class=nx>string</span><span class=p>;</span>
+  <span class=p>};</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=programs>Programs</h4><p>一般这个是作为跟节点的，即代表了一棵完整的程序代码树。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>Program</span> <span class=o>&lt;:</span> <span class=nx>Node</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Program&#34;</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=p>[</span> <span class=nx>Statement</span> <span class=p>];</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p><code>body</code> 属性是一个数组，包含了多个 <code>Statement</code>（即语句）节点。</p><h4 id=functions>Functions</h4><p>函数声明或者函数表达式节点。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nb>Function</span> <span class=o>&lt;:</span> <span class=nx>Node</span> <span class=p>{</span>
+    <span class=nx>id</span><span class=o>:</span> <span class=nx>Identifier</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+    <span class=nx>params</span><span class=o>:</span> <span class=p>[</span> <span class=nx>Pattern</span> <span class=p>];</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=nx>BlockStatement</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p><code>id</code> 是函数名，<code>params</code> 属性是一个数组，表示函数的参数。<code>body</code> 是一个块语句。
+有一个值得留意的点是，你在测试过程中，是不会找到 <code>type: "Function"</code> 的节点的，但是你可以找到 <code>type: "FunctionDeclaration"</code> 和 <code>type: "FunctionExpression"</code>，因为函数要么以声明语句出现，要么以函数表达式出现，都是节点类型的组合类型，后边会再提及 <code>FunctionDeclaration</code> 和 <code>FunctionExpression</code> 的相关内容。
+这让人感觉这个文档规划得蛮细致的，函数名，参数和函数块是属于函数部分的内容，而声明或者表达式则有它自己需要的东西。</p><h4 id=statement>Statement</h4><p>语句节点没什么特别的，它只是一个节点，一种区分，但是语句有很多种，下边会详述。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>Statement</span> <span class=o>&lt;:</span> <span class=nx>Node</span> <span class=p>{</span> <span class=p>}</span><span class=nx>ExpressionStatement</span>
+</code></pre></td></tr></table></div></div><h4 id=expressionstatement>ExpressionStatement</h4><p>表达式语句节点，<code>a = a + 1</code> 或者 <code>a++</code> 里边会有一个 <code>expression</code> 属性指向一个表达式节点对象（后边会提及表达式）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ExpressionStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ExpressionStatement&#34;</span><span class=p>;</span>
+    <span class=nx>expression</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=blockstatement>BlockStatement</h4><p>块语句节点，举个例子：<code>if (...) { // 这里是块语句的内容 }</code>，块里边可以包含多个其他的语句，所以有一个 <code>body</code> 属性，是一个数组，表示了块里边的多个语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>BlockStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;BlockStatement&#34;</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=p>[</span> <span class=nx>Statement</span> <span class=p>];</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=emptystatement>EmptyStatement</h4><p>一个空的语句节点，没有执行任何有用的代码，例如一个单独的分号 ;</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>EmptyStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;EmptyStatement&#34;</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=debuggerstatement>DebuggerStatement</h4><p><code>debugger</code>，就是表示这个，没有其他了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>DebuggerStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;DebuggerStatement&#34;</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=withstatement>WithStatement</h4><p><code>with</code> 语句节点，里边有两个特别的属性，<code>object</code> 表示 <code>with</code> 要使用的那个对象（可以是一个表达式），<code>body</code> 则是对应 <code>with</code> 后边要执行的语句，一般会是一个块语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>WithStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;WithStatement&#34;</span><span class=p>;</span>
+    <span class=nx>object</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=nx>Statement</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>下边是控制流的语句：</p><h4 id=returnstatement>ReturnStatement</h4><p>返回语句节点，<code>argument</code> 属性是一个表达式，代表返回的内容。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ReturnStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ReturnStatement&#34;</span><span class=p>;</span>
+    <span class=nx>argument</span><span class=o>:</span> <span class=nx>Expression</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=labeledstatement>LabeledStatement</h4><p><code>label</code> 语句，平时可能会比较少接触到，举个例子：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>loop</span><span class=o>:</span> <span class=k>for</span><span class=p>(</span><span class=kd>let</span> <span class=nx>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;</span> <span class=nx>len</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// ...
+</span><span class=c1></span>    <span class=k>for</span> <span class=p>(</span><span class=kd>let</span> <span class=nx>j</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>j</span> <span class=o>&lt;</span> <span class=nx>min</span><span class=p>;</span> <span class=nx>j</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+        <span class=c1>// ...
+</span><span class=c1></span>        <span class=k>break</span> <span class=nx>loop</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>这里的 <code>loop</code> 就是一个 <code>label</code> 了，我们可以在循环嵌套中使用 <code>break loop</code> 来指定跳出哪个循环。所以这里的 <code>label</code> 语句指的就是 <code>loop: ...</code> 这个。
+一个 <code>label</code> 语句节点会有两个属性，一个 <code>label</code> 属性表示 <code>label</code> 的名称，另外一个 <code>body</code> 属性指向对应的语句，通常是一个循环语句或者 <code>switch</code> 语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>LabeledStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;LabeledStatement&#34;</span><span class=p>;</span>
+    <span class=nx>label</span><span class=o>:</span> <span class=nx>Identifier</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=nx>Statement</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=breakstatement>BreakStatement</h4><p><code>break</code> 语句节点，会有一个 <code>label</code> 属性表示需要的 <code>label</code> 名称，当不需要 <code>label</code> 的时候（通常都不需要），便是 <code>null</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>BreakStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;BreakStatement&#34;</span><span class=p>;</span>
+    <span class=nx>label</span><span class=o>:</span> <span class=nx>Identifier</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=continuestatement>ContinueStatement</h4><p><code>continue</code> 语句节点，和 <code>break</code> 类似。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ContinueStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ContinueStatement&#34;</span><span class=p>;</span>
+    <span class=nx>label</span><span class=o>:</span> <span class=nx>Identifier</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>下边是条件语句：</p><h4 id=ifstatement>IfStatement</h4><p><code>if</code> 语句节点，很常见，会带有三个属性，test 属性表示 <code>if (...)</code> 括号中的表达式。
+<code>consequent</code> 属性是表示条件为 <code>true</code> 时的执行语句，通常会是一个块语句。
+<code>alternate</code> 属性则是用来表示 <code>else</code> 后跟随的语句节点，通常也会是块语句，但也可以又是一个 <code>if</code> 语句节点，即类似这样的结构：<code>if (a) { //... } else if (b) { // ... }</code>。<code>alternate</code> 当然也可以为 <code>null</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>IfStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;IfStatement&#34;</span><span class=p>;</span>
+    <span class=nx>test</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>consequent</span><span class=o>:</span> <span class=nx>Statement</span><span class=p>;</span>
+    <span class=nx>alternate</span><span class=o>:</span> <span class=nx>Statement</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=switchstatement>SwitchStatement</h4><p><code>switch</code> 语句节点，有两个属性，<code>discriminant</code>属性表示 <code>switch</code> 语句后紧随的表达式，通常会是一个变量，<code>cases</code> 属性是一个 <code>case</code> 节点的数组，用来表示各个 <code>case</code> 语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>SwitchStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;SwitchStatement&#34;</span><span class=p>;</span>
+    <span class=nx>discriminant</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>cases</span><span class=o>:</span> <span class=p>[</span> <span class=nx>SwitchCase</span> <span class=p>];</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=switchcase>SwitchCase</h4><p><code>switch</code> 的 <code>case</code> 节点。<code>test</code> 属性代表这个 <code>case</code> 的判断表达式，<code>consequent</code> 则是这个 <code>case</code> 的执行语句。
+当 <code>test</code> 属性是 <code>null</code> 时，则是表示 <code>default</code> 这个 <code>case</code> 节点。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>SwitchCase</span> <span class=o>&lt;:</span> <span class=nx>Node</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;SwitchCase&#34;</span><span class=p>;</span>
+    <span class=nx>test</span><span class=o>:</span> <span class=nx>Expression</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+    <span class=nx>consequent</span><span class=o>:</span> <span class=p>[</span> <span class=nx>Statement</span> <span class=p>];</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>下边是异常相关的语句：</p><h4 id=throwstatement>ThrowStatement</h4><p><code>throw</code> 语句节点，<code>argument</code> 属性用以表示 <code>throw</code> 后边紧跟的表达式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ThrowStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ThrowStatement&#34;</span><span class=p>;</span>
+    <span class=nx>argument</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=trystatement>TryStatement</h4><p><code>try</code> 语句节点，<code>block</code> 属性表示 <code>try</code> 的执行语句，通常是一个块语句。
+<code>hanlder</code> 属性是指 <code>catch</code> 节点，<code>finalizer</code> 是指 <code>finally</code> 语句节点，当 <code>hanlder</code> 为 <code>null</code> 时，<code>finalizer</code> 必须是一个块语句节点。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>TryStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;TryStatement&#34;</span><span class=p>;</span>
+    <span class=nx>block</span><span class=o>:</span> <span class=nx>BlockStatement</span><span class=p>;</span>
+    <span class=nx>handler</span><span class=o>:</span> <span class=nx>CatchClause</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+    <span class=nx>finalizer</span><span class=o>:</span> <span class=nx>BlockStatement</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=catchclause>CatchClause</h4><p><code>catch</code> 节点，<code>param</code> 用以表示 <code>catch</code> 后的参数，<code>body</code> 则表示 <code>catch</code> 后的执行语句，通常是一个块语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>CatchClause</span> <span class=o>&lt;:</span> <span class=nx>Node</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;CatchClause&#34;</span><span class=p>;</span>
+    <span class=nx>param</span><span class=o>:</span> <span class=nx>Pattern</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=nx>BlockStatement</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>下边是循环语句：</p><h4 id=whilestatement>WhileStatement</h4><p><code>while</code> 语句节点，<code>test</code> 表示括号中的表达式，<code>body</code> 是表示要循环执行的语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>WhileStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;WhileStatement&#34;</span><span class=p>;</span>
+    <span class=nx>test</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=nx>Statement</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=dowhilestatement>DoWhileStatement</h4><p><code>do/while</code> 语句节点，和 <code>while</code> 语句类似。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>DoWhileStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;DoWhileStatement&#34;</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=nx>Statement</span><span class=p>;</span>
+    <span class=nx>test</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=forstatement>ForStatement</h4><p><code>for</code> 循环语句节点，属性 <code>init/test/update</code> 分别表示了 <code>for</code> 语句括号中的三个表达式，初始化值，循环判断条件，每次循环执行的变量更新语句（<code>init</code> 可以是变量声明或者表达式）。这三个属性都可以为 <code>null</code>，即 <code>for(;;){}</code>。<code>body</code> 属性用以表示要循环执行的语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ForStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ForStatement&#34;</span><span class=p>;</span>
+    <span class=nx>init</span><span class=o>:</span> <span class=nx>VariableDeclaration</span> <span class=o>|</span> <span class=nx>Expression</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+    <span class=nx>test</span><span class=o>:</span> <span class=nx>Expression</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+    <span class=nx>update</span><span class=o>:</span> <span class=nx>Expression</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=nx>Statement</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=forinstatement>ForInStatement</h4><p><code>for/in</code> 语句节点，<code>left</code> 和 <code>right</code> 属性分别表示在 <code>in</code> 关键词左右的语句（左侧可以是一个变量声明或者表达式）。<code>body</code> 依旧是表示要循环执行的语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ForInStatement</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ForInStatement&#34;</span><span class=p>;</span>
+    <span class=nx>left</span><span class=o>:</span> <span class=nx>VariableDeclaration</span> <span class=o>|</span>  <span class=nx>Pattern</span><span class=p>;</span>
+    <span class=nx>right</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>body</span><span class=o>:</span> <span class=nx>Statement</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=declarations>Declarations</h4><p>声明语句节点，同样也是语句，只是一个类型的细化。下边会介绍各种声明语句类型。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>Declaration</span> <span class=o>&lt;:</span> <span class=nx>Statement</span> <span class=p>{</span> <span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=functiondeclaration>FunctionDeclaration</h4><p>函数声明，和之前提到的 <code>Function</code> 不同的是，<code>id</code> 不能为 <code>null</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>FunctionDeclaration</span> <span class=o>&lt;:</span> <span class=nb>Function</span><span class=p>,</span> <span class=nx>Declaration</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;FunctionDeclaration&#34;</span><span class=p>;</span>
+    <span class=nx>id</span><span class=o>:</span> <span class=nx>Identifier</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=variabledeclaration>VariableDeclaration</h4><p>变量声明，<code>kind</code> 属性表示是什么类型的声明，因为 ES6 引入了 <code>const/let</code>。<code>declarations</code>表示声明的多个描述，因为我们可以这样：<code>let a = 1, b = 2;</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>VariableDeclaration</span> <span class=o>&lt;:</span> <span class=nx>Declaration</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;VariableDeclaration&#34;</span><span class=p>;</span>
+    <span class=nx>declarations</span><span class=o>:</span> <span class=p>[</span> <span class=nx>VariableDeclarator</span> <span class=p>];</span>
+    <span class=nx>kind</span><span class=o>:</span> <span class=s2>&#34;var&#34;</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=variabledeclarator>VariableDeclarator</h4><p>变量声明的描述，<code>id</code> 表示变量名称节点，<code>init</code> 表示初始值的表达式，可以为 <code>null</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>VariableDeclarator</span> <span class=o>&lt;:</span> <span class=nx>Node</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;VariableDeclarator&#34;</span><span class=p>;</span>
+    <span class=nx>id</span><span class=o>:</span> <span class=nx>Pattern</span><span class=p>;</span>
+    <span class=nx>init</span><span class=o>:</span> <span class=nx>Expression</span> <span class=o>|</span> <span class=kc>null</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=expressions>Expressions</h4><p>表达式节点。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>Expression</span> <span class=o>&lt;:</span> <span class=nx>Node</span> <span class=p>{</span> <span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=thisexpression>ThisExpression</h4><p>表示 <code>this</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ThisExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ThisExpression&#34;</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=arrayexpression>ArrayExpression</h4><p>数组表达式节点，<code>elements</code> 属性是一个数组，表示数组的多个元素，每一个元素都是一个表达式节点。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ArrayExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ArrayExpression&#34;</span><span class=p>;</span>
+    <span class=nx>elements</span><span class=o>:</span> <span class=p>[</span> <span class=nx>Expression</span> <span class=o>|</span> <span class=kc>null</span> <span class=p>];</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=objectexpression>ObjectExpression</h4><p>对象表达式节点，<code>property</code> 属性是一个数组，表示对象的每一个键值对，每一个元素都是一个属性节点。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ObjectExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ObjectExpression&#34;</span><span class=p>;</span>
+    <span class=nx>properties</span><span class=o>:</span> <span class=p>[</span> <span class=nx>Property</span> <span class=p>];</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=property>Property</h4><p>对象表达式中的属性节点。<code>key</code> 表示键，<code>value</code> 表示值，由于 ES5 语法中有 <code>get/set</code> 的存在，所以有一个 <code>kind</code> 属性，用来表示是普通的初始化，或者是 <code>get/set</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>Property</span> <span class=o>&lt;:</span> <span class=nx>Node</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;Property&#34;</span><span class=p>;</span>
+    <span class=nx>key</span><span class=o>:</span> <span class=nx>Literal</span> <span class=o>|</span> <span class=nx>Identifier</span><span class=p>;</span>
+    <span class=nx>value</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>kind</span><span class=o>:</span> <span class=s2>&#34;init&#34;</span> <span class=o>|</span> <span class=s2>&#34;get&#34;</span> <span class=o>|</span> <span class=s2>&#34;set&#34;</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=functionexpression>FunctionExpression</h4><p>函数表达式节点。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>FunctionExpression</span> <span class=o>&lt;:</span> <span class=nb>Function</span><span class=p>,</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;FunctionExpression&#34;</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>下边是一元运算符相关的表达式部分：</p><h4 id=unaryexpression>UnaryExpression</h4><p>一元运算表达式节点（<code>++/--</code> 是 <code>update</code> 运算符，不在这个范畴内），<code>operator</code> 表示运算符，<code>prefix</code> 表示是否为前缀运算符。<code>argument</code> 是要执行运算的表达式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>UnaryExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;UnaryExpression&#34;</span><span class=p>;</span>
+    <span class=nx>operator</span><span class=o>:</span> <span class=nx>UnaryOperator</span><span class=p>;</span>
+    <span class=nx>prefix</span><span class=o>:</span> <span class=kr>boolean</span><span class=p>;</span>
+    <span class=nx>argument</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=unaryoperator>UnaryOperator</h4><p>一元运算符，枚举类型，所有值如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>enum</span> <span class=nx>UnaryOperator</span> <span class=p>{</span>
+    <span class=s2>&#34;-&#34;</span> <span class=o>|</span> <span class=s2>&#34;+&#34;</span> <span class=o>|</span> <span class=s2>&#34;!&#34;</span> <span class=o>|</span> <span class=s2>&#34;~&#34;</span> <span class=o>|</span> <span class=s2>&#34;typeof&#34;</span> <span class=o>|</span> <span class=s2>&#34;void&#34;</span> <span class=o>|</span> <span class=s2>&#34;delete&#34;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=updateexpression>UpdateExpression</h4><p><code>update</code> 运算表达式节点，即 <code>++/--</code>，和一元运算符类似，只是 <code>operator</code> 指向的节点对象类型不同，这里是 <code>update</code> 运算符。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>UpdateExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;UpdateExpression&#34;</span><span class=p>;</span>
+    <span class=nx>operator</span><span class=o>:</span> <span class=nx>UpdateOperator</span><span class=p>;</span>
+    <span class=nx>argument</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>prefix</span><span class=o>:</span> <span class=kr>boolean</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=updateoperator>UpdateOperator</h4><p><code>update</code> 运算符，值为 <code>++</code> 或 <code>--</code>，配合 <code>update</code> 表达式节点的 <code>prefix</code> 属性来表示前后。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>enum</span> <span class=nx>UpdateOperator</span> <span class=p>{</span>
+    <span class=s2>&#34;++&#34;</span> <span class=o>|</span> <span class=s2>&#34;--&#34;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>下边是二元运算符相关的表达式部分：</p><h4 id=binaryexpression>BinaryExpression</h4><p>二元运算表达式节点，<code>left</code> 和 <code>right</code> 表示运算符左右的两个表达式，<code>operator</code> 表示一个二元运算符。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>BinaryExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;BinaryExpression&#34;</span><span class=p>;</span>
+    <span class=nx>operator</span><span class=o>:</span> <span class=nx>BinaryOperator</span><span class=p>;</span>
+    <span class=nx>left</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>right</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=binaryoperator>BinaryOperator</h4><p>二元运算符，所有值如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>enum</span> <span class=nx>BinaryOperator</span> <span class=p>{</span>
+    <span class=s2>&#34;==&#34;</span> <span class=o>|</span> <span class=s2>&#34;!=&#34;</span> <span class=o>|</span> <span class=s2>&#34;===&#34;</span> <span class=o>|</span> <span class=s2>&#34;!==&#34;</span>
+         <span class=o>|</span> <span class=s2>&#34;&lt;&#34;</span> <span class=o>|</span> <span class=s2>&#34;&lt;=&#34;</span> <span class=o>|</span> <span class=s2>&#34;&gt;&#34;</span> <span class=o>|</span> <span class=s2>&#34;&gt;=&#34;</span>
+         <span class=o>|</span> <span class=s2>&#34;&lt;&lt;&#34;</span> <span class=o>|</span> <span class=s2>&#34;&gt;&gt;&#34;</span> <span class=o>|</span> <span class=s2>&#34;&gt;&gt;&gt;&#34;</span>
+         <span class=o>|</span> <span class=s2>&#34;+&#34;</span> <span class=o>|</span> <span class=s2>&#34;-&#34;</span> <span class=o>|</span> <span class=s2>&#34;*&#34;</span> <span class=o>|</span> <span class=s2>&#34;/&#34;</span> <span class=o>|</span> <span class=s2>&#34;%&#34;</span>
+         <span class=o>|</span> <span class=s2>&#34;|&#34;</span> <span class=o>|</span> <span class=s2>&#34;^&#34;</span> <span class=o>|</span> <span class=s2>&#34;&amp;&#34;</span> <span class=o>|</span> <span class=s2>&#34;in&#34;</span>
+         <span class=o>|</span> <span class=s2>&#34;instanceof&#34;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=assignmentexpression>AssignmentExpression</h4><p>赋值表达式节点，<code>operator</code> 属性表示一个赋值运算符，<code>left</code> 和 <code>right</code> 是赋值运算符左右的表达式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>AssignmentExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;AssignmentExpression&#34;</span><span class=p>;</span>
+    <span class=nx>operator</span><span class=o>:</span> <span class=nx>AssignmentOperator</span><span class=p>;</span>
+    <span class=nx>left</span><span class=o>:</span> <span class=nx>Pattern</span> <span class=o>|</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>right</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=assignmentoperator>AssignmentOperator</h4><p>赋值运算符，所有值如下：（常用的并不多）</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>enum</span> <span class=nx>AssignmentOperator</span> <span class=p>{</span>
+    <span class=s2>&#34;=&#34;</span> <span class=o>|</span> <span class=s2>&#34;+=&#34;</span> <span class=o>|</span> <span class=s2>&#34;-=&#34;</span> <span class=o>|</span> <span class=s2>&#34;*=&#34;</span> <span class=o>|</span> <span class=s2>&#34;/=&#34;</span> <span class=o>|</span> <span class=s2>&#34;%=&#34;</span>
+        <span class=o>|</span> <span class=s2>&#34;&lt;&lt;=&#34;</span> <span class=o>|</span> <span class=s2>&#34;&gt;&gt;=&#34;</span> <span class=o>|</span> <span class=s2>&#34;&gt;&gt;&gt;=&#34;</span>
+        <span class=o>|</span> <span class=s2>&#34;|=&#34;</span> <span class=o>|</span> <span class=s2>&#34;^=&#34;</span> <span class=o>|</span> <span class=s2>&#34;&amp;=&#34;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=logicalexpression>LogicalExpression</h4><p>逻辑运算表达式节点，和赋值或者二元运算类型，只不过 <code>operator</code> 是逻辑运算符类型。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>LogicalExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;LogicalExpression&#34;</span><span class=p>;</span>
+    <span class=nx>operator</span><span class=o>:</span> <span class=nx>LogicalOperator</span><span class=p>;</span>
+    <span class=nx>left</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>right</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=logicaloperator>LogicalOperator</h4><p>逻辑运算符，两种值，即<code>与</code> <code>或</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>enum</span> <span class=nx>LogicalOperator</span> <span class=p>{</span>
+    <span class=s2>&#34;||&#34;</span> <span class=o>|</span> <span class=s2>&#34;&amp;&amp;&#34;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=memberexpression>MemberExpression</h4><p>成员表达式节点，即表示引用对象成员的语句，<code>object</code> 是引用对象的表达式节点，<code>property</code> 是表示属性名称，<code>computed</code> 如果为 <code>false</code>，是表示 <code>.</code> 来引用成员，<code>property</code> 应该为一个 <code>Identifier</code> 节点，如果 <code>computed</code> 属性为 <code>true</code>，则是 <code>[]</code> 来进行引用，即 <code>property</code> 是一个 <code>Expression</code> 节点，名称是表达式的结果值。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>MemberExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span><span class=p>,</span> <span class=nx>Pattern</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;MemberExpression&#34;</span><span class=p>;</span>
+    <span class=nx>object</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>property</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>computed</span><span class=o>:</span> <span class=kr>boolean</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>下边是其他的一些表达式：</p><h4 id=conditionalexpression>ConditionalExpression</h4><p>条件表达式，通常我们称之为三元运算表达式，即 <code>boolean ? true : false</code>。属性参考条件语句。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>ConditionalExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;ConditionalExpression&#34;</span><span class=p>;</span>
+    <span class=nx>test</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>alternate</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>consequent</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=callexpression>CallExpression</h4><p>函数调用表达式，即表示了 <code>func(1, 2)</code> 这一类型的语句。callee 属性是一个表达式节点，表示函数，arguments 是一个数组，元素是表达式节点，表示函数参数列表。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>CallExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;CallExpression&#34;</span><span class=p>;</span>
+    <span class=nx>callee</span><span class=o>:</span> <span class=nx>Expression</span><span class=p>;</span>
+    <span class=nx>arguments</span><span class=o>:</span> <span class=p>[</span> <span class=nx>Expression</span> <span class=p>];</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=newexpression>NewExpression</h4><p><code>new</code> 表达式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>NewExpression</span> <span class=o>&lt;:</span> <span class=nx>CallExpression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;NewExpression&#34;</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=sequenceexpression>SequenceExpression</h4><p>这个就是逗号运算符构建的表达式（不知道确切的名称），<code>expressions</code> 属性为一个数组，即表示构成整个表达式，被逗号分割的多个表达式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>interface</span> <span class=nx>SequenceExpression</span> <span class=o>&lt;:</span> <span class=nx>Expression</span> <span class=p>{</span>
+    <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;SequenceExpression&#34;</span><span class=p>;</span>
+    <span class=nx>expressions</span><span class=o>:</span> <span class=p>[</span> <span class=nx>Expression</span> <span class=p>];</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>

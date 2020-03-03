@@ -1,0 +1,200 @@
+<!doctype html><html lang=en><head><title>Java script之apply、call和bind的模拟实现 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="JavaScript之apply、call和bind的模拟实现"><meta property="og:description" content="apply() apply 方法传入两个参数：一个是作为函数上下文的对象，另外一个是作为函数参数所组成的数组。当第一个参数为 null 时，函数上下文为 window。
+1 2 3 4 5 6 7 8 9  var obj = { name : 'luke' } function …"><meta property="og:url" content="https://goyth.cn/post/applyandcall/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/applyandcall/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
+<a href=https://goyth.cn/categories class=nav_item>Category</a>
+<a href=https://goyth.cn/tags class=nav_item>Tag</a>
+<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
+<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">27. May 2018</p><h1 class=post_title>JavaScript之apply、call和bind的模拟实现</h1><div class=post_body><div class=post_inner><h2 id=apply>apply()</h2><p>apply 方法传入两个参数：一个是作为函数上下文的对象，另外一个是作为函数参数所组成的数组。当第一个参数为 <code>null</code> 时，函数上下文为 <code>window</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>obj</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=nx>name</span> <span class=o>:</span> <span class=s1>&#39;luke&#39;</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>func</span><span class=p>(</span><span class=nx>age</span><span class=p>,</span> <span class=nx>gender</span><span class=p>){</span>
+    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>age</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>gender</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>obj</span><span class=p>,</span> <span class=p>[</span><span class=mi>18</span><span class=p>,</span> <span class=s1>&#39;male&#39;</span><span class=p>]);</span>    <span class=c1>// luke 18 male
+</span></code></pre></td></tr></table></div></div><h2 id=apply模拟实现>apply模拟实现</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=nb>Function</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>apply2</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>arrArgs</span><span class=p>){</span>
+  <span class=nx>context</span> <span class=o>=</span> <span class=nx>context</span> <span class=o>||</span> <span class=nb>window</span><span class=p>;</span>
+  <span class=nx>context</span><span class=p>.</span><span class=nx>fn</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
+  <span class=kd>let</span> <span class=nx>args</span> <span class=o>=</span> <span class=p>[];</span>
+  <span class=k>for</span><span class=p>(</span><span class=kd>let</span> <span class=nx>i</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span> <span class=nx>len</span><span class=o>=</span><span class=nx>arrArgs</span><span class=p>.</span><span class=nx>length</span><span class=p>;</span> <span class=nx>i</span><span class=o>&lt;</span><span class=nx>len</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span><span class=p>){</span>
+    <span class=nx>args</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s1>&#39;arrArgs[&#39;</span><span class=o>+</span><span class=nx>i</span><span class=o>+</span><span class=s1>&#39;]&#39;</span><span class=p>);</span>
+  <span class=p>}</span>
+  <span class=kd>let</span> <span class=nx>result</span> <span class=o>=</span> <span class=nb>eval</span><span class=p>(</span><span class=s1>&#39;context.fn(&#39;</span><span class=o>+</span><span class=nx>args</span><span class=o>+</span><span class=s1>&#39;)&#39;</span><span class=p>);</span>
+  <span class=k>delete</span> <span class=nx>context</span><span class=p>.</span><span class=nx>fn</span><span class=p>;</span>
+  <span class=k>return</span> <span class=nx>result</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// 测试一下
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>obj</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=nx>name</span> <span class=o>:</span> <span class=s1>&#39;luke&#39;</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>func</span><span class=p>(</span><span class=nx>age</span><span class=p>,</span> <span class=nx>gender</span><span class=p>){</span>
+    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>age</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>gender</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=nx>func</span><span class=p>.</span><span class=nx>apply2</span><span class=p>(</span><span class=nx>obj</span><span class=p>,</span> <span class=p>[</span><span class=mi>18</span><span class=p>,</span> <span class=s1>&#39;male&#39;</span><span class=p>]);</span>    <span class=c1>// luke 18 male
+</span><span class=c1></span>
+</code></pre></td></tr></table></div></div><h2 id=call>call()</h2><p>call 方法第一个参数也是作为函数上下文的对象，但是后面传入的是一个参数列表，而不是单个数组。当第一个参数为 <code>null</code> 时，函数上下文也是 <code>window</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>obj</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=nx>name</span> <span class=o>:</span> <span class=s1>&#39;luke&#39;</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>func</span><span class=p>(</span><span class=nx>age</span><span class=p>,</span> <span class=nx>gender</span><span class=p>){</span>
+    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>age</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>gender</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=nx>func</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=nx>obj</span><span class=p>,</span> <span class=mi>18</span><span class=p>,</span> <span class=s1>&#39;male&#39;</span><span class=p>);</span>    <span class=c1>// luke 18 male
+</span></code></pre></td></tr></table></div></div><h2 id=call模拟实现>call模拟实现</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=nb>Function</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>call2</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>context</span><span class=p>){</span>
+  <span class=nx>context</span> <span class=o>=</span> <span class=nx>context</span> <span class=o>||</span> <span class=nb>window</span><span class=p>;</span>
+  <span class=nx>context</span><span class=p>.</span><span class=nx>fn</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
+  <span class=kd>let</span> <span class=nx>args</span> <span class=o>=</span> <span class=p>[];</span>
+  <span class=k>for</span><span class=p>(</span><span class=kd>let</span> <span class=nx>i</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=nx>len</span><span class=o>=</span><span class=nx>arguments</span><span class=p>.</span><span class=nx>length</span><span class=p>;</span> <span class=nx>i</span><span class=o>&lt;</span><span class=nx>len</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span><span class=p>){</span>
+    <span class=nx>args</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s1>&#39;arguments[&#39;</span><span class=o>+</span><span class=nx>i</span><span class=o>+</span><span class=s1>&#39;]&#39;</span><span class=p>)</span>
+  <span class=p>}</span>
+  <span class=kd>let</span> <span class=nx>result</span> <span class=o>=</span> <span class=nb>eval</span><span class=p>(</span><span class=s1>&#39;context.fn(&#39;</span><span class=o>+</span><span class=nx>args</span><span class=o>+</span><span class=s1>&#39;)&#39;</span><span class=p>);</span>
+  <span class=k>delete</span> <span class=nx>context</span><span class=p>.</span><span class=nx>fn</span><span class=p>;</span>
+  <span class=k>return</span> <span class=nx>result</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// 测试一下
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>obj</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=nx>name</span> <span class=o>:</span> <span class=s1>&#39;luke&#39;</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>func</span><span class=p>(</span><span class=nx>age</span><span class=p>,</span> <span class=nx>gender</span><span class=p>){</span>
+    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>age</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>gender</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=nx>func</span><span class=p>.</span><span class=nx>call2</span><span class=p>(</span><span class=nx>obj</span><span class=p>,</span> <span class=mi>18</span><span class=p>,</span> <span class=s1>&#39;male&#39;</span><span class=p>);</span>    <span class=c1>// luke 18 male
+</span></code></pre></td></tr></table></div></div><h2 id=bind>bind()</h2><p>bind() 方法会创建一个新函数。当这个新函数被调用时，bind() 的第一个参数将作为它运行时的 this，之后的一序列参数将会在传递的实参前传入作为它的参数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>obj</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=nx>name</span> <span class=o>:</span> <span class=s1>&#39;luke&#39;</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>func</span><span class=p>(</span><span class=nx>age</span><span class=p>,</span> <span class=nx>gender</span><span class=p>){</span>
+    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>age</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>gender</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=kd>let</span> <span class=nx>bindfn</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>bind</span><span class=p>(</span><span class=nx>obj</span><span class=p>,</span> <span class=mi>18</span><span class=p>);</span>
+<span class=nx>bindfn</span><span class=p>(</span><span class=s1>&#39;male&#39;</span><span class=p>)</span>    <span class=c1>// luke 18 male
+</span><span class=c1></span>
+</code></pre></td></tr></table></div></div><h2 id=bind模拟实现>bind模拟实现</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=nb>Function</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>bind2</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(){</span>
+  <span class=kd>let</span> <span class=nx>context</span> <span class=o>=</span> <span class=p>[].</span><span class=nx>shift</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=nx>arguments</span><span class=p>)</span> <span class=o>||</span> <span class=nb>window</span><span class=p>;</span>
+  <span class=kd>let</span> <span class=nx>args</span> <span class=o>=</span> <span class=p>[].</span><span class=nx>slice</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=nx>arguments</span><span class=p>);</span>
+  <span class=kd>let</span> <span class=nx>self</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
+  <span class=kd>function</span> <span class=nx>Bd</span><span class=p>(){</span>
+    <span class=k>return</span> <span class=nx>self</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=k>this</span> <span class=k>instanceof</span> <span class=nx>Bd</span> <span class=o>?</span> <span class=k>this</span> <span class=o>:</span> <span class=nx>context</span><span class=p>,</span> <span class=nx>args</span><span class=p>.</span><span class=nx>concat</span><span class=p>([].</span><span class=nx>slice</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=nx>arguments</span><span class=p>)));</span>
+  <span class=p>}</span>
+  <span class=nx>Bd</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=nb>Object</span><span class=p>.</span><span class=nx>create</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>prototype</span><span class=p>);</span>
+  <span class=k>return</span> <span class=nx>Bd</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// 测试一下
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>obj</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=nx>name</span> <span class=o>:</span> <span class=s1>&#39;luke&#39;</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>func</span><span class=p>(</span><span class=nx>age</span><span class=p>,</span> <span class=nx>gender</span><span class=p>){</span>
+    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>age</span> <span class=o>+</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=nx>gender</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=kd>let</span> <span class=nx>bindfn</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>bind2</span><span class=p>(</span><span class=nx>obj</span><span class=p>,</span> <span class=mi>18</span><span class=p>);</span>
+<span class=nx>bindfn</span><span class=p>(</span><span class=s1>&#39;male&#39;</span><span class=p>)</span>    <span class=c1>// luke 18 male
+</span><span class=c1></span>
+</code></pre></td></tr></table></div></div></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>

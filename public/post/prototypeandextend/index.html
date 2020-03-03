@@ -1,0 +1,594 @@
+<!doctype html><html lang=en><head><title>Java script 原型链与继承 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="JavaScript 原型链与继承"><meta property="og:description" content="原型对象 无论什么时候，只要创建一个新函数，就会根据一组特定的规则为该函数创建一个 prototype 属性，这个属性指向函数的原型对象。默认情况下，所有原型对象都会自动获得一个 constructor（构造函数）属性，这个属性指向 prototype 属性所在的函数。
+1 2  function …"><meta property="og:url" content="https://goyth.cn/post/prototypeandextend/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/prototypeandextend/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
+<a href=https://goyth.cn/categories class=nav_item>Category</a>
+<a href=https://goyth.cn/tags class=nav_item>Tag</a>
+<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
+<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">23. April 2018</p><h1 class=post_title>JavaScript 原型链与继承</h1><div class=post_body><div class=post_inner><h3 id=原型对象>原型对象</h3><p>无论什么时候，只要创建一个新函数，就会根据一组特定的规则为该函数创建一个 <code>prototype</code> 属性，这个属性指向函数的原型对象。默认情况下，所有原型对象都会自动获得一个 <code>constructor</code>（构造函数）属性，这个属性指向 <code>prototype</code> 属性所在的函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Person</span><span class=p>(){</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/prototypeAndExtend-Person.png alt></p><p>当我们用构造函数创建一个实例时，也会为这个实例创建一个 <code>__proto__</code> 属性，这个<code>__proto__</code> 属性是一个指针指向构造函数的原型对象</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>let</span> <span class=nx>person</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Person</span><span class=p>();</span>
+<span class=nx>person</span><span class=p>.</span><span class=nx>__proto__</span> <span class=o>===</span> <span class=nx>Person</span><span class=p>.</span><span class=nx>prototype</span>    <span class=c1>// true
+</span><span class=c1></span><span class=kd>let</span> <span class=nx>person1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Person</span><span class=p>();</span>
+<span class=nx>person1</span><span class=p>.</span><span class=nx>__proto__</span> <span class=o>===</span> <span class=nx>Person</span><span class=p>.</span><span class=nx>prototype</span>    <span class=c1>// true
+</span></code></pre></td></tr></table></div></div><p>由于同一个构造函数创建的所有实例对象的<code>__proto__</code> 属性都指向这个构造函数的原型对象，因此所有的实例对象都会共享构造函数的原型对象上所有的属性和方法，一旦原型对象上的属性或方法发生改变，所有的实例对象都会受到影响。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Person</span><span class=p>(){</span>
+<span class=p>}</span>
+<span class=nx>Person</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>name</span> <span class=o>=</span> <span class=s2>&#34;Luke&#34;</span><span class=p>;</span>
+<span class=nx>Person</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>age</span> <span class=o>=</span> <span class=mi>18</span><span class=p>;</span>
+<span class=kd>let</span> <span class=nx>person1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Person</span><span class=p>();</span>
+<span class=kd>let</span> <span class=nx>person2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Person</span><span class=p>();</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>person1</span><span class=p>.</span><span class=nx>name</span><span class=p>)</span>    <span class=c1>// &#34;Luke&#34;
+</span><span class=c1></span><span class=nx>alert</span><span class=p>(</span><span class=nx>person2</span><span class=p>.</span><span class=nx>name</span><span class=p>)</span>    <span class=c1>// &#34;Luke&#34;
+</span><span class=c1></span><span class=nx>Person</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>name</span> <span class=o>=</span> <span class=s2>&#34;Jack&#34;</span><span class=p>;</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>person1</span><span class=p>.</span><span class=nx>name</span><span class=p>)</span>    <span class=c1>// &#34;Jack&#34;
+</span><span class=c1></span><span class=nx>alert</span><span class=p>(</span><span class=nx>person2</span><span class=p>.</span><span class=nx>name</span><span class=p>)</span>    <span class=c1>// &#34;Jack&#34;
+</span></code></pre></td></tr></table></div></div><h3 id=重写原型对象>重写原型对象</h3><p>我们经常用一个包含所有属性和方法的对象字面量来重写整个原型对象，如下面的例子所示</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Person</span><span class=p>(){</span>
+<span class=p>}</span>
+<span class=nx>Person</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=nx>name</span> <span class=o>:</span> <span class=s2>&#34;Luke&#34;</span><span class=p>,</span>
+    <span class=nx>age</span> <span class=o>:</span> <span class=mi>18</span><span class=p>,</span>
+    <span class=nx>job</span> <span class=o>:</span> <span class=s2>&#34;Software Engineer&#34;</span><span class=p>,</span>
+    <span class=nx>sayName</span> <span class=o>:</span> <span class=kd>function</span><span class=p>(){</span>
+        <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>在上面的代码中，我们将 <code>Person.prototype</code> 设置为一个新对象，而这个对象中没有<code>constructor</code>属性，这导致 <code>constructor</code> 属性不再指向 <code>Person</code>，而是指向 <code>Object</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>let</span> <span class=nx>friend</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Person</span><span class=p>();</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>friend</span><span class=p>.</span><span class=nx>constructor</span>  <span class=o>===</span> <span class=nx>Person</span><span class=p>);</span>    <span class=c1>//false
+</span><span class=c1></span><span class=nx>alert</span><span class=p>(</span><span class=nx>friend</span><span class=p>.</span><span class=nx>constructor</span>  <span class=o>===</span> <span class=nb>Object</span><span class=p>);</span>    <span class=c1>//true
+</span></code></pre></td></tr></table></div></div><p>如果 <code>constructor</code> 的值很重要，我们可以像下面这样特意将它设置回设置回适当的值</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Person</span><span class=p>(){</span>
+<span class=p>}</span>
+<span class=nx>Person</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=p>{</span>
+    <span class=nx>constructor</span> <span class=o>:</span> <span class=nx>Person</span><span class=p>,</span>
+    <span class=nx>name</span> <span class=o>:</span> <span class=s2>&#34;Luke&#34;</span><span class=p>,</span>
+    <span class=nx>age</span> <span class=o>:</span> <span class=mi>18</span><span class=p>,</span>
+    <span class=nx>job</span> <span class=o>:</span> <span class=s2>&#34;Software Engineer&#34;</span><span class=p>,</span>
+    <span class=nx>sayName</span> <span class=o>:</span> <span class=kd>function</span><span class=p>(){</span>
+        <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h3 id=原型链及原型链继承>原型链及原型链继承</h3><p>每个构造函数都有一个原型对象，原型对象都包含一个指向构造函数的指针(<code>constructor</code>)，而实例都包含一个指向原型对象的内部指针(<code>__proto__</code>)。那么，假如我们让原型对象等于另一个类型的实例，结果会怎么样呢？显然，此时的原型对象将包含一个指向另一个原型的指针，相应地，另一个原型中也包含着一个指向另一个构造函数的指针。假如另一个原型又是另一个构造函数的实例，那么上述关系依然成立，如此层层递进，就构成了实例与原型的链条。这就是所谓的原型链的基本概念。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>property</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>getSuperValue</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(){</span>
+    <span class=k>return</span> <span class=k>this</span><span class=p>.</span><span class=nx>property</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>subproperty</span> <span class=o>=</span> <span class=kc>false</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Super</span><span class=p>();</span>    <span class=c1>//继承了 Super
+</span><span class=c1></span>
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>getSubValue</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=k>return</span> <span class=k>this</span><span class=p>.</span><span class=nx>subproperty</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=kd>let</span> <span class=nx>instance</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>();</span>
+<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>instance</span><span class=p>.</span><span class=nx>getSuperValue</span><span class=p>());</span>    <span class=c1>//true
+</span><span class=c1></span>
+<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>instance</span><span class=p>.</span><span class=nx>__proto__</span> <span class=o>===</span> <span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>);</span>    <span class=c1>//true
+</span><span class=c1></span><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>__proto__</span> <span class=o>===</span> <span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>);</span>    <span class=c1>//true
+</span><span class=c1></span>
+</code></pre></td></tr></table></div></div><p>上面的代码中<code>Sub.prototype = new Super(); </code>通过创建Super的实例，并将该实例赋值给<code>Sub.prototype</code>来实现继承。此时存在于Super的实例和原型对象中的所有属性和方法，也都存在于Sub.prototype中。instanse的<code>__proto__</code>属性指向Sub的原型对象<code>Sub.prototype</code>，Sub原型对象的<code>__proto__</code>属性又指向Super的原型对象<code>Super.prototype</code>。</p><h4 id=原型链搜索机制>原型链搜索机制</h4><p>当访问一个实例的属性时，首先会在该实例中搜索该属性。如果没有找到该属性，则会继续搜索实例的原型。在通过原型链继承的情况下，搜索过程就得以沿着原型链继续向上查找，直到找到该属性为止，或者搜索到最高级的原型链<code>Object.prototype</code>中，任然没有找到则返回<code>undefined</code>。就拿上面的例子来说，调用<code>instance.getSuperValue()</code>会经历三个搜索步骤：1）搜索实例；2）搜索Sub.prototype;3）搜索Super.prototype，最后一步才会找到该方法。在找不到属性或方法的情况下，搜索过程总是要一环一环地前行到原型链的末端才会停下。</p><h4 id=原型链问题>原型链问题</h4><p>原型链继承最大的问题是来自包含引用类型值的原型。引用类型值的原型属性会被所有实例共享。而这正是为什么要在构造函数中，而不是原型对象中定义属性的原因。在通过原型来实现继承时，原型实际上会另一个类型的实例。于是，原先的实例属性也就顺理成章地变成了现在的原型属性了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>colors</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;red&#34;</span><span class=p>,</span> <span class=s2>&#34;blue&#34;</span><span class=p>,</span> <span class=s2>&#34;green&#34;</span><span class=p>];</span>
+<span class=p>}</span>
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(){</span>
+
+<span class=p>}</span>
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Super</span><span class=p>();</span>    <span class=c1>// 继承了Super
+</span><span class=c1></span>
+<span class=kd>let</span> <span class=nx>instance1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>();</span>
+
+<span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s2>&#34;black&#34;</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span><span class=c1></span>
+<span class=kd>let</span> <span class=nx>instance2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>();</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance2</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span></code></pre></td></tr></table></div></div><p>上面的代码中，Super 构造函数定义了一个colors 属性，该属性是一个数组。Super 的每个实例都会有各自包含自己数组的colors 属性。当Sub 通过原型链继承了Super之后，Sub.prototype 就变成了Super 的一个实例，因此它也拥有了一个它自己的colors 属性。结果是所有的Sub 实例都会共享这一个colors 属性。
+原型链的第二个问题是没有办法在不影响所有对象实例的情况下，给超类的构造函数传递参数。</p><h3 id=构造函数继承经典继承>构造函数继承（经典继承）</h3><p>即在子类构造函数的中调用父类构造函数，此时当构建一个子类实例时，此实例也会拥有父类实例的属性和方法。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>colors</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;red&#34;</span><span class=p>,</span> <span class=s2>&#34;blue&#34;</span><span class=p>,</span> <span class=s2>&#34;green&#34;</span><span class=p>];</span>
+<span class=p>}</span>
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(){</span>
+    <span class=nx>Super</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>name</span><span class=p>);</span>    <span class=c1>//继承了Super
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=kd>let</span> <span class=nx>instance1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>();</span>
+
+<span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s2>&#34;black&#34;</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span><span class=c1></span>
+<span class=kd>let</span> <span class=nx>instance2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>();</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance2</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green&#34;
+</span></code></pre></td></tr></table></div></div><p>上面的代码，当构建Sub的实例时，也会调用Super 的构造函数，这样就会在新Sub对象上执行Super()函数中定义的所有对象初始化代码。结果，Sub 的每个实例就都会具有自己的colors 属性的副本了。</p><h4 id=构造函数继承问题>构造函数继承问题</h4><p>如果仅仅是借用构造函数，那么也将无法避免构造函数模式存在的问题————方法都在构造函数中定义，因此函数服用就无从谈起。而且，在超类原型中定义的方法，对子类而已也是不可见的。</p><h3 id=组合继承>组合继承</h3><p>是指将原型链和构造函数的相结合，发挥二者之长的一种继承模式。其思路是使用原型链实现对原型属性和方法的继承，而通过借用构造函数来实现对实例属性的继承。这样，即通过在原型上定义方法实现了函数复用，又能够保证每个实例都有它自己的属性。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(</span><span class=nx>name</span><span class=p>){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>=</span> <span class=nx>name</span><span class=p>;</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>colors</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;red&#34;</span><span class=p>,</span> <span class=s2>&#34;blue&#34;</span><span class=p>,</span> <span class=s2>&#34;green&#34;</span><span class=p>];</span>
+<span class=p>}</span>
+
+<span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayName</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(</span><span class=nx>name</span><span class=p>,</span> <span class=nx>age</span><span class=p>){</span>
+    <span class=nx>Super</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>name</span><span class=p>);</span>    <span class=c1>//继承了Super 属性 (第二次调用Sup构造函数)
+</span><span class=c1></span>    <span class=k>this</span><span class=p>.</span><span class=nx>age</span> <span class=o>=</span> <span class=nx>age</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Super</span><span class=p>();</span>    <span class=c1>// 继承了Super 原型链上的方法 (第一次调用Sup构造函数)
+</span><span class=c1></span><span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>constructor</span> <span class=o>=</span> <span class=nx>Sub</span><span class=p>;</span>
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayAge</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>age</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=kd>var</span> <span class=nx>instance1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Luke&#34;</span><span class=p>,</span> <span class=mi>18</span><span class=p>);</span>
+<span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s2>&#34;black&#34;</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Luke&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//18
+</span><span class=c1></span>
+<span class=kd>var</span> <span class=nx>instance2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Jack&#34;</span><span class=p>,</span> <span class=mi>20</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance2</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Jack&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//20
+</span><span class=c1></span>
+</code></pre></td></tr></table></div></div><p>在上面的例子中，Sup构造函数定义了两个属性：name和colors。Sup的原型定义了一个方法sayName()。Sub构造函数在调用Sup构造函数时传入了name参数，紧接着又定义了它自己的属性age。然后，将Sup的实例赋值给Sub的原型，然后又在该新原型上定义了sayAge()方法。这样就可以让两个不同的Sub 实例即分别拥有自己的属性————包括colors 属性，又可以使用相同的方法了。
+组合继承避免了原型链和构造函数的缺陷，融合了它们的优点，是JavaScript中最常用的继承模式。但是美中不足的是，上面的代码中调用了两次父类构造函数。Sub.prototype = new Super(); 第一次调用父类构造函数时，将Sup父类构造函数的实例赋值给了Sub子类的原型对象Sub.prototype。此时也会将父类构造函数实例上的属性赋值给子类的原型对象Sub.prototype。而第二次是在子类的构造函数中调用父类的构造函数 Super.call(this)，此时会将父类构造函数实例上的属性赋值给子类的构造函数的实例。根据原型链搜索原则，实例上的属性会屏蔽原型链上的属性。因此我们没有必要将父类构造函数实例的属性赋值给子类的原型对象，这是浪费资源而又没有意义的行为。</p><h3 id=优化后的组合继承>优化后的组合继承</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(</span><span class=nx>name</span><span class=p>){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>=</span> <span class=nx>name</span><span class=p>;</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>colors</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;red&#34;</span><span class=p>,</span> <span class=s2>&#34;blue&#34;</span><span class=p>,</span> <span class=s2>&#34;green&#34;</span><span class=p>];</span>
+<span class=p>}</span>
+
+<span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayName</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(</span><span class=nx>name</span><span class=p>,</span> <span class=nx>age</span><span class=p>){</span>
+    <span class=nx>Super</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>name</span><span class=p>);</span>    <span class=c1>//继承了Super 属性
+</span><span class=c1></span>    <span class=k>this</span><span class=p>.</span><span class=nx>age</span> <span class=o>=</span> <span class=nx>age</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>F</span><span class=p>(){</span>
+<span class=p>}</span>
+<span class=nx>F</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>;</span>
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>F</span><span class=p>();</span>    <span class=c1>// 继承了Super 原型链上的方法
+</span><span class=c1></span>
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>constructor</span> <span class=o>=</span> <span class=nx>Sub</span><span class=p>;</span>
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayAge</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>age</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=kd>var</span> <span class=nx>instance1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Luke&#34;</span><span class=p>,</span> <span class=mi>18</span><span class=p>);</span>
+<span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s2>&#34;black&#34;</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Luke&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//18
+</span><span class=c1></span>
+<span class=kd>var</span> <span class=nx>instance2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Jack&#34;</span><span class=p>,</span> <span class=mi>20</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance2</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Jack&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//20
+</span><span class=c1></span>
+</code></pre></td></tr></table></div></div><p>上面的例子通过将父类的原型对象直接赋值给一个中间构造函数的原型对象，然后将这个中间构造函数的实例赋值给子类的原型对象Sub.prototype，从而完成原型链继承。它的高效性体现在只调用了一个父类构造函数Super，并且原型链保持不变。还有一种简便的写法是采用ES5的Object.create()方法来替代中间构造函数，其实原理都是一样的</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(</span><span class=nx>name</span><span class=p>){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>=</span> <span class=nx>name</span><span class=p>;</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>colors</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;red&#34;</span><span class=p>,</span> <span class=s2>&#34;blue&#34;</span><span class=p>,</span> <span class=s2>&#34;green&#34;</span><span class=p>];</span>
+<span class=p>}</span>
+
+<span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayName</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(</span><span class=nx>name</span><span class=p>,</span> <span class=nx>age</span><span class=p>){</span>
+    <span class=nx>Super</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>name</span><span class=p>);</span>    <span class=c1>//继承了Super 属性
+</span><span class=c1></span>    <span class=k>this</span><span class=p>.</span><span class=nx>age</span> <span class=o>=</span> <span class=nx>age</span><span class=p>;</span>
+<span class=p>}</span>
+<span class=cm>/*
+</span><span class=cm>function F(){
+</span><span class=cm>}
+</span><span class=cm>F.prototype = Super.prototype;
+</span><span class=cm>Sub.prototype = new F();    // 继承了Super 原型链上的方法
+</span><span class=cm>
+</span><span class=cm>Sub.prototype.constructor = Sub;
+</span><span class=cm>*/</span>
+<span class=c1>//这行代码的原理与上面注释的代码是一样的
+</span><span class=c1></span><span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span> <span class=o>=</span> <span class=nb>Object</span><span class=p>.</span><span class=nx>create</span><span class=p>(</span><span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>,</span> <span class=p>{</span><span class=nx>constructor</span><span class=o>:</span> <span class=p>{</span><span class=nx>value</span><span class=o>:</span> <span class=nx>Sub</span><span class=p>}})</span>
+
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayAge</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>age</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=kd>var</span> <span class=nx>instance1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Luke&#34;</span><span class=p>,</span> <span class=mi>18</span><span class=p>);</span>
+<span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s2>&#34;black&#34;</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Luke&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//18
+</span><span class=c1></span>
+<span class=kd>var</span> <span class=nx>instance2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Jack&#34;</span><span class=p>,</span> <span class=mi>20</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance2</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Jack&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//20
+</span></code></pre></td></tr></table></div></div><h3 id=更简单的继承方式>更简单的继承方式</h3><p>还有一种更简单的继承方法，就是直接将子类的原型对象(prototype)上的<code>__proto__</code>指向父类的的原型对象(prototype)，这种方式没有改变子类的原型对象，所以子类原型对象上的<code>constructor</code>属性还是指向子类的构造函数，而且当子类的实例在子类的原型对象上没有搜索到对应的属性或方法时，它会通过子类原型对象上的<code>__proto__</code>属性，继续在父类的原型对象上搜索对应的属性或方法</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(</span><span class=nx>name</span><span class=p>){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>=</span> <span class=nx>name</span><span class=p>;</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>colors</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;red&#34;</span><span class=p>,</span> <span class=s2>&#34;blue&#34;</span><span class=p>,</span> <span class=s2>&#34;green&#34;</span><span class=p>];</span>
+<span class=p>}</span>
+
+<span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayName</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(</span><span class=nx>name</span><span class=p>,</span> <span class=nx>age</span><span class=p>){</span>
+    <span class=nx>Super</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>name</span><span class=p>);</span>    <span class=c1>//继承了Super 属性
+</span><span class=c1></span>    <span class=k>this</span><span class=p>.</span><span class=nx>age</span> <span class=o>=</span> <span class=nx>age</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>__proto__</span> <span class=o>=</span> <span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span>
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayAge</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>age</span><span class=p>);</span>
+<span class=p>};</span>
+<span class=kd>var</span> <span class=nx>instance1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Luke&#34;</span><span class=p>,</span> <span class=mi>18</span><span class=p>);</span>
+<span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s2>&#34;black&#34;</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Luke&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//18
+</span><span class=c1></span>
+<span class=kd>var</span> <span class=nx>instance2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Jack&#34;</span><span class=p>,</span> <span class=mi>20</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance2</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Jack&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//20
+</span></code></pre></td></tr></table></div></div><h3 id=objectsetprototypeof>Object.setPrototypeOf()</h3><p>Object.setPrototypeOf()是ECMAScript 6最新草案中的方法，相对于 Object.prototype.<strong>proto</strong> ，它被认为是修改对象原型更合适的方法</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(</span><span class=nx>name</span><span class=p>){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>=</span> <span class=nx>name</span><span class=p>;</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>colors</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;red&#34;</span><span class=p>,</span> <span class=s2>&#34;blue&#34;</span><span class=p>,</span> <span class=s2>&#34;green&#34;</span><span class=p>];</span>
+<span class=p>}</span>
+
+<span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayName</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(</span><span class=nx>name</span><span class=p>,</span> <span class=nx>age</span><span class=p>){</span>
+    <span class=nx>Super</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>name</span><span class=p>);</span>    <span class=c1>//继承了Super 属性
+</span><span class=c1></span>    <span class=k>this</span><span class=p>.</span><span class=nx>age</span> <span class=o>=</span> <span class=nx>age</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>//Sub.prototype.__proto__ = Super.prototype
+</span><span class=c1></span><span class=nb>Object</span><span class=p>.</span><span class=nx>setPrototypeOf</span><span class=p>(</span><span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>,</span> <span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>)</span>
+
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayAge</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>age</span><span class=p>);</span>
+<span class=p>};</span>
+<span class=kd>var</span> <span class=nx>instance1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Luke&#34;</span><span class=p>,</span> <span class=mi>18</span><span class=p>);</span>
+<span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s2>&#34;black&#34;</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Luke&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//18
+</span><span class=c1></span>
+<span class=kd>var</span> <span class=nx>instance2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Jack&#34;</span><span class=p>,</span> <span class=mi>20</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance2</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Jack&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//20
+</span></code></pre></td></tr></table></div></div><h3 id=类的静态方法继承>类的静态方法继承</h3><p>上面所有的继承方法都没有实现类的静态方法继承，而在ES6的<code>class</code>继承中，子类是可以继承父类的静态方法的。我们可通过<code>Object.setPrototypeOf()</code>来实现类的静态方法继承，非常简单</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Object</span><span class=p>.</span><span class=nx>setPrototypeOf</span><span class=p>(</span><span class=nx>Sub</span><span class=p>,</span> <span class=nx>Super</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>Super</span><span class=p>(</span><span class=nx>name</span><span class=p>){</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>name</span> <span class=o>=</span> <span class=nx>name</span><span class=p>;</span>
+    <span class=k>this</span><span class=p>.</span><span class=nx>colors</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;red&#34;</span><span class=p>,</span> <span class=s2>&#34;blue&#34;</span><span class=p>,</span> <span class=s2>&#34;green&#34;</span><span class=p>];</span>
+<span class=p>}</span>
+
+<span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayName</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>name</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=nx>Super</span><span class=p>.</span><span class=nx>staticFn</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=s1>&#39;Super.staticFn&#39;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>function</span> <span class=nx>Sub</span><span class=p>(</span><span class=nx>name</span><span class=p>,</span> <span class=nx>age</span><span class=p>){</span>
+    <span class=nx>Super</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>name</span><span class=p>);</span>    <span class=c1>//继承了Super 属性
+</span><span class=c1></span>    <span class=k>this</span><span class=p>.</span><span class=nx>age</span> <span class=o>=</span> <span class=nx>age</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>//Sub.prototype.__proto__ = Super.prototype
+</span><span class=c1></span><span class=nb>Object</span><span class=p>.</span><span class=nx>setPrototypeOf</span><span class=p>(</span><span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>,</span> <span class=nx>Super</span><span class=p>.</span><span class=nx>prototype</span><span class=p>)</span>
+<span class=nb>Object</span><span class=p>.</span><span class=nx>setPrototypeOf</span><span class=p>(</span><span class=nx>Sub</span><span class=p>,</span> <span class=nx>Super</span><span class=p>)</span>    <span class=c1>// 继承父类的静态属性或方法
+</span><span class=c1></span><span class=nx>Sub</span><span class=p>.</span><span class=nx>staticFn</span><span class=p>()</span>    <span class=c1>// &#34;Super.staticFn&#34;
+</span><span class=c1></span>
+<span class=nx>Sub</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>sayAge</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(){</span>
+    <span class=nx>alert</span><span class=p>(</span><span class=k>this</span><span class=p>.</span><span class=nx>age</span><span class=p>);</span>
+<span class=p>};</span>
+<span class=kd>var</span> <span class=nx>instance1</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Luke&#34;</span><span class=p>,</span> <span class=mi>18</span><span class=p>);</span>
+<span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=s2>&#34;black&#34;</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance1</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green, black&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Luke&#34;
+</span><span class=c1></span><span class=nx>instance1</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//18
+</span><span class=c1></span>
+<span class=kd>var</span> <span class=nx>instance2</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Sub</span><span class=p>(</span><span class=s2>&#34;Jack&#34;</span><span class=p>,</span> <span class=mi>20</span><span class=p>);</span>
+<span class=nx>alert</span><span class=p>(</span><span class=nx>instance2</span><span class=p>.</span><span class=nx>colors</span><span class=p>);</span>    <span class=c1>//&#34;red, blue, green&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayName</span><span class=p>();</span>    <span class=c1>//&#34;Jack&#34;
+</span><span class=c1></span><span class=nx>instance2</span><span class=p>.</span><span class=nx>sayAge</span><span class=p>()</span>    <span class=c1>//20
+</span></code></pre></td></tr></table></div></div><p>这大概就是最终的理想继承方式吧。</p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>

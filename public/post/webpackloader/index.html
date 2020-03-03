@@ -1,0 +1,278 @@
+<!doctype html><html lang=en><head><title>Webpack 工作原理（三） | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="Webpack 工作原理（三）"><meta property="og:description" content="webpack Loader 是一个符合 commonjs 规范的模块，这个模块导出一个函数，它的主要作用是对源码进行转换，webpack 在调用 Loader时，会将源代码作为参数传递给这个Loader，然后该loader会对源码进行转换，并且返回转换后的内容。"><meta property="og:url" content="https://goyth.cn/post/webpackloader/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/webpackloader/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
+<a href=https://goyth.cn/categories class=nav_item>Category</a>
+<a href=https://goyth.cn/tags class=nav_item>Tag</a>
+<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
+<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">12. January 2019</p><h1 class=post_title>Webpack 工作原理（三）</h1><div class=post_body><div class=post_inner><h2 id=什么是-webpack-loader>什么是 webpack Loader</h2><p>webpack Loader 是一个符合 <code>commonjs</code> 规范的模块，这个模块导出一个函数，它的主要作用是对源码进行转换，webpack 在调用 Loader时，会将源代码作为参数传递给这个Loader，然后该loader会对源码进行转换，并且返回转换后的内容。</p><p>一个最简单的 Loader 的源码如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+  <span class=c1>// source 为 compiler 传递给 Loader 的一个文件的原内容
+</span><span class=c1></span>  <span class=c1>// 该函数需要返回处理后的内容，这里简单起见，直接把原内容返回了，相当于该 Loader 没有做任何转换
+</span><span class=c1></span>  <span class=k>return</span> <span class=nx>source</span><span class=p>;</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><h3 id=loader-执行顺序>loader 执行顺序</h3><p><strong>webpack.config.js</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=p>{</span>
+  <span class=c1>//...
+</span><span class=c1></span>  <span class=nx>module</span><span class=o>:</span> <span class=p>{</span>
+    <span class=nx>rules</span><span class=o>:</span> <span class=p>[</span>
+      <span class=p>{</span>
+        <span class=c1>//...
+</span><span class=c1></span>        <span class=nx>use</span><span class=o>:</span> <span class=p>[</span>
+          <span class=s1>&#39;a-loader&#39;</span><span class=p>,</span>
+          <span class=s1>&#39;b-loader&#39;</span><span class=p>,</span>
+          <span class=s1>&#39;c-loader&#39;</span>
+        <span class=p>]</span>
+      <span class=p>}</span>
+    <span class=p>]</span>
+  <span class=p>}</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><p>loader 的执行顺序是从后往前的，例如顺序配置<code>'a-loader'</code>,<code>'b-loader'</code>,<code>'c-loader'</code>，则它们的执行顺序是<code>'c-loader'</code> &ndash;> <code>'b-loader'</code> &ndash;> <code>'a-loader'</code>，<code>'c-loader'</code>接受 webpack 传递进来的原始数据，进行相应的转换，<code>'b-loader'</code> 接受 &lsquo;c-loader&rsquo; 转换都的结果进行进一步转换，<code>'a-loader'</code> 接受 <code>'b-loader'</code> 转换的结果，进行进一步的转换，产生最终转换都的源码</p><h3 id=处理二进制数据>处理二进制数据</h3><p>在默认的情况下，Webpack 传给 Loader 的原内容都是 <code>UTF-8</code> 格式编码的字符串。
+但有些场景下 Loader 不是处理文本文件，而是处理二进制文件，例如 <code>file-loader</code>，就需要 Webpack 给 Loader 传入二进制格式的数据。
+为此，你需要这样编写 Loader：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// 在 exports.raw === true 时，Webpack 传给 Loader 的 source 是 Buffer 类型的
+</span><span class=c1></span>    <span class=nx>source</span> <span class=k>instanceof</span> <span class=nx>Buffer</span> <span class=o>===</span> <span class=kc>true</span><span class=p>;</span>
+    <span class=c1>// Loader 返回的类型也可以是 Buffer 类型的
+</span><span class=c1></span>    <span class=c1>// 在 exports.raw !== true 时，Loader 也可以返回 Buffer 类型的结果
+</span><span class=c1></span>    <span class=k>return</span> <span class=nx>source</span><span class=p>;</span>
+<span class=p>};</span>
+<span class=c1>// 通过 exports.raw 属性告诉 Webpack 该 Loader 是否需要二进制数据
+</span><span class=c1></span><span class=nx>module</span><span class=p>.</span><span class=nx>exports</span><span class=p>.</span><span class=nx>raw</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
+</code></pre></td></tr></table></div></div><p>以上代码中最关键的代码是最后一行 <code>module.exports.raw = true;</code>，没有该行 Loader 只能拿到字符串。</p><h2 id=webpack-loader-api-介绍>webpack loader API 介绍</h2><p>webpack在 loader 的 <code>this</code> 上挂在了很多有用的属性或方法，后面会有详细介绍。</p><h3 id=thiscallback>this.callback()</h3><p>在 loader 中如果是采用 <code>return</code> 的方式，那么默认只会返回一个值，如果你需要返回多个值可以采用<code>this.callback</code></p><p>例如以用 babel-loader 转换 ES6 代码为例，它还需要输出转换后的 ES5 代码对应的 Source Map，以方便调试源码。
+为了把 Source Map 也一起随着 ES5 代码返回给 Webpack，可以这样写：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+  <span class=c1>// 通过 this.callback 告诉 Webpack 返回的结果
+</span><span class=c1></span>  <span class=k>this</span><span class=p>.</span><span class=nx>callback</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>source</span><span class=p>,</span> <span class=nx>sourceMaps</span><span class=p>);</span>
+  <span class=c1>// 当你使用 this.callback 返回内容时，该 Loader 必须返回 undefined，
+</span><span class=c1></span>  <span class=c1>// 以让 Webpack 知道该 Loader 返回的结果在 this.callback 中，而不是 return 中
+</span><span class=c1></span>  <span class=k>return</span><span class=p>;</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><p>其中的 <code>this.callback</code> 是 Webpack 给 Loader 注入的 API，以方便 Loader 和 Webpack 之间通信。
+<code>this.callback</code> 的详细使用方法如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=k>this</span><span class=p>.</span><span class=nx>callback</span><span class=p>(</span>
+    <span class=c1>// 当无法转换原内容时，给 Webpack 返回一个 Error
+</span><span class=c1></span>    <span class=nx>err</span><span class=o>:</span> <span class=nb>Error</span> <span class=o>|</span> <span class=kc>null</span><span class=p>,</span>
+    <span class=c1>// 原内容转换后的内容
+</span><span class=c1></span>    <span class=nx>content</span><span class=o>:</span> <span class=nx>string</span> <span class=o>|</span> <span class=nx>Buffer</span><span class=p>,</span>
+    <span class=c1>// 用于把转换后的内容得出原内容的 Source Map，方便调试
+</span><span class=c1></span>    <span class=nx>sourceMap</span><span class=o>?:</span> <span class=nx>SourceMap</span><span class=p>,</span>
+    <span class=c1>// 如果本次转换为原内容生成了 AST 语法树，可以把这个 AST 返回，
+</span><span class=c1></span>    <span class=c1>// 以方便之后需要 AST 的 Loader 复用该 AST，以避免重复生成 AST，提升性能
+</span><span class=c1></span>    <span class=nx>abstractSyntaxTree</span><span class=o>?:</span> <span class=nx>AST</span>
+<span class=p>);</span>
+</code></pre></td></tr></table></div></div><p>Source Map 的生成很耗时，通常在开发环境下才会生成 Source Map，其它环境下不用生成，以加速构建。
+为此 Webpack 为 Loader 提供了 this.sourceMap API 去告诉 Loader 当前构建环境下用户是否需要 Source Map。
+如果你编写的 Loader 会生成 Source Map，请考虑到这点。</p><h3 id=thisasync>this.async()</h3><p>Loader 有同步和异步之分，上面介绍的 Loader 都是同步的 Loader，因为它们的转换流程都是同步的，转换完成后再返回结果。
+但在有些场景下转换的步骤只能是异步完成的，例如你需要通过网络请求才能得出结果，如果采用同步的方式网络请求就会阻塞整个构建，导致构建非常缓慢。</p><p>在转换步骤是异步时，你可以这样：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// 告诉 Webpack 本次转换是异步的，Loader 会在 callback 中回调结果
+</span><span class=c1></span>    <span class=kd>var</span> <span class=nx>callback</span> <span class=o>=</span> <span class=k>this</span><span class=p>.</span><span class=nx>async</span><span class=p>();</span>
+    <span class=nx>someAsyncOperation</span><span class=p>(</span><span class=nx>source</span><span class=p>,</span> <span class=kd>function</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=nx>result</span><span class=p>,</span> <span class=nx>sourceMaps</span><span class=p>,</span> <span class=nx>ast</span><span class=p>)</span> <span class=p>{</span>
+        <span class=c1>// 通过 callback 返回异步执行后的结果
+</span><span class=c1></span>        <span class=nx>callback</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=nx>result</span><span class=p>,</span> <span class=nx>sourceMaps</span><span class=p>,</span> <span class=nx>ast</span><span class=p>);</span>
+    <span class=p>});</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><h3 id=thiscacheable>this.cacheable()</h3><p>在有些情况下，有些转换操作需要大量计算非常耗时，如果每次构建都重新执行重复的转换操作，构建将会变得非常缓慢。
+为此，Webpack 会默认缓存所有 Loader 的处理结果，也就是说在需要被处理的文件或者其依赖的文件没有发生变化时，
+是不会重新调用对应的 Loader 去执行转换操作的。</p><p>如果你想让 Webpack 不缓存该 Loader 的处理结果，可以这样：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+  <span class=c1>// 关闭该 Loader 的缓存功能
+</span><span class=c1></span>  <span class=k>this</span><span class=p>.</span><span class=nx>cacheable</span><span class=p>(</span><span class=kc>false</span><span class=p>);</span>
+  <span class=k>return</span> <span class=nx>source</span><span class=p>;</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><h3 id=thiscontext>this.context</h3><p>当前处理文件的所在目录，假如当前 Loader 处理的文件是 <code>/src/main.js</code>，则 <code>this.context</code> 就等于 <code>/src</code>。</p><h3 id=thisresource>this.resource</h3><p>当前处理文件的完整请求路径，包括 querystring，例如 <code>/src/main.js?name=1</code>。</p><h3 id=thisresourcepath>this.resourcePath</h3><p>当前处理文件的路径，例如 <code>/src/main.js</code>。</p><h3 id=thisresourcequery>this.resourceQuery</h3><p>当前处理文件的 querystring。</p><h3 id=thistarget>this.target</h3><p>等于 Webpack 配置中的 Target</p><h3 id=thisloadmodule>this.loadModule</h3><p>但 Loader 在处理一个文件时，如果依赖其它文件的处理结果才能得出当前文件的结果时，就可以通过 <code>this.loadModule(request: string, callback: function(err, source, sourceMap, module))</code> 去获得 request 对应文件的处理结果。</p><h3 id=thisresolve>this.resolve</h3><p>像 require 语句一样获得指定文件的完整路径，使用方法为 <code>resolve(context: string, request: string, callback: function(err, result: string))</code>。</p><h3 id=thisadddependency>this.addDependency</h3><p>给当前处理文件添加其依赖的文件，以便再其依赖的文件发生变化时，会重新调用 Loader 处理该文件。使用方法为 <code>addDependency(file: string)</code>。</p><h3 id=thisaddcontextdependency>this.addContextDependency</h3><p>和 <code>addDependency</code> 类似，但 <code>addContextDependency</code> 是把整个目录加入到当前正在处理文件的依赖中。使用方法为 <code>addContextDependency(directory: string)</code>。</p><h3 id=thiscleardependencies>this.clearDependencies</h3><p>清除当前正在处理文件的所有依赖，使用方法为 <code>clearDependencies()</code>。</p><h3 id=thisemitfile>this.emitFile</h3><p>输出一个文件，使用方法为 <code>emitFile(name: string, content: Buffer|string, sourceMap: {...})</code>。</p><h2 id=编写loader>编写loader</h2><h3 id=loader-编写准则>loader 编写准则</h3><ol><li>loader 应该遵循单一职责原则，一个loader只完成一个功能，如果需要多步转换，则应该编写多个loader进行链式调用。</li><li>不要在模块代码中插入绝对路径，因为当项目根路径变化时，文件绝对路径也会变化。<code>loader-utils</code> 中的 <code>stringifyRequest</code> 方法，可以将绝对路径转化为相对路径。</li><li>如果一个 loader 使用外部资源（例如，从文件系统读取），必须声明它。这些信息用于使缓存 loaders 无效，以及在观察模式(watch mode)下重编译。</li></ol><h3 id=loader-工具库>loader 工具库</h3><h4 id=loader-utils>loader-utils</h4><p><a href=https://github.com/webpack/loader-utils>loader-utils</a> 包。它提供了许多有用的工具，但最常用的一种工具是获取传递给 loader 的选项</p><h4 id=schema-utils>schema-utils</h4><p><a href=https://github.com/webpack-contrib/schema-utils>schema-utils</a> 包配合 loader-utils，用于保证 loader 选项，进行与 JSON Schema 结构一致的校验</p><h3 id=babel-loader>babel-loader</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>const</span> <span class=nx>babel</span><span class=o>=</span><span class=nx>require</span><span class=p>(</span><span class=s1>&#39;babel-core&#39;</span><span class=p>);</span>
+<span class=kr>const</span> <span class=nx>path</span><span class=o>=</span><span class=nx>require</span><span class=p>(</span><span class=s1>&#39;path&#39;</span><span class=p>);</span>
+
+<span class=nx>module</span><span class=p>.</span><span class=nx>exports</span><span class=o>=</span><span class=kd>function</span> <span class=p>(</span><span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+    <span class=kr>const</span> <span class=nx>options</span> <span class=o>=</span> <span class=p>{</span>
+        <span class=nx>presets</span><span class=o>:</span> <span class=p>[</span><span class=s1>&#39;env&#39;</span><span class=p>],</span>
+        <span class=nx>sourceMap</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span>
+        <span class=nx>filename</span><span class=o>:</span><span class=k>this</span><span class=p>.</span><span class=nx>request</span><span class=p>.</span><span class=nx>split</span><span class=p>(</span><span class=s1>&#39;/&#39;</span><span class=p>).</span><span class=nx>pop</span><span class=p>()</span>
+    <span class=p>}</span>
+    <span class=kd>let</span> <span class=nx>result</span><span class=o>=</span><span class=nx>babel</span><span class=p>.</span><span class=nx>transform</span><span class=p>(</span><span class=nx>source</span><span class=p>,</span><span class=nx>options</span><span class=p>);</span>
+    <span class=k>return</span> <span class=k>this</span><span class=p>.</span><span class=nx>callback</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span><span class=nx>result</span><span class=p>.</span><span class=nx>code</span><span class=p>,</span><span class=nx>result</span><span class=p>.</span><span class=nx>map</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h3 id=bannerloader>BannerLoader</h3><p>给所有的文件添加同一的版权注释，可以接受一个文本，或者一个文件。</p><p><strong>banner-loader.js</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>const</span> <span class=nx>loaderUtils</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;loader-utils&#39;</span><span class=p>);</span>
+<span class=kr>const</span> <span class=nx>validateOptions</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;schema-utils&#39;</span><span class=p>);</span>
+<span class=kr>const</span> <span class=nx>fs</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;fs&#39;</span><span class=p>);</span>
+<span class=kd>function</span> <span class=nx>loader</span><span class=p>(</span><span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>//把loader改为异步,任务完成后需要手工执行callback
+</span><span class=c1></span>    <span class=kd>let</span> <span class=nx>cb</span> <span class=o>=</span> <span class=k>this</span><span class=p>.</span><span class=nx>async</span><span class=p>();</span>
+    <span class=c1>//启用loader缓存
+</span><span class=c1></span>    <span class=k>this</span><span class=p>.</span><span class=nx>cacheable</span> <span class=o>&amp;&amp;</span> <span class=k>this</span><span class=p>.</span><span class=nx>cacheable</span><span class=p>();</span>
+    <span class=c1>//用来验证options的合法性
+</span><span class=c1></span>    <span class=kd>let</span> <span class=nx>schema</span> <span class=o>=</span> <span class=p>{</span>
+        <span class=nx>type</span><span class=o>:</span> <span class=s1>&#39;object&#39;</span><span class=p>,</span>
+        <span class=nx>properties</span><span class=o>:</span> <span class=p>{</span>
+            <span class=nx>filename</span><span class=o>:</span> <span class=p>{</span>
+                <span class=nx>type</span><span class=o>:</span> <span class=s1>&#39;string&#39;</span>
+            <span class=p>},</span>
+            <span class=nx>text</span><span class=o>:</span> <span class=p>{</span>
+                <span class=nx>type</span><span class=o>:</span> <span class=s1>&#39;string&#39;</span>
+            <span class=p>}</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=c1>//通过工具方法获取options
+</span><span class=c1></span>    <span class=kd>let</span> <span class=nx>options</span> <span class=o>=</span> <span class=nx>loaderUtils</span><span class=p>.</span><span class=nx>getOptions</span><span class=p>(</span><span class=k>this</span><span class=p>);</span>
+    <span class=c1>//用来验证options的合法性
+</span><span class=c1></span>    <span class=nx>validateOptions</span><span class=p>(</span><span class=nx>schema</span><span class=p>,</span> <span class=nx>options</span><span class=p>,</span> <span class=s1>&#39;Banner-Loader&#39;</span><span class=p>);</span>
+    <span class=kd>let</span> <span class=p>{</span> <span class=nx>text</span><span class=p>,</span> <span class=nx>filename</span> <span class=p>}</span> <span class=o>=</span> <span class=nx>options</span><span class=p>;</span>
+    <span class=k>if</span> <span class=p>(</span><span class=nx>text</span><span class=p>)</span> <span class=p>{</span>
+        <span class=nx>cb</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>text</span> <span class=o>+</span> <span class=nx>source</span><span class=p>);</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=nx>filename</span><span class=p>)</span> <span class=p>{</span>
+        <span class=nx>fs</span><span class=p>.</span><span class=nx>readFile</span><span class=p>(</span><span class=nx>filename</span><span class=p>,</span> <span class=s1>&#39;utf8&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=nx>text</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
+            <span class=nx>cb</span><span class=p>(</span><span class=nx>err</span><span class=p>,</span> <span class=nx>text</span> <span class=o>+</span> <span class=nx>source</span><span class=p>);</span>
+        <span class=p>});</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=nx>loader</span><span class=p>;</span>
+</code></pre></td></tr></table></div></div><p><strong>banner.js</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=cm>/* © 2019 GOYTH All Rights Reserved.  */</span>
+</code></pre></td></tr></table></div></div><p><strong>webpack.config.js</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=p>{</span>
+  <span class=c1>//...
+</span><span class=c1></span>  <span class=nx>resolveLoader</span><span class=o>:</span> <span class=p>{</span>
+    <span class=nx>alias</span><span class=o>:</span> <span class=p>{</span>
+      <span class=s2>&#34;babel-loader&#34;</span><span class=o>:</span> <span class=nx>resolve</span><span class=p>(</span><span class=s1>&#39;./build/banner-loader.js&#39;</span><span class=p>)</span>
+    <span class=p>}</span>
+  <span class=p>},</span>
+  <span class=nx>module</span><span class=o>:</span> <span class=p>{</span>
+    <span class=nx>rules</span><span class=o>:</span> <span class=p>[</span>
+      <span class=p>{</span>
+        <span class=nx>test</span><span class=o>:</span><span class=sr>/.+\.js$/</span>
+        <span class=nx>use</span><span class=o>:</span> <span class=p>[</span>
+          <span class=p>{</span>
+            <span class=nx>loader</span><span class=o>:</span> <span class=s2>&#34;babel-loader&#34;</span><span class=p>,</span>
+            <span class=nx>options</span><span class=o>:</span><span class=p>{</span><span class=nx>filename</span><span class=o>:</span><span class=s2>&#34;./src/loaders/banner.js&#34;</span><span class=p>}</span>
+<span class=c1>//          options: {text: &#34;© 2019 GOYTH All Rights Reserved. &#34;}
+</span><span class=c1></span>          <span class=p>}</span>
+        <span class=p>]</span>
+      <span class=p>}</span>
+    <span class=p>]</span>
+  <span class=p>}</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><p><em>参考链接</em>
+<em><a href=https://webpack.js.org/api/loaders/>https://webpack.js.org/api/loaders/</a></em>
+<em><a href=https://github.com/webpack/loader-utils>https://github.com/webpack/loader-utils</a></em>
+<em><a href=https://github.com/webpack-contrib/schema-utils>https://github.com/webpack-contrib/schema-utils</a></em>
+<em><a href=https://segmentfault.com/a/1190000012718374>https://segmentfault.com/a/1190000012718374</a></em></p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>

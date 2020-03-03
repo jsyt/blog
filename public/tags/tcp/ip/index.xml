@@ -1,27 +1,6 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>TCP/IP on GOYTH</title>
-    <link>https://goyth.cn/tags/tcp/ip/</link>
-    <description>Recent content in TCP/IP on GOYTH</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="https://goyth.cn/tags/tcp/ip/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>TCP/IP 协议知识点梳理</title>
-      <link>https://goyth.cn/2018/07/04/tcpip/</link>
-      <pubDate>Wed, 04 Jul 2018 21:53:54 +0800</pubDate>
-      
-      <guid>https://goyth.cn/2018/07/04/tcpip/</guid>
-      <description>&lt;h2 id=&#34;tcpip协议&#34;&gt;TCP/IP协议&lt;/h2&gt;
-&lt;p&gt;TCP/IP协议模型（Transmission Control Protocol/Internet Protocol），包含了一系列构成互联网基础的网络协议，是Internet的核心协议。&lt;/p&gt;
-&lt;h3 id=&#34;tcpip-协议分层模型&#34;&gt;TCP/IP 协议分层模型&lt;/h3&gt;
-&lt;p&gt;基于TCP/IP的参考模型将协议分成四个层次，它们分别是链路层、网络层、传输层和应用层。下图表示TCP/IP模型与OSI模型各层的对照关系。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/TcpIp-tcpip.webp&#34; alt=&#34;&#34;&gt;&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>TCP/IP on luke's blog</title><link>https://goyth.cn/tags/tcp/ip/</link><description>Recent content in TCP/IP on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><atom:link href="https://goyth.cn/tags/tcp/ip/index.xml" rel="self" type="application/rss+xml"/><item><title>TCP/IP 协议知识点梳理</title><link>https://goyth.cn/post/tcpip/</link><pubDate>Wed, 04 Jul 2018 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/tcpip/</guid><description>TCP/IP协议 TCP/IP协议模型（Transmission Control Protocol/Internet Protocol），包含了一系列构成互联网基础的网络协议，是Internet的核心协议。
+TCP/IP 协议分层模型 基于TCP/IP的参考模型将协议分成四个层次，它们分别是链路层、网络层、传输层和应用层。下图表示TCP/IP模型与OSI模型各层的对照关系。
+物理层将二进制的0和1和电压高低，光的闪灭和电波的强弱信号进行转换 链路层代表驱动 网络层 使用 IP 协议，IP 协议基于 IP 转发分包数据 IP 协议是个不可靠协议，不会重发 IP 协议发送失败会使用ICMP 协议通知失败 ARP 解析 IP 中的 MAC 地址，MAC 地址由网卡出厂提供 IP 还隐含链路层的功能，不管双方底层的链路层是啥，都能通信 传输层 通用的 TCP 和 UDP 协议 TCP 协议面向有连接，能正确处理丢包，传输顺序错乱的问题，但是为了建立与断开连接，需要至少7次的发包收包，资源浪费 UDP 面向无连接，不管对方有没有收到，如果要得到通知，需要通过应用层 会话层以上分层 TCP/IP 分层中，会话层，表示层，应用层集中在一起 网络管理通过 SNMP 协议 TCP/IP 协议模型封包解包 TCP/IP协议族按照层次由上到下，层层包装。最上面的是应用层，这里面有http，ftp,等等我们熟悉的协议。而第二层则是传输层，著名的TCP和UDP协议就在这个层次。第三层是网络层，IP协议就在这里，它负责对数据加上IP地址和其他的数据以确定传输的目标。第四层是数据链路层，这个层次为待传送的数据加入一个以太网协议头，并进行CRC编码，为最后的数据传输做准备。
+上图清楚地表示了TCP/IP协议中每个层的作用，而TCP/IP协议通信的过程其实就对应着数据入栈与出栈的过程。入栈的过程，数据发送方每层不断地封装首部与尾部，添加一些传输的信息，确保能传输到目的地。出栈的过程，数据接收方每层不断地拆除首部与尾部，得到最终传输的数据。
+TCP三次握手 TCP是面向连接的，无论哪一方向另一方发送数据之前，都必须先在双方之间建立一条连接。在TCP/IP协议中，TCP协议提供可靠的连接服务，连接是通过三次握手进行初始化的。三次握手的目的是同步连接双方的序列号和确认号并交换 TCP窗口大小信息。
+第一次握手： 建立连接。客户端发送连接请求报文段，将SYN位置为1，Sequence Number为x；然后，客户端进入SYN_SEND状态，等待服务器的确认； 第二次握手： 服务器收到SYN报文段。服务器收到客户端的SYN报文段，需要对这个SYN报文段进行确认，设置Acknowledgment Number为x+1(Sequence Number+1)；同时，自己自己还要发送SYN请求信息，将SYN位置为1，Sequence Number为y；服务器端将上述所有信息放到一个报文段（即SYN+ACK报文段）中，一并发送给客户端，此时服务器进入SYN_RECV状态； 第三次握手： 客户端收到服务器的SYN+ACK报文段。然后将Acknowledgment Number设置为y+1，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。</description></item></channel></rss>

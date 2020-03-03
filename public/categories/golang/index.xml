@@ -1,26 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Golang on GOYTH</title>
-    <link>https://goyth.cn/categories/golang/</link>
-    <description>Recent content in Golang on GOYTH</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Sat, 08 Jun 2019 21:53:54 +0800</lastBuildDate>
-    
-	<atom:link href="https://goyth.cn/categories/golang/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>golang 学习笔记（一）——语法篇</title>
-      <link>https://goyth.cn/2019/06/08/golanglearning01/</link>
-      <pubDate>Sat, 08 Jun 2019 21:53:54 +0800</pubDate>
-      
-      <guid>https://goyth.cn/2019/06/08/golanglearning01/</guid>
-      <description>golang 应⽤程序⼊⼝  必须是 main 包：package main 必须是 main ⽅法：func main() ⽂件名不⼀定是 main.go  退出返回值 与其他主要编程语⾔的差异
- Go 中 main 函数不⽀持任何返回值 通过 os.Exit 来返回状态  获取命令⾏参数 与其他主要编程语⾔的差异
- main 函数不⽀持传⼊参数 func main(arg []string) 在程序中直接通过 os.</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>golang on luke's blog</title><link>https://goyth.cn/categories/golang/</link><description>Recent content in golang on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><lastBuildDate>Sun, 02 Feb 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://goyth.cn/categories/golang/index.xml" rel="self" type="application/rss+xml"/><item><title>(Hu)go Template Primer</title><link>https://goyth.cn/post/goisforlovers/</link><pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate><guid>https://goyth.cn/post/goisforlovers/</guid><description>Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
+This document is a brief primer on using Go templates.</description></item><item><title>Getting Started with Hugo</title><link>https://goyth.cn/post/hugoisforlovers/</link><pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate><guid>https://goyth.cn/post/hugoisforlovers/</guid><description>Step 1. Install Hugo Go to Hugo releases and download the appropriate version for your OS and architecture.
+Save it somewhere specific as we will be using it in the next step.
+More complete instructions are available at Install Hugo
+Step 2. Build the Docs Hugo has its own example site which happens to also be the documentation site you are reading right now.
+Follow the following steps:
+Clone the Hugo repository Go into the repo Run hugo in server mode and build the docs Open your browser to http://localhost:1313 Corresponding pseudo commands:</description></item><item><title>golang 学习笔记（一）——语法篇</title><link>https://goyth.cn/post/golanglearning01/</link><pubDate>Sat, 08 Jun 2019 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/golanglearning01/</guid><description>golang 应⽤程序⼊⼝ 必须是 main 包：package main 必须是 main ⽅法：func main() ⽂件名不⼀定是 main.go 退出返回值 与其他主要编程语⾔的差异
+Go 中 main 函数不⽀持任何返回值 通过 os.Exit 来返回状态 获取命令⾏参数 与其他主要编程语⾔的差异
+main 函数不⽀持传⼊参数 func main(arg []string) 在程序中直接通过 os.Args 获取命令⾏参数 变量量赋值 与其他主要编程语⾔言的差异
+赋值可以进⾏行行⾃自动类型推断 在⼀一个赋值语句句中可以对多个变量量进⾏行行同时赋值 常量量定义 与其他主要编程语⾔言的差异
+快速设置连续值 1 2 3 4 5 6 7 8 9 10 11 12 13 14 const ( Monday = iota + 1 //Monday = 0 + 1 Tuesday //Tuesday = iota + 1 = 1 + 1 Wednesday //Wednesday = iota + 1 = 2 + 1 Thursday //Thursday = iota + 1 = 3 + 1 Friday //Friday = iota + 1 = 4 + 1 Saturday //Saturday = iota + 1 = 5 + 1 Sunday //Sunday = iota + 1 = 6 + 1 ) const ( Open = 1 &amp;lt;&amp;lt; iota Close Pending ) iota是golang语言的常量计数器,只能在常量的表达式中使用。 iota在const关键字出现时将被重置为0(const内部的第一行之前)，const中每新增一行常量声明将使iota计数一次(iota可理解为const语句块中的行索引)。 使用iota能简化定义，在定义枚举时很有用。</description></item></channel></rss>

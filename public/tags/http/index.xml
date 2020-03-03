@@ -1,28 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>HTTP on GOYTH</title>
-    <link>https://goyth.cn/tags/http/</link>
-    <description>Recent content in HTTP on GOYTH</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 11 Jul 2018 21:53:54 +0800</lastBuildDate>
-    
-	<atom:link href="https://goyth.cn/tags/http/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>HTTP知识点整理</title>
-      <link>https://goyth.cn/2018/07/11/http2/</link>
-      <pubDate>Wed, 11 Jul 2018 21:53:54 +0800</pubDate>
-      
-      <guid>https://goyth.cn/2018/07/11/http2/</guid>
-      <description>&lt;p&gt;HTTP/2是HTTP协议自1999年HTTP 1.1发布后的首个更新，主要基于SPDY协议。于2015年正式发布，HTTP/2解决了HTTP1.1线头阻塞、重复建立TCP连接等问题，充分利用TCP连接的高效传输，使得网络延迟大幅下降，网络传输速度大幅提升。&lt;/p&gt;
-&lt;h2 id=&#34;http09---1991&#34;&gt;HTTP/0.9 - 1991&lt;/h2&gt;
-&lt;p&gt;第一版的HTTP文档是1991年提出来的 HTTP/0.9。这是有史以来最简单的协议；它仅有一个GET方法。如果客户端要访问服务器上的一些网页，它会作出如下的简单请求：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;GET &lt;span style=&#34;color:#ff79c6&#34;&gt;/&lt;/span&gt;index.html
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HTTP on luke's blog</title><link>https://goyth.cn/tags/http/</link><description>Recent content in HTTP on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><lastBuildDate>Wed, 11 Jul 2018 21:53:54 +0800</lastBuildDate><atom:link href="https://goyth.cn/tags/http/index.xml" rel="self" type="application/rss+xml"/><item><title>HTTP知识点整理</title><link>https://goyth.cn/post/http2/</link><pubDate>Wed, 11 Jul 2018 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/http2/</guid><description>HTTP/2是HTTP协议自1999年HTTP 1.1发布后的首个更新，主要基于SPDY协议。于2015年正式发布，HTTP/2解决了HTTP1.1线头阻塞、重复建立TCP连接等问题，充分利用TCP连接的高效传输，使得网络延迟大幅下降，网络传输速度大幅提升。
+HTTP/0.9 - 1991 第一版的HTTP文档是1991年提出来的 HTTP/0.9。这是有史以来最简单的协议；它仅有一个GET方法。如果客户端要访问服务器上的一些网页，它会作出如下的简单请求：
+1 GET /index.html 并且来自服务器的响应内容如下：
+1 2 (response body) (connection closed) 也就是说，服务器会得到这个请求，然后通过HTML格式回复响应内容，且一旦响应内容发送完毕，就会关闭这个连接。归纳一下：
+没有header数据块 GET方法是唯一允许的方法 必须以HTML格式响应 HTTP/1.0 - 1996 1996年，HTTP/1.0 诞生了，它在原版本上做出了极大的改善。不像 HTTP/0.9 仅能以HTML格式响应，HTTP/1.1 现在可以处理其他的响应格式了，例如：图像，视频文件，纯文本或其他任何的内容类型。它增加了更多的方法（即 POST 和 HEAD），请求/响应的格式也发生了改变，请求和响应中均加入了HTTP头信息，响应数据还增加了状态码标识，还介绍了字符集的支持、多部分发送、权限、缓存、内容编码等很多内容。
+如下所示，这是一个通过 HTTP/1.0 请求和响应的例子：
+1 2 3 4 GET / HTTP/1.0 Host: kamranahmed.info User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Accept: */* 正如你所见，客户端除了发送请求以外，它还发送了它的个人信息，要求响应类型等。而在 HTTP/0.9 中因为没有头信息，客户端是不会发送这些信息的。
+上面的例子对应的服务器响应结果如下：
+1 2 3 4 5 6 7 8 9 HTTP/1.</description></item></channel></rss>

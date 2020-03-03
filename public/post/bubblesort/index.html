@@ -1,0 +1,81 @@
+<!doctype html><html lang=en><head><title>排序算法之冒泡排序 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="排序算法之冒泡排序"><meta property="og:description" content="冒泡排序（Bubble Sort），是一种计算机科学领域的较简单的排序算法。 它重复地走访过要排序的数列，一次比较两个元素，如果他们的顺序错误就把他们交换过来。走访数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。 这个算法的名字由来是因为越大的元素会经由交换慢慢“浮”到数列的顶 …"><meta property="og:url" content="https://goyth.cn/post/bubblesort/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/bubblesort/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
+<a href=https://goyth.cn/categories class=nav_item>Category</a>
+<a href=https://goyth.cn/tags class=nav_item>Tag</a>
+<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
+<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">08. February 2018</p><h1 class=post_title>排序算法之冒泡排序</h1><div class=post_body><div class=post_inner><p>排序算法总览：</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/sort-sort.png alt></p><h2 id=冒泡排序>冒泡排序</h2><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/bubbleSort-bubbleSort.png alt></p><p>冒泡排序（Bubble Sort），是一种计算机科学领域的较简单的排序算法。
+它重复地走访过要排序的数列，一次比较两个元素，如果他们的顺序错误就把他们交换过来。走访数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。
+这个算法的名字由来是因为越大的元素会经由交换慢慢“浮”到数列的顶端，故名“冒泡排序”。</p><h2 id=算法原理编辑>算法原理编辑</h2><p>冒泡排序算法的运作如下：（从前往后）
+比较相邻的元素。如果第一个比第二个大，就交换他们两个。
+对每一对相邻元素作同样的工作，从开始第一对到结尾的最后一对。在这一点，最后的元素应该会是最大的数。
+针对所有的元素重复以上的步骤，除了最后一个。
+持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。</p><h2 id=算法实现>算法实现</h2><h3 id=javascript>JavaScript</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>function</span> <span class=nx>bubbleSort</span><span class=p>(</span><span class=nx>arr</span><span class=p>){</span>
+  <span class=k>for</span><span class=p>(</span><span class=kd>let</span> <span class=nx>i</span> <span class=o>=</span> <span class=nx>arr</span><span class=p>.</span><span class=nx>length</span><span class=o>-</span><span class=mi>1</span><span class=p>;</span> <span class=nx>i</span><span class=o>&gt;</span><span class=mi>0</span><span class=p>;</span> <span class=nx>i</span><span class=o>--</span><span class=p>){</span>
+    <span class=k>for</span><span class=p>(</span><span class=kd>let</span> <span class=nx>j</span><span class=o>=</span><span class=mi>0</span><span class=p>;</span> <span class=nx>j</span><span class=o>&lt;</span><span class=nx>i</span><span class=p>;</span> <span class=nx>j</span><span class=o>++</span><span class=p>){</span>
+      <span class=k>if</span><span class=p>(</span><span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=p>]</span> <span class=o>&gt;</span> <span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=o>+</span><span class=mi>1</span><span class=p>]){</span>
+        <span class=p>[</span><span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=p>],</span> <span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=o>+</span><span class=mi>1</span><span class=p>]]</span> <span class=o>=</span> <span class=p>[</span><span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=o>+</span><span class=mi>1</span><span class=p>],</span> <span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=p>]]</span>    <span class=c1>// 利用es6解构语法进行swap
+</span><span class=c1></span>      <span class=p>}</span>
+    <span class=p>}</span>
+  <span class=p>}</span>
+  <span class=k>return</span> <span class=nx>arr</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// 测试
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>arr</span> <span class=o>=</span> <span class=p>[</span><span class=mi>3</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>8</span><span class=p>];</span>
+<span class=kd>var</span> <span class=nx>arrSorted</span> <span class=o>=</span> <span class=nx>bubbleSort</span><span class=p>(</span><span class=nx>arr</span><span class=p>);</span>
+<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>arrSorted</span><span class=p>);</span>
+<span class=c1>// 控制台将输出：[1, 2, 3, 4, 5, 6, 7, 8, 9]
+</span></code></pre></td></tr></table></div></div><h2 id=冒泡算法优化>冒泡算法优化</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>function</span> <span class=nx>bubbleSort</span><span class=p>(</span><span class=nx>arr</span><span class=p>){</span>
+  <span class=kd>let</span> <span class=nx>flag</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
+  <span class=k>for</span><span class=p>(</span><span class=kd>let</span> <span class=nx>i</span><span class=o>=</span><span class=nx>arr</span><span class=p>.</span><span class=nx>length</span><span class=o>-</span><span class=mi>1</span><span class=p>;</span> <span class=nx>flag</span> <span class=o>&amp;&amp;</span> <span class=nx>i</span><span class=o>&gt;</span><span class=mi>0</span><span class=p>;</span> <span class=nx>i</span><span class=o>--</span><span class=p>){</span>
+    <span class=nx>flag</span> <span class=o>=</span> <span class=kc>false</span><span class=p>;</span>    <span class=c1>//只要flag在下一次外循环条件检测的时候值为false，就说明已经排好序，不用继续循环
+</span><span class=c1></span>    <span class=k>for</span><span class=p>(</span><span class=kd>let</span> <span class=nx>j</span><span class=o>=</span><span class=mi>0</span><span class=p>;</span> <span class=nx>j</span><span class=o>&lt;</span><span class=nx>i</span><span class=p>;</span> <span class=nx>j</span><span class=o>++</span><span class=p>){</span>
+      <span class=k>if</span><span class=p>(</span><span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=p>]</span> <span class=o>&gt;</span> <span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=o>+</span><span class=mi>1</span><span class=p>]){</span>
+        <span class=nx>flag</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>    <span class=c1>//如果有交换，就将标记变量赋true
+</span><span class=c1></span>        <span class=p>[</span><span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=p>],</span> <span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=o>+</span><span class=mi>1</span><span class=p>]]</span> <span class=o>=</span> <span class=p>[</span><span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=o>+</span><span class=mi>1</span><span class=p>],</span> <span class=nx>arr</span><span class=p>[</span><span class=nx>j</span><span class=p>]]</span>    <span class=c1>// 利用es6解构语法进行swap
+</span><span class=c1></span>      <span class=p>}</span>
+    <span class=p>}</span>
+  <span class=p>}</span>
+  <span class=k>return</span> <span class=nx>arr</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=c1>// 测试
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>arr</span> <span class=o>=</span> <span class=p>[</span><span class=mi>3</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>8</span><span class=p>];</span>
+<span class=kd>var</span> <span class=nx>arrSorted</span> <span class=o>=</span> <span class=nx>bubbleSort</span><span class=p>(</span><span class=nx>arr</span><span class=p>);</span>
+<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>arrSorted</span><span class=p>);</span>
+<span class=c1>// 控制台将输出：[1, 2, 3, 4, 5, 6, 7, 8, 9]
+</span></code></pre></td></tr></table></div></div></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>

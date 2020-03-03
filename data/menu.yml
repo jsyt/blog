@@ -1,0 +1,8 @@
+- item: Home
+  url: ""
+- item: Category
+  url: categories
+- item: Tag
+  url: tags
+- item: About
+  url: about/

@@ -1,70 +1,38 @@
-title = "GOYTH"
-baseURL = "https://goyth.cn/"
-languageCode = "en-us"
-theme = "ananke"
-footnoteReturnLinkContents = "↩"
+baseurl = "https://goyth.cn/"  # Include trailing slash
+title = "luke's blog"
+theme = "newsroom"
+author = "Luke"
+copyright = "Copyright © 2019, Weru and the Hugo Authors; all rights reserved."
+canonifyurls = true
+paginate = 5
+# Enable syntax highlighting
+# comment or delete lines 11 ~ 14
+pygmentsCodefences = true
+pygmentsCodefencesGuessSyntax = true
+pygmentsUseClasses=true
+pygmentsOptions = "linenos=table"
 
-newContentEditor = "code"
-MetaDataFormat = "yaml"
-DefaultContentLanguage = "en"
-SectionPagesMenu = "main"
-Paginate = 6 # this is set low for demonstrating with dummy content. Set to a higher number
-# googleAnalytics = "UA-159357603-1"
-enableRobotsTXT = true
-# disqusShortname = "goyth"
-show_reading_time = true
+# Alternatively, you can use chroma instead of pigments
+# to do so comment or delete lines 11 ~ 14 and uncomment lines 17 ~ 27
+# [markup]
+#   [markup.highlight]
+#     codeFences = true
+#     guessSyntax = false
+#     hl_Lines = ""
+#     lineNoStart = 1
+#     lineNos = true
+#     lineNumbersInTable = true
+#     noClasses = false
+#     # style = "monokai"
+#     tabWidth = 2
 
-summaryLength = 30
+# If you want to use disqus, uncomment the line below
+# disqusShortname = "yourdiscussshortname"
 
-[sitemap]
-  changefreq = "monthly"
-  priority = 0.5
-  filename = "sitemap.xml"
-
+# ids used below are not valid. Replace with valid ones
 [params]
-  # favicon = "https://pic-x.oss-cn-shanghai.aliyuncs.com/imgs/apple-touch-icon.png"
-  favicon = "https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/favicon-red-bird.png"
-  description = "I hear and I forget, I see and I remember, I do and I understand."
-  facebook = ""
-  twitter = "https://twitter.com/goythz"
-  instagram = ""
-  youtube = ""
-  github = "https://github.com/jsyt"
-  gitlab = ""
-  linkedin = ""
-  mastodon = ""
-  slack = ""
-  stackoverflow = ""
-  # choose a background color from any on this page: http://tachyons.io/docs/themes/skins/ and preface it with "bg-"
-  background_color_class = "bg-black"
-  featured_image = "/images/gohugo-default-sample-hero-image.jpg"
-  recent_posts_number = 5
-  # commentoEnable = true
-  # body_classes = "avenir bg-near-white"
-  post_content_classes = "avenir bg-near-white"
-  # pagination = 5
+  # ga_analytics = "" # google analytics ID e.g UA-116386578-1
 
-  AuthorName = "Luke"
-  GitHubUser = "jsyt"
-  ListOfFoo = ["foo1", "foo2"]
-  SidebarRecentLimit = 5
-  Subtitle = "Hugo is Absurdly Fast!"
+  # ga_verify = "" # google verification code e.g 5jb-rxeBfITeJQKOuUss3ud6FPGTxXkCho-ZN5qlrZg
+  # twitter = "" # twitter handle e.g @weru
 
-[permalinks]
-  posts = "/:year/:month/:day/:filename/"
-
-[taxonomies]
-  category = "categories"
-  tag = "tags"
-
-[markup]
-  [markup.highlight]
-    codeFences = true
-    guessSyntax = false
-    hl_Lines = ""
-    lineNoStart = 1
-    lineNos = false
-    lineNumbersInTable = true
-    noClasses = true
-    style = "dracula"
-    tabWidth = 4

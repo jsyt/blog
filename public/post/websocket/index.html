@@ -1,0 +1,282 @@
+<!doctype html><html lang=en><head><title>Web socket知识点梳理 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="WebSocket知识点梳理"><meta property="og:description" content="什么是WebSocket WebSocket是一种在单个TCP连接上进行全双工通讯的协议。它与HTTP协一样，同属于应用层协议。
+WebSocket解决了什么问题 WebSocket使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在WebSocket API中，浏览器和 …"><meta property="og:url" content="https://goyth.cn/post/websocket/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/websocket/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
+<a href=https://goyth.cn/categories class=nav_item>Category</a>
+<a href=https://goyth.cn/tags class=nav_item>Tag</a>
+<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
+<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">09. July 2018</p><h1 class=post_title>WebSocket知识点梳理</h1><div class=post_body><div class=post_inner><h3 id=什么是websocket>什么是WebSocket</h3><p>WebSocket是一种在单个TCP连接上进行全双工通讯的协议。它与HTTP协一样，同属于应用层协议。</p><h3 id=websocket解决了什么问题>WebSocket解决了什么问题</h3><p>WebSocket使得客户端和服务器之间的数据交换变得更加简单，<strong>允许服务端主动向客户端推送数据</strong>。在WebSocket API中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建<strong>持久性的连接</strong>，并进行<strong>双向数据传输</strong>。
+简单说就是解决了浏览器和服务器之间双向数据传输的问题。</p><h3 id=http协议可以实现双向数据传输吗>HTTP协议可以实现双向数据传输吗</h3><p>答案肯定是可以的，在HTTP协议中我们通常使用<strong>轮询</strong>来实现双向通信。
+轮询是通过在特定的的时间间隔（如每1秒），由浏览器对服务器发出HTTP请求，然后由服务器返回最新的数据给客户端的浏览器。这种传统的模式带来很明显的缺点，即浏览器需要不断的向服务器发出请求，然而HTTP请求可能包含较长的头部，其中真正有效的数据可能只是很小的一部分，显然这样会浪费很多的带宽等资源。</p><h3 id=http11长连接与websocket长连接有什么区别>HTTP1.1长连接与WebSocket长连接有什么区别</h3><p>HTTP1.1默认启用"Connection: Keep-Alive&rdquo;，使得在发送完http请求和应答后，不会立刻将连接关闭，在后续的http请求和应答可以继续使用这个连接，避免创建新的TCP连接时三次握手及断开连接时四次挥手的额外消耗。这个keep-alive一般会有固定的时间限制。如Apache是5s，而nginx默认是75s，超过这个时间服务器就会主动把TCP连接关闭了，因为不关闭的话会有大量的TCP连接占用系统资源。所以这个keep-alive并不是为了长连接设计的，只是为了提高http请求的效率。而WebSocket长连接的关闭可以由通过调用相应的API，主动控制。
+HTTP1.1长连接是无状态的，每一个请求对应一个应答，并且每个请求和应答里面都包含了完整的头部信息；而WebSocket长连接是有状态的，在建立连接后，WebSocket只用携带少量头部字段信息（如数据包长度、掩码），不用携带状态信息。</p><h3 id=websocket的优点>WebSocket的优点</h3><ul><li>较少的控制开销。在连接创建后，服务器和客户端之间交换数据时，用于协议控制的数据包头部相对较小。在不包含扩展的情况下，对于服务器到客户端的内容，此头部大小只有2至10字节（和数据包长度有关）；对于客户端到服务器的内容，此头部还需要加上额外的4字节的掩码。相对于HTTP请求每次都要携带完整的头部，此项开销显著减少了。</li><li>更强的实时性。由于协议是全双工的，所以服务器可以随时主动给客户端下发数据。相对于HTTP请求需要等待客户端发起请求服务端才能响应，延迟明显更少；即使是和Comet等类似的长轮询比较，其也能在短时间内更多次地传递数据。</li><li>保持连接状态。与HTTP不同的是，Websocket需要先创建连接，这就使得其成为一种有状态的协议，之后通信时可以省略部分状态信息。而HTTP请求可能需要在每个请求都携带状态信息（如身份认证等）。</li><li>更好的二进制支持。Websocket定义了二进制帧，相对HTTP，可以更轻松地处理二进制内容。</li><li>可以支持扩展。Websocket定义了扩展，用户可以扩展协议、实现部分自定义的子协议。如部分浏览器支持压缩等。</li><li>更好的压缩效果。相对于HTTP压缩，Websocket在适当的扩展支持下，可以沿用之前内容的上下文，在传递类似的数据时，可以显著地提高压缩率。</li></ul><h3 id=websocket兼容性情况>WebSocket兼容性情况</h3><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/webSocket-ws01.png alt></p><h3 id=websocket握手协议>WebSocket握手协议</h3><p>WebSocket 是独立的、创建在 TCP 上的协议。</p><p>Websocket 通过 HTTP/1.1 协议的101状态码进行握手。</p><p>为了创建Websocket连接，需要通过浏览器发出请求，之后服务器进行回应，这个过程通常称为“握手”（handshaking）。</p><h4 id=例子>例子</h4><p>一个典型的Websocket握手请求如下：</p><p>客户端请求</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>GET</span> <span class=o>/</span> <span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span>
+<span class=nx>Upgrade</span><span class=o>:</span> <span class=nx>websocket</span>
+<span class=nx>Connection</span><span class=o>:</span> <span class=nx>Upgrade</span>
+<span class=nx>Host</span><span class=o>:</span> <span class=nx>example</span><span class=p>.</span><span class=nx>com</span>
+<span class=nx>Origin</span><span class=o>:</span> <span class=nx>http</span><span class=o>:</span><span class=c1>//example.com
+</span><span class=c1></span><span class=nx>Sec</span><span class=o>-</span><span class=nx>WebSocket</span><span class=o>-</span><span class=nx>Key</span><span class=o>:</span> <span class=nx>sN9cRrP</span><span class=o>/</span><span class=nx>n9NdMgdcy2VJFQ</span><span class=o>==</span>
+<span class=nx>Sec</span><span class=o>-</span><span class=nx>WebSocket</span><span class=o>-</span><span class=nx>Version</span><span class=o>:</span> <span class=mi>13</span>
+</code></pre></td></tr></table></div></div><p>服务器回应</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>101</span> <span class=nx>Switching</span> <span class=nx>Protocols</span>
+<span class=nx>Upgrade</span><span class=o>:</span> <span class=nx>websocket</span>
+<span class=nx>Connection</span><span class=o>:</span> <span class=nx>Upgrade</span>
+<span class=nx>Sec</span><span class=o>-</span><span class=nx>WebSocket</span><span class=o>-</span><span class=nx>Accept</span><span class=o>:</span> <span class=nx>fFBooB7FAkLlXgRSz0BT3v4hq5s</span><span class=o>=</span>
+<span class=nx>Sec</span><span class=o>-</span><span class=nx>WebSocket</span><span class=o>-</span><span class=nx>Location</span><span class=o>:</span> <span class=nx>ws</span><span class=o>:</span><span class=c1>//example.com/
+</span></code></pre></td></tr></table></div></div><h4 id=字段说明>字段说明</h4><ul><li>Connection必须设置Upgrade，表示客户端希望连接升级。</li><li>Upgrade字段必须设置Websocket，表示希望升级到Websocket协议。</li><li>Sec-WebSocket-Key是随机的字符串，服务器端会用这些数据来构造出一个SHA-1的信息摘要。把“Sec-WebSocket-Key”加上一个特殊字符串“258EAFA5-E914-47DA-95CA-C5AB0DC85B11”，然后计算SHA-1摘要，之后进行BASE-64编码，将结果做为“Sec-WebSocket-Accept”头的值，返回给客户端。如此操作，可以尽量避免普通HTTP请求被误认为Websocket协议。</li><li>Sec-WebSocket-Version 表示支持的Websocket版本。RFC6455要求使用的版本是13，之前草案的版本均应当弃用。</li><li>Origin字段是可选的，通常用来表示在浏览器中发起此Websocket连接所在的页面，类似于Referer。但是，与Referer不同的是，Origin只包含了协议和主机名称。</li><li>其他一些定义在HTTP协议中的字段，如Cookie等，也可以在Websocket中使用。</li></ul><h3 id=帧协议>帧协议</h3><p>客户端、服务端数据的交换，离不开数据帧格式的定义。因此，在实际讲解数据交换之前，我们先来看下WebSocket的数据帧格式。</p><p>WebSocket客户端、服务端通信的最小单位是帧（frame），由1个或多个帧组成一条完整的消息（message）。</p><p>发送端：将消息切割成多个帧，并发送给服务端；
+接收端：接收消息帧，并将关联的帧重新组装成完整的消息；
+本节的重点，就是讲解数据帧的格式。详细定义可参考 <a href=https://tools.ietf.org/html/rfc6455#section-5.2>RFC6455 5.2节</a> 。
+<img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/webSocket-ws02.webp alt></p><p><strong>FIN</strong>：1个比特。</p><p>如果是1，表示这是消息（message）的最后一个分片（fragment），如果是0，表示不是是消息（message）的最后一个分片（fragment）。</p><p><strong>RSV1, RSV2, RSV3</strong>：各占1个比特。</p><p>一般情况下全为0。当客户端、服务端协商采用WebSocket扩展时，这三个标志位可以非0，且值的含义由扩展进行定义。如果出现非零的值，且并没有采用WebSocket扩展，连接出错。</p><p><strong>Opcode</strong>: 4个比特。</p><p>操作代码，Opcode的值决定了应该如何解析后续的数据载荷（data payload）。如果操作代码是不认识的，那么接收端应该断开连接（fail the connection）。可选的操作代码如下：</p><ul><li>%x0：表示一个延续帧。当Opcode为0时，表示本次数据传输采用了数据分片，当前收到的数据帧为其中一个数据分片。</li><li>%x1：表示这是一个文本帧（frame）</li><li>%x2：表示这是一个二进制帧（frame）</li><li>%x3-7：保留的操作代码，用于后续定义的非控制帧。</li><li>%x8：表示连接断开。</li><li>%x9：表示这是一个ping操作。</li><li>%xA：表示这是一个pong操作。</li><li>%xB-F：保留的操作代码，用于后续定义的控制帧。</li></ul><p><strong>Mask</strong>: 1个比特。</p><p>表示是否要对数据载荷进行掩码操作。从客户端向服务端发送数据时，需要对数据进行掩码操作；从服务端向客户端发送数据时，不需要对数据进行掩码操作。</p><p>如果服务端接收到的数据没有进行过掩码操作，服务端需要断开连接。</p><p>如果Mask是1，那么在Masking-key中会定义一个掩码键（masking key），并用这个掩码键来对数据载荷进行反掩码。所有客户端发送到服务端的数据帧，Mask都是1。</p><p>掩码的算法、用途在下一小节讲解。</p><p><strong>Payload length</strong>：数据载荷的长度，单位是字节。为7位，或7+16位，或1+64位。</p><p>假设数Payload length === x，如果</p><ul><li>x为0~126：数据的长度为x字节。</li><li>x为126：后续2个字节代表一个16位的无符号整数，该无符号整数的值为数据的长度。</li><li>x为127：后续8个字节代表一个64位的无符号整数（最高位为0），该无符号整数的值为数据的长度。</li></ul><p>此外，如果payload length占用了多个字节的话，payload length的二进制表达采用网络序（big endian，重要的位在前）。</p><p><strong>Masking-key</strong>：0或4字节（32位）</p><p>所有从客户端传送到服务端的数据帧，数据载荷都进行了掩码操作，Mask为1，且携带了4字节的Masking-key。如果Mask为0，则没有Masking-key。</p><p>备注：载荷数据的长度，不包括mask key的长度。</p><p><strong>Payload data</strong>：(x+y) 字节</p><p>载荷数据：包括了扩展数据、应用数据。其中，扩展数据x字节，应用数据y字节。</p><p>扩展数据：如果没有协商使用扩展的话，扩展数据数据为0字节。所有的扩展都必须声明扩展数据的长度，或者可以如何计算出扩展数据的长度。此外，扩展如何使用必须在握手阶段就协商好。如果扩展数据存在，那么载荷数据长度必须将扩展数据的长度包含在内。</p><p>应用数据：任意的应用数据，在扩展数据之后（如果存在扩展数据），占据了数据帧剩余的位置。载荷数据长度 减去 扩展数据长度，就得到应用数据的长度。</p><h4 id=掩码算法>掩码算法</h4><p>掩码键（Masking-key）是由客户端挑选出来的32位的随机数。掩码操作不会影响数据载荷的长度。掩码、反掩码操作都采用如下算法：</p><p>首先，假设：</p><ul><li>original-octet-i：为原始数据的第i字节。</li><li>transformed-octet-i：为转换后的数据的第i字节。</li><li>j：为i mod 4的结果。</li><li>masking-key-octet-j：为mask key第j字节。</li><li></li></ul><p>算法描述为： original-octet-i 与 masking-key-octet-j 异或后，得到 transformed-octet-i。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>j</span> <span class=o>=</span> <span class=nx>i</span> <span class=nx>MOD</span> <span class=mi>4</span>
+<span class=nx>transformed</span><span class=o>-</span><span class=nx>octet</span><span class=o>-</span><span class=nx>i</span> <span class=o>=</span> <span class=nx>original</span><span class=o>-</span><span class=nx>octet</span><span class=o>-</span><span class=nx>i</span> <span class=nx>XOR</span> <span class=nx>masking</span><span class=o>-</span><span class=nx>key</span><span class=o>-</span><span class=nx>octet</span><span class=o>-</span><span class=nx>j</span>
+</code></pre></td></tr></table></div></div><h4 id=数据掩码的作用>数据掩码的作用</h4><p>WebSocket协议中，数据掩码的作用是增强协议的安全性。但数据掩码并不是为了保护数据本身，因为算法本身是公开的，运算也不复杂。除了加密通道本身，似乎没有太多有效的保护通信安全的办法。</p><p>那么为什么还要引入掩码计算呢，除了增加计算机器的运算量外似乎并没有太多的收益（这也是不少同学疑惑的点）。</p><p>答案还是两个字：安全。但并不是为了防止数据泄密，而是为了防止早期版本的协议中存在的代理缓存污染攻击（proxy cache poisoning attacks）等问题。</p><h4 id=跳动检测>跳动检测</h4><p>在握手之后的任何时候，客户端或者服务器都可以选择向对方发送 ping 帧。 当收到一个 ping 帧，收件人必须尽快发回一个 pong 帧。 这是一次跳动。 你可以使用它来确保客户端保持着连接。</p><p>ping 帧或 pong 帧只是一个常规的帧，但它是一个控制帧。 ping 帧具有 0x9 的操作码，并且 pong 帧具有 0xA 的操作码。 当你得到一个 ping 帧，发回一个 pong 帧与 ping 帧完全相同的有效载荷数据（对于 pings 和 pongs ，最大有效载荷长度是 125 ）。 你也可能会得到一个 pong 帧返回，而无需再发送一个 ping 帧。如果它发生就忽略它。</p><p>跳动检测可能是非常有用的。 有些服务（如负载均衡器）会终止空闲连接。 另外，接收方无法查看远端是否已经终止。 只有在下一个发送时你会意识到出了问题。</p><h4 id=sec-websocket-keyaccept的作用>Sec-WebSocket-Key/Accept的作用</h4><p>前面提到了，<code>Sec-WebSocket-Key/Sec-WebSocket-Accept</code>在主要作用在于提供基础的防护，减少恶意连接、意外连接。</p><p>作用大致归纳如下：</p><ul><li>避免服务端收到非法的websocket连接（比如http客户端不小心请求连接websocket服务，此时服务端可以直接拒绝连接）</li><li>确保服务端理解websocket连接。因为ws握手阶段采用的是http协议，因此可能ws连接是被一个http服务器处理并返回的，此时客户端可以通过Sec-WebSocket-Key来确保服务端认识ws协议。（并非百分百保险，比如总是存在那么些无聊的http服务器，光处理Sec-WebSocket-Key，但并没有实现ws协议。。。）</li><li>用浏览器里发起ajax请求，设置header时，Sec-WebSocket-Key以及其他相关的header是被禁止的。这样可以避免客户端发送ajax请求时，意外请求协议升级（websocket upgrade）</li><li>可以防止反向代理（不理解ws协议）返回错误的数据。比如反向代理前后收到两次ws连接的升级请求，反向代理把第一次请求的返回给cache住，然后第二次请求到来时直接把cache住的请求给返回（无意义的返回）。</li><li>Sec-WebSocket-Key主要目的并不是确保数据的安全性，因为Sec-WebSocket-Key、Sec-WebSocket-Accept的转换计算公式是公开的，而且非常简单，最主要的作用是预防一些常见的意外情况（非故意的）。</li></ul><p><strong>强调：Sec-WebSocket-Key/Sec-WebSocket-Accept 的换算，只能带来基本的保障，但连接是否安全、数据是否安全、客户端/服务端是否合法的 ws客户端、ws服务端，其实并没有实际性的保证。</strong></p><h4 id=数据传递>数据传递</h4><p>一旦WebSocket客户端、服务端建立连接后，后续的操作都是基于数据帧的传递。</p><p>WebSocket根据<code>opcode</code>来区分操作的类型。比如<code>0x8</code>表示断开连接，<code>0x0</code>-<code>0x2</code>表示数据交互。</p><h5 id=1数据分片>1、数据分片</h5><p>WebSocket的每条消息可能被切分成多个数据帧。当WebSocket的接收方收到一个数据帧时，会根据<code>FIN</code>的值来判断，是否已经收到消息的最后一个数据帧。</p><p>FIN=1表示当前数据帧为消息的最后一个数据帧，此时接收方已经收到完整的消息，可以对消息进行处理。FIN=0，则接收方还需要继续监听接收其余的数据帧。</p><p>此外，<code>opcode</code>在数据交换的场景下，表示的是数据的类型。<code>0x01</code>表示文本，<code>0x02</code>表示二进制。而<code>0x00</code>比较特殊，表示延续帧（continuation frame），顾名思义，就是完整消息对应的数据帧还没接收完。</p><h5 id=2数据分片例子>2、数据分片例子</h5><p>直接看例子更形象些。下面例子来自<a href=https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers>MDN</a>，可以很好地演示数据的分片。客户端向服务端两次发送消息，服务端收到消息后回应客户端，这里主要看客户端往服务端发送的消息。</p><p><strong>第一条消息</strong></p><p>FIN=1, 表示是当前消息的最后一个数据帧。服务端收到当前数据帧后，可以处理消息。opcode=0x1，表示客户端发送的是文本类型。</p><p><strong>第二条消息</strong></p><ol><li>FIN=0，opcode=0x1，表示发送的是文本类型，且消息还没发送完成，还有后续的数据帧。</li><li>FIN=0，opcode=0x0，表示消息还没发送完成，还有后续的数据帧，当前的数据帧需要接在上一条数据帧之后。</li><li>FIN=1，opcode=0x0，表示消息已经发送完成，没有后续的数据帧，当前的数据帧需要接在上一条数据帧之后。服务端可以将关联的数据帧组装成完整的消息。</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>Client</span><span class=o>:</span> <span class=nx>FIN</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=nx>opcode</span><span class=o>=</span><span class=mh>0x1</span><span class=p>,</span> <span class=nx>msg</span><span class=o>=</span><span class=s2>&#34;hello&#34;</span>
+<span class=nx>Server</span><span class=o>:</span> <span class=p>(</span><span class=nx>process</span> <span class=nx>complete</span> <span class=nx>message</span> <span class=nx>immediately</span><span class=p>)</span> <span class=nx>Hi</span><span class=p>.</span>
+<span class=nx>Client</span><span class=o>:</span> <span class=nx>FIN</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span> <span class=nx>opcode</span><span class=o>=</span><span class=mh>0x1</span><span class=p>,</span> <span class=nx>msg</span><span class=o>=</span><span class=s2>&#34;and a&#34;</span>
+<span class=nx>Server</span><span class=o>:</span> <span class=p>(</span><span class=nx>listening</span><span class=p>,</span> <span class=k>new</span> <span class=nx>message</span> <span class=nx>containing</span> <span class=nx>text</span> <span class=nx>started</span><span class=p>)</span>
+<span class=nx>Client</span><span class=o>:</span> <span class=nx>FIN</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span> <span class=nx>opcode</span><span class=o>=</span><span class=mh>0x0</span><span class=p>,</span> <span class=nx>msg</span><span class=o>=</span><span class=s2>&#34;happy new&#34;</span>
+<span class=nx>Server</span><span class=o>:</span> <span class=p>(</span><span class=nx>listening</span><span class=p>,</span> <span class=nx>payload</span> <span class=nx>concatenated</span> <span class=nx>to</span> <span class=nx>previous</span> <span class=nx>message</span><span class=p>)</span>
+<span class=nx>Client</span><span class=o>:</span> <span class=nx>FIN</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=nx>opcode</span><span class=o>=</span><span class=mh>0x0</span><span class=p>,</span> <span class=nx>msg</span><span class=o>=</span><span class=s2>&#34;year!&#34;</span>
+<span class=nx>Server</span><span class=o>:</span> <span class=p>(</span><span class=nx>process</span> <span class=nx>complete</span> <span class=nx>message</span><span class=p>)</span> <span class=nx>Happy</span> <span class=k>new</span> <span class=nx>year</span> <span class=nx>to</span> <span class=nx>you</span> <span class=nx>too</span><span class=o>!</span>
+</code></pre></td></tr></table></div></div><h3 id=websocket-api>Websocket API</h3><h4 id=websocket-的用法示例>WebSocket 的用法示例</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>var</span> <span class=nx>ws</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>WebSocket</span><span class=p>(</span><span class=s2>&#34;wss://echo.websocket.org&#34;</span><span class=p>);</span>
+
+<span class=nx>ws</span><span class=p>.</span><span class=nx>onopen</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>evt</span><span class=p>)</span> <span class=p>{</span>
+  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s2>&#34;Connection open ...&#34;</span><span class=p>);</span>
+  <span class=nx>ws</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=s2>&#34;Hello WebSockets!&#34;</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=nx>ws</span><span class=p>.</span><span class=nx>onmessage</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>evt</span><span class=p>)</span> <span class=p>{</span>
+  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=s2>&#34;Received Message: &#34;</span> <span class=o>+</span> <span class=nx>evt</span><span class=p>.</span><span class=nx>data</span><span class=p>);</span>
+  <span class=nx>ws</span><span class=p>.</span><span class=nx>close</span><span class=p>();</span>
+<span class=p>};</span>
+
+<span class=nx>ws</span><span class=p>.</span><span class=nx>onclose</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>evt</span><span class=p>)</span> <span class=p>{</span>
+  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s2>&#34;Connection closed.&#34;</span><span class=p>);</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><h4 id=websocket-构造函数>WebSocket 构造函数</h4><p>WebSocket 对象作为一个构造函数，用于新建 WebSocket 实例。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>var</span> <span class=nx>ws</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>WebSocket</span><span class=p>(</span><span class=s1>&#39;ws://localhost:8080&#39;</span><span class=p>);</span>
+</code></pre></td></tr></table></div></div><p>执行上面语句之后，客户端就会与服务器进行连接。</p><p>实例对象的所有属性和方法清单，参见这里。</p><h4 id=websocketreadystate>webSocket.readyState</h4><p>readyState属性返回实例对象的当前状态，共有四种。</p><ul><li>CONNECTING：值为0，表示正在连接。</li><li>OPEN：值为1，表示连接成功，可以通信了。</li><li>CLOSING：值为2，表示连接正在关闭。</li><li>CLOSED：值为3，表示连接已经关闭，或者打开连接失败。</li></ul><p>下面是一个示例。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=k>switch</span> <span class=p>(</span><span class=nx>ws</span><span class=p>.</span><span class=nx>readyState</span><span class=p>)</span> <span class=p>{</span>
+  <span class=k>case</span> <span class=nx>WebSocket</span><span class=p>.</span><span class=nx>CONNECTING</span><span class=o>:</span>
+    <span class=c1>// do something
+</span><span class=c1></span>    <span class=k>break</span><span class=p>;</span>
+  <span class=k>case</span> <span class=nx>WebSocket</span><span class=p>.</span><span class=nx>OPEN</span><span class=o>:</span>
+    <span class=c1>// do something
+</span><span class=c1></span>    <span class=k>break</span><span class=p>;</span>
+  <span class=k>case</span> <span class=nx>WebSocket</span><span class=p>.</span><span class=nx>CLOSING</span><span class=o>:</span>
+    <span class=c1>// do something
+</span><span class=c1></span>    <span class=k>break</span><span class=p>;</span>
+  <span class=k>case</span> <span class=nx>WebSocket</span><span class=p>.</span><span class=nx>CLOSED</span><span class=o>:</span>
+    <span class=c1>// do something
+</span><span class=c1></span>    <span class=k>break</span><span class=p>;</span>
+  <span class=k>default</span><span class=o>:</span>
+    <span class=c1>// this never happens
+</span><span class=c1></span>    <span class=k>break</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=websocketonopen>webSocket.onopen</h4><p>实例对象的onopen属性，用于指定连接成功后的回调函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>ws</span><span class=p>.</span><span class=nx>onopen</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>()</span> <span class=p>{</span>
+  <span class=nx>ws</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=s1>&#39;Hello Server!&#39;</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>如果要指定多个回调函数，可以使用addEventListener方法。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>ws</span><span class=p>.</span><span class=nx>addEventListener</span><span class=p>(</span><span class=s1>&#39;open&#39;</span><span class=p>,</span> <span class=kd>function</span> <span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>{</span>
+  <span class=nx>ws</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=s1>&#39;Hello Server!&#39;</span><span class=p>);</span>
+<span class=p>});</span>
+</code></pre></td></tr></table></div></div><h4 id=websocketonclose>webSocket.onclose</h4><p>实例对象的onclose属性，用于指定连接关闭后的回调函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>ws</span><span class=p>.</span><span class=nx>onclose</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>{</span>
+  <span class=kd>var</span> <span class=nx>code</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>code</span><span class=p>;</span>
+  <span class=kd>var</span> <span class=nx>reason</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>reason</span><span class=p>;</span>
+  <span class=kd>var</span> <span class=nx>wasClean</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>wasClean</span><span class=p>;</span>
+  <span class=c1>// handle close event
+</span><span class=c1></span><span class=p>};</span>
+
+<span class=nx>ws</span><span class=p>.</span><span class=nx>addEventListener</span><span class=p>(</span><span class=s2>&#34;close&#34;</span><span class=p>,</span> <span class=kd>function</span><span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>{</span>
+  <span class=kd>var</span> <span class=nx>code</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>code</span><span class=p>;</span>
+  <span class=kd>var</span> <span class=nx>reason</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>reason</span><span class=p>;</span>
+  <span class=kd>var</span> <span class=nx>wasClean</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>wasClean</span><span class=p>;</span>
+  <span class=c1>// handle close event
+</span><span class=c1></span><span class=p>});</span>
+</code></pre></td></tr></table></div></div><h4 id=websocketonmessage>webSocket.onmessage</h4><p>实例对象的onmessage属性，用于指定收到服务器数据后的回调函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>ws</span><span class=p>.</span><span class=nx>onmessage</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>{</span>
+  <span class=kd>var</span> <span class=nx>data</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>data</span><span class=p>;</span>
+  <span class=c1>// 处理数据
+</span><span class=c1></span><span class=p>};</span>
+
+<span class=nx>ws</span><span class=p>.</span><span class=nx>addEventListener</span><span class=p>(</span><span class=s2>&#34;message&#34;</span><span class=p>,</span> <span class=kd>function</span><span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>{</span>
+  <span class=kd>var</span> <span class=nx>data</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>data</span><span class=p>;</span>
+  <span class=c1>// 处理数据
+</span><span class=c1></span><span class=p>});</span>
+</code></pre></td></tr></table></div></div><p>注意，服务器数据可能是文本，也可能是二进制数据（blob对象或Arraybuffer对象）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>ws</span><span class=p>.</span><span class=nx>onmessage</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>event</span><span class=p>){</span>
+  <span class=k>if</span><span class=p>(</span><span class=k>typeof</span> <span class=nx>event</span><span class=p>.</span><span class=nx>data</span> <span class=o>===</span> <span class=nb>String</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s2>&#34;Received data string&#34;</span><span class=p>);</span>
+  <span class=p>}</span>
+
+  <span class=k>if</span><span class=p>(</span><span class=nx>event</span><span class=p>.</span><span class=nx>data</span> <span class=k>instanceof</span> <span class=nx>ArrayBuffer</span><span class=p>){</span>
+    <span class=kd>var</span> <span class=nx>buffer</span> <span class=o>=</span> <span class=nx>event</span><span class=p>.</span><span class=nx>data</span><span class=p>;</span>
+    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s2>&#34;Received arraybuffer&#34;</span><span class=p>);</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>除了动态判断收到的数据类型，也可以使用binaryType属性，显式指定收到的二进制数据类型。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=c1>// 收到的是 blob 数据
+</span><span class=c1></span><span class=nx>ws</span><span class=p>.</span><span class=nx>binaryType</span> <span class=o>=</span> <span class=s2>&#34;blob&#34;</span><span class=p>;</span>
+<span class=nx>ws</span><span class=p>.</span><span class=nx>onmessage</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
+  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>e</span><span class=p>.</span><span class=nx>data</span><span class=p>.</span><span class=nx>size</span><span class=p>);</span>
+<span class=p>};</span>
+
+<span class=c1>// 收到的是 ArrayBuffer 数据
+</span><span class=c1></span><span class=nx>ws</span><span class=p>.</span><span class=nx>binaryType</span> <span class=o>=</span> <span class=s2>&#34;arraybuffer&#34;</span><span class=p>;</span>
+<span class=nx>ws</span><span class=p>.</span><span class=nx>onmessage</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
+  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>e</span><span class=p>.</span><span class=nx>data</span><span class=p>.</span><span class=nx>byteLength</span><span class=p>);</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><h4 id=websocketsend>webSocket.send()</h4><p>实例对象的send()方法用于向服务器发送数据。</p><p>发送文本的例子。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>ws</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=s1>&#39;your message&#39;</span><span class=p>);</span>
+</code></pre></td></tr></table></div></div><p>发送 Blob 对象的例子。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>var</span> <span class=nx>file</span> <span class=o>=</span> <span class=nb>document</span>
+  <span class=p>.</span><span class=nx>querySelector</span><span class=p>(</span><span class=s1>&#39;input[type=&#34;file&#34;]&#39;</span><span class=p>)</span>
+  <span class=p>.</span><span class=nx>files</span><span class=p>[</span><span class=mi>0</span><span class=p>];</span>
+<span class=nx>ws</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=nx>file</span><span class=p>);</span>
+</code></pre></td></tr></table></div></div><p>发送 ArrayBuffer 对象的例子。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=c1>// Sending canvas ImageData as ArrayBuffer
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>img</span> <span class=o>=</span> <span class=nx>canvas_context</span><span class=p>.</span><span class=nx>getImageData</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>400</span><span class=p>,</span> <span class=mi>320</span><span class=p>);</span>
+<span class=kd>var</span> <span class=nx>binary</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Uint8Array</span><span class=p>(</span><span class=nx>img</span><span class=p>.</span><span class=nx>data</span><span class=p>.</span><span class=nx>length</span><span class=p>);</span>
+<span class=k>for</span> <span class=p>(</span><span class=kd>var</span> <span class=nx>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;</span> <span class=nx>img</span><span class=p>.</span><span class=nx>data</span><span class=p>.</span><span class=nx>length</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+  <span class=nx>binary</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>=</span> <span class=nx>img</span><span class=p>.</span><span class=nx>data</span><span class=p>[</span><span class=nx>i</span><span class=p>];</span>
+<span class=p>}</span>
+<span class=nx>ws</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=nx>binary</span><span class=p>.</span><span class=nx>buffer</span><span class=p>);</span>
+</code></pre></td></tr></table></div></div><h4 id=websocketbufferedamount>webSocket.bufferedAmount</h4><p>实例对象的bufferedAmount属性，表示还有多少字节的二进制数据没有发送出去。它可以用来判断发送是否结束。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>var</span> <span class=nx>data</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>ArrayBuffer</span><span class=p>(</span><span class=mi>10000000</span><span class=p>);</span>
+<span class=nx>socket</span><span class=p>.</span><span class=nx>send</span><span class=p>(</span><span class=nx>data</span><span class=p>);</span>
+
+<span class=k>if</span> <span class=p>(</span><span class=nx>socket</span><span class=p>.</span><span class=nx>bufferedAmount</span> <span class=o>===</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+  <span class=c1>// 发送完毕
+</span><span class=c1></span><span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+  <span class=c1>// 发送还没结束
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table></div></div><h4 id=websocketonerror>webSocket.onerror</h4><p>实例对象的onerror属性，用于指定报错时的回调函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>socket</span><span class=p>.</span><span class=nx>onerror</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>{</span>
+  <span class=c1>// handle error event
+</span><span class=c1></span><span class=p>};</span>
+
+<span class=nx>socket</span><span class=p>.</span><span class=nx>addEventListener</span><span class=p>(</span><span class=s2>&#34;error&#34;</span><span class=p>,</span> <span class=kd>function</span><span class=p>(</span><span class=nx>event</span><span class=p>)</span> <span class=p>{</span>
+  <span class=c1>// handle error event
+</span><span class=c1></span><span class=p>});</span>
+</code></pre></td></tr></table></div></div><hr><p><em>参考链接：
+<a href=https://zh.wikipedia.org/zh-cn/WebSocket>https://zh.wikipedia.org/zh-cn/WebSocket</a>
+<a href=https://juejin.im/post/5b0a31f851882538bb0cfae2>https://juejin.im/post/5b0a31f851882538bb0cfae2</a>
+<a href="https://cloud.tencent.com/document/product/214/4150?fromSource=gwzcw.93403.93403.93403">https://cloud.tencent.com/document/product/214/4150?fromSource=gwzcw.93403.93403.93403</a>
+<a href=https://www.cnblogs.com/chyingp/p/websocket-deep-in.html>https://www.cnblogs.com/chyingp/p/websocket-deep-in.html</a>
+<a href=https://www.zhihu.com/question/20215561>https://www.zhihu.com/question/20215561</a>
+<a href=https://mp.weixin.qq.com/s/7aXMdnajINt0C5dcJy2USg>https://mp.weixin.qq.com/s/7aXMdnajINt0C5dcJy2USg</a>
+<a href=https://www.oschina.net/translate/how-does-javascript-actually-work-part-5>https://www.oschina.net/translate/how-does-javascript-actually-work-part-5</a>
+<a href=http://www.ruanyifeng.com/blog/2017/05/websocket.html>http://www.ruanyifeng.com/blog/2017/05/websocket.html</a></em></p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
