@@ -1,1 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Router on luke's blog</title><link>https://goyth.cn/tags/router/</link><description>Recent content in Router on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><lastBuildDate>Sat, 25 May 2019 21:53:54 +0800</lastBuildDate><atom:link href="https://goyth.cn/tags/router/index.xml" rel="self" type="application/rss+xml"/><item><title>单页面（SPA）路由实现原理</title><link>https://goyth.cn/post/sparouter/</link><pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/sparouter/</guid><description>什么是单页面应用 ? 单页面应用（SPA）即single page application，目前在前后端分离的项目中，一般都是采用 SPA 的模式，整个应用只有一个 html 页面。后端接口只负责提供数据，而页面路由则需要前端自己完成。单页面应用的优势：1. 减少 http 请求数，降低服务器压力；2. 有利于前后端分离；3. 页面流畅度更高，用户体验更加友好。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Router on luke&#39;s blog</title>
+    <link>https://goyth.cn/tags/router/</link>
+    <description>Recent content in Router on luke&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
+    <lastBuildDate>Sat, 25 May 2019 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/tags/router/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>单页面（SPA）路由实现原理</title>
+      <link>https://goyth.cn/post/sparouter/</link>
+      <pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/sparouter/</guid>
+      <description>什么是单页面应用 ? 单页面应用（SPA）即single page application，目前在前后端分离的项目中，一般都是采用 SPA 的模式，整个应用只有一个 html 页面。后端接口只负责提供数据，而页面路由则需要前端自己完成。单页面应用的优势：1. 减少 http 请求数，降低服务器压力；2. 有利于前后端分离；3. 页面流畅度更高，用户体验更加友好。</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,360 +1,964 @@
-<!doctype html><html lang=en><head><title>Mongo d b 知识点梳理(二) | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="MongoDB 知识点梳理(二)"><meta property="og:description" content="MongoDB通过配置项启动数据库 启动服务器 1  mongod --config mongo.conf   启动客户端 1  mongo --port 50000      参数 含义     &ndash;dbpath 指定数据库文件的目录   &ndash;port 端口 默认是27017 …"><meta property="og:url" content="https://goyth.cn/post/mongodb2/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/mongodb2/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
-<a href=https://goyth.cn/categories class=nav_item>Category</a>
-<a href=https://goyth.cn/tags class=nav_item>Tag</a>
-<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
-<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">13. October 2018</p><h1 class=post_title>MongoDB 知识点梳理(二)</h1><div class=post_body><div class=post_inner><h3 id=mongodb通过配置项启动数据库>MongoDB通过配置项启动数据库</h3><h4 id=启动服务器>启动服务器</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>mongod --config mongo.conf
-</code></pre></td></tr></table></div></div><h4 id=启动客户端>启动客户端</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>mongo --port <span class=m>50000</span>
-</code></pre></td></tr></table></div></div><table><thead><tr><th align=center>参数</th><th align=center>含义</th></tr></thead><tbody><tr><td align=center>&ndash;dbpath</td><td align=center>指定数据库文件的目录</td></tr><tr><td align=center>&ndash;port</td><td align=center>端口 默认是27017 28017</td></tr><tr><td align=center>&ndash;fork</td><td align=center>以后台守护的方式进行启动</td></tr><tr><td align=center>&ndash;logpath</td><td align=center>指定日志文件输出路径</td></tr><tr><td align=center>&ndash;config</td><td align=center>指定一个配置文件</td></tr><tr><td align=center>&ndash;auth</td><td align=center>以安全方式启动数据库，默认不验证</td></tr></tbody></table><h4 id=mongoconf>mongo.conf</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=nv>dbpath</span><span class=o>=</span>/Users/demon/coding/mongo/data
-<span class=nv>logpath</span><span class=o>=</span>/Users/demon/coding/mongo/log
-<span class=nv>port</span><span class=o>=</span><span class=m>50000</span>
-</code></pre></td></tr></table></div></div><h3 id=导入导出数据>导入导出数据</h3><p>这命令是保存成了文件格式</p><ul><li>mongoimport 导出数据</li><li>mongoexport 导入数据</li></ul><table><thead><tr><th align=center>参数</th><th align=center>含义</th><th></th></tr></thead><tbody><tr><td align=center>-h</td><td align=center>[ &ndash;host ] 连接的数据库</td><td></td></tr><tr><td align=center>&ndash;port</td><td align=center>端口号</td><td></td></tr><tr><td align=center>-u</td><td align=center>用户名</td><td></td></tr><tr><td align=center>-p</td><td align=center>密码</td><td></td></tr><tr><td align=center>-d</td><td align=center>导出的数据库</td><td></td></tr><tr><td align=center>-d</td><td align=center>导出的数据库</td><td></td></tr><tr><td align=center>-c</td><td align=center>指定导出的集合</td><td></td></tr><tr><td align=center>-o</td><td align=center>导出的文件存储路径</td><td></td></tr><tr><td align=center>-q</td><td align=center>进行过滤</td><td></td></tr></tbody></table><p><strong>准备数据</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>use</span> <span class=nx>school</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>students</span> <span class=o>=</span> <span class=p>[];</span>
-<span class=k>for</span><span class=p>(</span><span class=kd>var</span> <span class=nx>i</span><span class=o>=</span><span class=mi>1</span><span class=p>;</span><span class=nx>i</span><span class=o>&lt;=</span><span class=mi>10</span><span class=p>;</span><span class=nx>i</span><span class=o>++</span><span class=p>){</span>
-    <span class=nx>students</span><span class=p>.</span><span class=nx>push</span><span class=p>({</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;luke&#39;</span><span class=o>+</span><span class=nx>i</span><span class=p>,</span><span class=nx>age</span><span class=o>:</span><span class=nx>i</span><span class=p>});</span>
-<span class=p>}</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>students</span><span class=p>.</span><span class=nx>insert</span><span class=p>(</span><span class=nx>students</span><span class=p>);</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>students</span><span class=p>.</span><span class=nx>find</span><span class=p>();</span>
-</code></pre></td></tr></table></div></div><p><strong>备份记录</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>mongoexport</span> <span class=o>-</span><span class=nx>h</span> <span class=mf>127.0.0.1</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>50000</span>  <span class=o>-</span><span class=nx>d</span> <span class=nx>school</span> <span class=o>-</span><span class=nx>c</span> <span class=nx>students</span> <span class=o>-</span><span class=nx>o</span> <span class=nx>stu</span><span class=p>.</span><span class=nx>json</span>
-</code></pre></td></tr></table></div></div><p><strong>删除记录</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>&gt; db.students.remove<span class=o>({})</span><span class=p>;</span>
-WriteResult<span class=o>({</span> <span class=s2>&#34;nRemoved&#34;</span> : <span class=m>10</span> <span class=o>})</span>
-</code></pre></td></tr></table></div></div><p><strong>导入记录</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>mongoimport</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>50000</span> <span class=o>--</span><span class=nx>db</span> <span class=nx>school</span> <span class=o>--</span><span class=nx>collection</span> <span class=nx>students</span> <span class=o>--</span><span class=nx>file</span>
-<span class=nx>stu</span><span class=p>.</span><span class=nx>json</span>
-</code></pre></td></tr></table></div></div><h3 id=备份与恢复>备份与恢复</h3><h4 id=mongodump>mongodump</h4><p>在Mongodb中我们使用mongodump命令来备份MongoDB数据。该命令可以导出所有数据到指定目录中。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>mongodump</span> <span class=o>-</span><span class=nx>h</span> <span class=nx>dbhost</span> <span class=o>-</span><span class=nx>d</span> <span class=nx>dbname</span> <span class=o>-</span><span class=nx>o</span> <span class=nx>dbdirectory</span>
-</code></pre></td></tr></table></div></div><ul><li>-h MongDB所在服务器地址，例如：127.0.0.1，当然也可以指定端口号：127.0.0.1:27017</li><li>-d 需要备份的数据库实例，例如：test</li><li>-o 备份的数据存放位置</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>mongodump</span> <span class=o>-</span><span class=nx>h</span> <span class=mf>127.0.0.1</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>50000</span> <span class=o>-</span><span class=nx>d</span> <span class=nx>school</span> <span class=o>-</span><span class=nx>o</span> <span class=nx>data</span><span class=p>.</span><span class=nx>dmp</span>
-</code></pre></td></tr></table></div></div><h4 id=mongorestore>mongorestore</h4><p><strong>mongodb</strong>使用 <strong>mongorestore</strong> 命令来恢复备份的数据。</p><ul><li>&ndash;host MongoDB所在服务器地址</li><li>&ndash;db -d 需要恢复的数据库实例</li><li>最后的一个参数，设置备份数据所在位置</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>mongorestore</span> <span class=o>-</span><span class=nx>h</span> <span class=mf>127.0.0.1</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>50000</span> <span class=nx>data</span><span class=p>.</span><span class=nx>dmp</span>
-<span class=nx>mongorestore</span> <span class=o>-</span><span class=nx>h</span> <span class=mf>127.0.0.1</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>50000</span> <span class=o>-</span><span class=nx>d</span> <span class=nx>school</span> <span class=nx>data</span><span class=p>.</span><span class=nx>bmp</span><span class=o>/</span><span class=nx>school</span>
-</code></pre></td></tr></table></div></div><blockquote><p>Mongodump可以backup整个数据库，而mongoexport要对每个collection进行操作，最主要的区别也是选择的标准是mongoexport输出的JSON比Mongodump的BSON可读性更高，进而可以直接对JSON文件进行操作然后还原数据（BSON转换JSON存在潜在兼容问题）。</p></blockquote><h3 id=锁定和解锁数据库>锁定和解锁数据库</h3><p>为了数据的完整性和一致性，导出前要先锁定写入，导出后再解锁。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>&gt; use admin<span class=p>;</span>
-switched to db admin
-&gt; db.runCommand<span class=o>({</span>fsync:1,lock:1<span class=o>})</span><span class=p>;</span>
-<span class=o>{</span>
-        <span class=s2>&#34;info&#34;</span> : <span class=s2>&#34;now locked against writes, use db.fsyncUnlock() to unlock&#34;</span>,
-        <span class=s2>&#34;seeAlso&#34;</span> : <span class=s2>&#34;http://dochub.mongodb.org/core/fsynccommand&#34;</span>,
-        <span class=s2>&#34;ok&#34;</span> : <span class=m>1</span>
-<span class=o>}</span>
-&gt; db.fsyncUnlock<span class=o>()</span><span class=p>;</span>
-<span class=o>{</span> <span class=s2>&#34;ok&#34;</span> : 1, <span class=s2>&#34;info&#34;</span> : <span class=s2>&#34;unlock completed&#34;</span> <span class=o>}</span>
-</code></pre></td></tr></table></div></div><h3 id=用户管理>用户管理</h3><h4 id=查看角色>查看角色</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>show</span> <span class=nx>roles</span><span class=p>;</span>
-</code></pre></td></tr></table></div></div><h4 id=内置角色>内置角色</h4><ul><li>数据库用户角色：read、readWrite；</li><li>数据库管理角色：dbAdmin、dbOwner、userAdmin;</li><li>集群管理角色：clusterAdmin、clusterManager、clusterMonitor、hostManage；</li><li>备份恢复角色：backup、restore；</li><li>所有数据库角色：readAnyDatabase、readWriteAnyDatabase、userAdminAnyDatabase、dbAdminAnyDatabase</li><li>超级用户角色：root</li><li>内部角色：__system</li></ul><h4 id=创建用户的方法>创建用户的方法</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>&gt; db.createUser<span class=o>({</span>user:<span class=s1>&#39;luke2&#39;</span>,pwd:<span class=s1>&#39;123456&#39;</span>,roles:<span class=o>[{</span>role:<span class=s1>&#39;read&#39;</span>,db:<span class=s1>&#39;school&#39;</span><span class=o>}]})</span><span class=p>;</span>
-Successfully added user: <span class=o>{</span>
-        <span class=s2>&#34;user&#34;</span> : <span class=s2>&#34;luke2&#34;</span>,
-        <span class=s2>&#34;roles&#34;</span> : <span class=o>[</span>
-                <span class=o>{</span>
-                        <span class=s2>&#34;role&#34;</span> : <span class=s2>&#34;read&#34;</span>,
-                        <span class=s2>&#34;db&#34;</span> : <span class=s2>&#34;school&#34;</span>
-                <span class=o>}</span>
-        <span class=o>]</span>
-<span class=o>}</span>
-</code></pre></td></tr></table></div></div><h4 id=查看用户的权限>查看用户的权限</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=o>&gt;</span> <span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span><span class=nx>usersInfo</span><span class=o>:</span><span class=s1>&#39;luke2&#39;</span><span class=p>,</span><span class=nx>showPrivileges</span><span class=o>:</span><span class=kc>true</span><span class=p>});</span>
-<span class=p>{</span>
-        <span class=s2>&#34;users&#34;</span> <span class=o>:</span> <span class=p>[</span>
-                <span class=p>{</span>
-                        <span class=s2>&#34;_id&#34;</span> <span class=o>:</span> <span class=s2>&#34;admin.luke2&#34;</span><span class=p>,</span>
-                        <span class=s2>&#34;user&#34;</span> <span class=o>:</span> <span class=s2>&#34;luke2&#34;</span><span class=p>,</span>
-                        <span class=s2>&#34;db&#34;</span> <span class=o>:</span> <span class=s2>&#34;admin&#34;</span><span class=p>,</span>
-                        <span class=s2>&#34;roles&#34;</span> <span class=o>:</span> <span class=p>[</span>
-                                <span class=p>{</span>
-                                        <span class=s2>&#34;role&#34;</span> <span class=o>:</span> <span class=s2>&#34;read&#34;</span><span class=p>,</span>
-                                        <span class=s2>&#34;db&#34;</span> <span class=o>:</span> <span class=s2>&#34;school&#34;</span>
-                                <span class=p>}</span>
-                <span class=p>]</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h3 id=数据库高级命令>数据库高级命令</h3><h4 id=准备数据>准备数据</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span><span class=lnt>9
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>var</span> <span class=nx>students</span> <span class=o>=</span> <span class=p>[</span>
-        <span class=p>{</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;luke1&#39;</span><span class=p>,</span><span class=nx>home</span><span class=o>:</span><span class=s1>&#39;北京&#39;</span><span class=p>,</span><span class=nx>age</span><span class=o>:</span><span class=mi>1</span><span class=p>},</span>
-        <span class=p>{</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;luke2&#39;</span><span class=p>,</span><span class=nx>home</span><span class=o>:</span><span class=s1>&#39;北京&#39;</span><span class=p>,</span><span class=nx>age</span><span class=o>:</span><span class=mi>2</span><span class=p>},</span>
-        <span class=p>{</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;luke3&#39;</span><span class=p>,</span><span class=nx>home</span><span class=o>:</span><span class=s1>&#39;北京&#39;</span><span class=p>,</span><span class=nx>age</span><span class=o>:</span><span class=mi>3</span><span class=p>},</span>
-        <span class=p>{</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;luke4&#39;</span><span class=p>,</span><span class=nx>home</span><span class=o>:</span><span class=s1>&#39;广东&#39;</span><span class=p>,</span><span class=nx>age</span><span class=o>:</span><span class=mi>1</span><span class=p>},</span>
-        <span class=p>{</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;luke5&#39;</span><span class=p>,</span><span class=nx>home</span><span class=o>:</span><span class=s1>&#39;广东&#39;</span><span class=p>,</span><span class=nx>age</span><span class=o>:</span><span class=mi>2</span><span class=p>},</span>
-        <span class=p>{</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;luke6&#39;</span><span class=p>,</span><span class=nx>home</span><span class=o>:</span><span class=s1>&#39;广东&#39;</span><span class=p>,</span><span class=nx>age</span><span class=o>:</span><span class=mi>3</span><span class=p>}</span>
-<span class=p>]</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>students</span><span class=p>.</span><span class=nx>insert</span><span class=p>(</span><span class=nx>students</span><span class=p>);</span>
-</code></pre></td></tr></table></div></div><h4 id=count>count</h4><p>查看记录数</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>students</span><span class=p>.</span><span class=nx>find</span><span class=p>().</span><span class=nx>count</span><span class=p>();</span>
-</code></pre></td></tr></table></div></div><h4 id=查找不重复的值-distinct>查找不重复的值 distinct</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span><span class=nx>distinct</span><span class=o>:</span><span class=s1>&#39;students&#39;</span><span class=p>,</span><span class=nx>key</span><span class=o>:</span><span class=s1>&#39;home&#39;</span><span class=p>}).</span><span class=nx>values</span><span class=p>;</span>
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Mongo d b 知识点梳理(二) | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'MongoDB 知识点梳理(二)' />
+<meta property = 'og:description' content = 'MongoDB通过配置项启动数据库 启动服务器 1  mongod --config mongo.conf   启动客户端 1  mongo --port 50000      参数 含义     &ndash;dbpath 指定数据库文件的目录   &ndash;port 端口 默认是27017 …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/mongodb2/' />
+<meta property = 'og:image' content = 'https://goyth.cn/images/stuck.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
 
-<span class=c1>//[ &#34;北京&#34;, &#34;广东&#34; ]
-</span></code></pre></td></tr></table></div></div><h4 id=group-分组>group 分组</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span>
-        <span class=nx>group</span><span class=o>:</span><span class=p>{</span>
-                <span class=nx>ns</span><span class=o>:</span><span class=nx>集合名称</span><span class=err>，</span>
-                <span class=nx>key</span><span class=o>:</span><span class=nx>分组的键</span><span class=p>,</span>
-                <span class=nx>initial</span><span class=o>:</span><span class=nx>初始值</span><span class=p>,</span>
-                <span class=nx>$reduce</span><span class=o>:</span><span class=nx>分解器</span>
-                <span class=nx>condition</span><span class=o>:</span><span class=nx>条件</span><span class=p>,</span>
-                <span class=nx>finalize</span><span class=o>:</span><span class=nx>完成时的处理器</span>
-        <span class=p>}</span>
-<span class=p>});</span>
-</code></pre></td></tr></table></div></div><h4 id=按城市分组求每个城市里符合条件的人的年龄总和>按城市分组，求每个城市里符合条件的人的年龄总和</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span>
-        <span class=nx>group</span><span class=o>:</span><span class=p>{</span>
-                <span class=nx>ns</span><span class=o>:</span><span class=s1>&#39;students&#39;</span><span class=p>,</span>
-                <span class=nx>key</span><span class=o>:</span><span class=p>{</span><span class=nx>home</span><span class=o>:</span><span class=kc>true</span><span class=p>},</span>
-                <span class=nx>initial</span><span class=o>:</span><span class=p>{</span><span class=nx>total</span><span class=o>:</span><span class=mi>0</span><span class=p>},</span>
-                <span class=nx>$reduce</span><span class=o>:</span><span class=kd>function</span><span class=p>(</span><span class=nx>doc</span><span class=p>,</span><span class=nx>result</span><span class=p>){</span>
-                      <span class=nx>result</span><span class=p>.</span><span class=nx>total</span> <span class=o>+=</span> <span class=nx>doc</span><span class=p>.</span><span class=nx>age</span><span class=p>;</span>
-                <span class=p>},</span>
-                <span class=nx>condition</span><span class=o>:</span><span class=p>{</span><span class=nx>age</span><span class=o>:</span><span class=p>{</span><span class=nx>$gt</span><span class=o>:</span><span class=mi>1</span><span class=p>}},</span>
-                <span class=nx>finalize</span><span class=o>:</span><span class=kd>function</span><span class=p>(</span><span class=nx>result</span><span class=p>){</span>
-                    <span class=nx>result</span><span class=p>.</span><span class=nx>desc</span> <span class=o>=</span> <span class=s1>&#39;本城市的总年龄为&#39;</span><span class=o>+</span><span class=nx>result</span><span class=p>.</span><span class=nx>total</span><span class=p>;</span>
-                <span class=p>}</span>
-        <span class=p>}</span>
-<span class=p>});</span>
-</code></pre></td></tr></table></div></div><h4 id=删除集合>删除集合</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span><span class=nx>drop</span><span class=o>:</span><span class=s1>&#39;students&#39;</span><span class=p>});</span>
-</code></pre></td></tr></table></div></div><h3 id=固定集合>固定集合</h3><p>MongoDB 固定集合（Capped Collections）是性能出色且有着固定大小的集合，对于大小固定，我们可以想象其就像一个环形队列，当集合空间用完后，再插入的元素就会覆盖最初始的头部的元素！ firstinfirstout</p><h4 id=特性>特性</h4><ul><li>没有索引</li><li>插入和查询速度速度非常快 不需要重新分配空间</li><li>特别适合存储日志</li></ul><h4 id=创建固定集合>创建固定集合</h4><ul><li>我们通过createCollection来创建一个固定集合，且capped选项设置为true：</li><li>还可以指定文档个数,加上max:1000属性：</li><li>判断集合是否为固定集合: db.logs.isCapped()</li><li>size 是整个集合空间大小，单位为【KB】</li><li>max 是集合文档个数上线，单位是【个】</li><li>如果空间大小到达上限，则插入下一个文档时，会覆盖第一个文档；如果文档个数到达上限，同样插入下一个文档时，会覆盖第一个文档。两个参数上限判断取的是【与】的逻辑。</li><li>capped 封顶的</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js> <span class=nx>db</span><span class=p>.</span><span class=nx>createCollection</span><span class=p>(</span><span class=s1>&#39;logs&#39;</span><span class=p>,{</span><span class=nx>size</span><span class=o>:</span><span class=mi>50</span><span class=p>,</span><span class=nx>max</span><span class=o>:</span><span class=mi>5</span><span class=p>,</span><span class=nx>capped</span><span class=o>:</span><span class=kc>true</span><span class=p>});</span>
-</code></pre></td></tr></table></div></div><h4 id=非固定集合转为固定集合>非固定集合转为固定集合</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span><span class=nx>convertToCapped</span><span class=o>:</span><span class=s2>&#34;logs&#34;</span><span class=p>,</span><span class=nx>size</span><span class=o>:</span><span class=mi>5</span><span class=p>});</span>
-</code></pre></td></tr></table></div></div><h3 id=索引>索引</h3><ul><li>索引通常能够极大的提高查询的效率，如果没有索引，MongoDB在读取数据时必须扫描集合中的每个文件并选取那些符合查询条件的记录。</li><li>这种扫描全集合的查询效率是非常低的，特别在处理大量的数据时，查询可以要花费几十秒甚至几分钟，这对网站的性能是非常致命的。</li><li>索引是特殊的数据结构，索引存储在一个易于遍历读取的数据集合中，索引是对数据库表中一列或多列的值进行排序的一种结构</li><li>使用索引，方便范围查询和匹配查询。</li></ul><h4 id=createindex-方法>createIndex() 方法</h4><p>MongoDB使用 createIndex() 方法来创建索引。</p><blockquote><p>注意在 3.0.0 版本前创建索引方法为 db.collection.ensureIndex()，之后的版本使用了 db.collection.createIndex() 方法，ensureIndex() 还能用，但只是 createIndex() 的别名。</p></blockquote><p><strong>语法</strong>
-createIndex()方法基本语法格式如下所示：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>collection</span><span class=p>.</span><span class=nx>createIndex</span><span class=p>(</span><span class=nx>keys</span><span class=p>,</span> <span class=nx>options</span><span class=p>)</span>
-</code></pre></td></tr></table></div></div><p>语法中 Key 值为你要创建的索引字段，1 为指定按升序创建索引，如果你想按降序来创建索引指定为 -1 即可。</p><p><strong>实例</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>col</span><span class=p>.</span><span class=nx>createIndex</span><span class=p>({</span><span class=s2>&#34;title&#34;</span><span class=o>:</span><span class=mi>1</span><span class=p>})</span>
-</code></pre></td></tr></table></div></div><p>createIndex() 方法中你也可以设置使用多个字段创建索引（关系型数据库中称作复合索引）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>col</span><span class=p>.</span><span class=nx>createIndex</span><span class=p>({</span><span class=s2>&#34;title&#34;</span><span class=o>:</span><span class=mi>1</span><span class=p>,</span><span class=s2>&#34;description&#34;</span><span class=o>:-</span><span class=mi>1</span><span class=p>})</span>
-</code></pre></td></tr></table></div></div><h4 id=指定使用的索引>指定使用的索引</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>students</span><span class=p>.</span><span class=nx>find</span><span class=p>({</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;zfpx299999&#39;</span><span class=p>,</span><span class=nx>age</span><span class=o>:</span><span class=mi>299999</span><span class=p>}).</span><span class=nx>hint</span><span class=p>({</span><span class=nx>name</span><span class=o>:</span><span class=mi>1</span><span class=p>}).</span><span class=nx>explain</span><span class=p>(</span><span class=kc>true</span><span class=p>);</span>
-</code></pre></td></tr></table></div></div><h4 id=创建唯一索引并删除重复记录>创建唯一索引并删除重复记录</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>person</span><span class=p>.</span><span class=nx>ensureIndex</span><span class=p>({</span> <span class=s2>&#34;name&#34;</span> <span class=o>:</span> <span class=o>-</span><span class=mi>1</span> <span class=p>},{</span> <span class=s2>&#34;name&#34;</span> <span class=o>:</span> <span class=s2>&#34;indexname&#34;</span><span class=p>,</span> <span class=s2>&#34;unique&#34;</span> <span class=o>:</span> <span class=kc>true</span><span class=p>,</span><span class=nx>dropDups</span><span class=o>:</span><span class=kc>true</span> <span class=p>})</span>
-</code></pre></td></tr></table></div></div><h4 id=删除索引>删除索引</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>students</span><span class=p>.</span><span class=nx>dropIndex</span><span class=p>(</span><span class=s1>&#39;namedIndex&#39;</span><span class=p>);</span><span class=c1>//删除指定的索引
-</span><span class=c1></span><span class=nx>db</span><span class=p>.</span><span class=nx>students</span><span class=p>.</span><span class=nx>dropIndex</span><span class=p>(</span><span class=s1>&#39;*&#39;</span><span class=p>);</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span><span class=nx>dropIndexes</span><span class=o>:</span><span class=s2>&#34;students&#34;</span><span class=p>,</span><span class=nx>index</span><span class=o>:</span><span class=s2>&#34;namedIndex&#34;</span><span class=p>});</span><span class=c1>//删除所有的索引
-</span></code></pre></td></tr></table></div></div><h4 id=在后台创建索引>在后台创建索引</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>students</span><span class=p>.</span><span class=nx>ensureIndex</span><span class=p>({</span><span class=nx>name</span><span class=o>:</span><span class=mi>1</span><span class=p>},{</span><span class=nx>name</span><span class=o>:</span><span class=s1>&#39;nameIndex&#39;</span><span class=p>,</span><span class=nx>unique</span><span class=o>:</span><span class=kc>true</span><span class=p>,</span><span class=nx>background</span><span class=o>:</span><span class=kc>true</span><span class=p>});</span>
-</code></pre></td></tr></table></div></div><h4 id=过期索引>过期索引</h4><p>在一定的时间后会过期，过期后相应数据数据被删除,比如 session、日志、缓存和临时文件</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>stus</span><span class=p>.</span><span class=nx>insert</span><span class=p>({</span><span class=nx>time</span><span class=o>:</span><span class=k>new</span> <span class=nb>Date</span><span class=p>()});</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>stus</span><span class=p>.</span><span class=nx>ensureIndex</span><span class=p>({</span><span class=nx>time</span><span class=o>:</span><span class=mi>1</span><span class=p>},{</span><span class=nx>expireAfterSeconds</span><span class=o>:</span><span class=mi>10</span><span class=p>});</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>stus</span><span class=p>.</span><span class=nx>find</span><span class=p>();</span>
-</code></pre></td></tr></table></div></div><ol><li>索引字段的值必须Date对象，不能是其它类型比如时间戳</li><li>删除时间不精确，每60秒跑一次。删除也要时间，所以有误差。</li></ol><h4 id=全文索引>全文索引</h4><p>大篇幅的文章中搜索关键词,MongoDB为我们提供了全文索引</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>db</span><span class=p>.</span><span class=nx>article</span><span class=p>.</span><span class=nx>insert</span><span class=p>({</span><span class=nx>content</span><span class=o>:</span><span class=s1>&#39;I am a gir&#39;</span><span class=p>});</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>article</span><span class=p>.</span><span class=nx>insert</span><span class=p>({</span><span class=nx>content</span><span class=o>:</span><span class=s1>&#39;I am a boy&#39;</span><span class=p>});</span>
-<span class=nx>$text</span><span class=o>:</span><span class=nx>表示要在全文索引中查东西</span>
-<span class=nx>$search</span><span class=o>:</span><span class=nx>后边跟查找的内容</span><span class=p>,</span> <span class=nx>默认全部匹配</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>article</span><span class=p>.</span><span class=nx>find</span><span class=p>({</span><span class=nx>$text</span><span class=o>:</span><span class=p>{</span><span class=nx>$search</span><span class=o>:</span><span class=s1>&#39;boy&#39;</span><span class=p>}});</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>article</span><span class=p>.</span><span class=nx>find</span><span class=p>({</span><span class=nx>$text</span><span class=o>:</span><span class=p>{</span><span class=nx>$search</span><span class=o>:</span><span class=s1>&#39;girl&#39;</span><span class=p>}});</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>article</span><span class=p>.</span><span class=nx>find</span><span class=p>({</span><span class=nx>$text</span><span class=o>:</span><span class=p>{</span><span class=nx>$search</span><span class=o>:</span><span class=s1>&#39;boy girl&#39;</span><span class=p>}});</span><span class=c1>//多次查找，多个关键字为或的关系
-</span><span class=c1></span><span class=nx>db</span><span class=p>.</span><span class=nx>article</span><span class=p>.</span><span class=nx>find</span><span class=p>({</span><span class=nx>$text</span><span class=o>:</span><span class=p>{</span><span class=nx>$search</span><span class=o>:</span><span class=s2>&#34;a b&#34;</span><span class=p>}});</span>
-<span class=nx>db</span><span class=p>.</span><span class=nx>article</span><span class=p>.</span><span class=nx>find</span><span class=p>({</span><span class=nx>$text</span><span class=o>:</span><span class=p>{</span><span class=nx>$search</span><span class=o>:</span><span class=s2>&#34;boy -girl&#34;</span><span class=p>}});</span> <span class=c1>// -表示取消
-</span><span class=c1></span><span class=nx>db</span><span class=p>.</span><span class=nx>article</span><span class=p>.</span><span class=nx>find</span><span class=p>({</span><span class=nx>$text</span><span class=o>:</span><span class=p>{</span><span class=nx>$search</span><span class=o>:</span><span class=s2>&#34;a \&#34;coco cola\&#34; b &#34;</span><span class=p>}});</span> <span class=c1>//支持转义符的,用\斜杠来转义
-</span></code></pre></td></tr></table></div></div><h4 id=索引使用的注意事项>索引使用的注意事项</h4><ul><li>1为正序 -1为倒序</li><li>索引虽然可以提升查询性能，但会降低插件性能，对于插入多查询少不要创索引</li><li>数据量不大时不需要使用索引。性能的提升并不明显，反而大大增加了内存和硬盘的消耗。</li><li>查询数据超过表数据量30%时，不要使用索引字段查询</li><li>排序工作的时候可以建立索引以提高排序速度</li><li>数字索引，要比字符串索引快的多</li></ul><h3 id=mongodb-复制副本集>MongoDB 复制（副本集）</h3><p><strong>MongoDB</strong>复制是将数据同步在多个服务器的过程。
+  <link rel='canonical' href='https://goyth.cn/post/mongodb2/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>13. October 2018</p>
+      <h1 class = 'post_title'>MongoDB 知识点梳理(二)</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h3 id="mongodb通过配置项启动数据库">MongoDB通过配置项启动数据库</h3>
+<h4 id="启动服务器">启动服务器</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">mongod --config mongo.conf
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="启动客户端">启动客户端</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">mongo --port <span class="m">50000</span>
+</code></pre></td></tr></table>
+</div>
+</div><table>
+<thead>
+<tr>
+<th align="center">参数</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">&ndash;dbpath</td>
+<td align="center">指定数据库文件的目录</td>
+</tr>
+<tr>
+<td align="center">&ndash;port</td>
+<td align="center">端口 默认是27017 28017</td>
+</tr>
+<tr>
+<td align="center">&ndash;fork</td>
+<td align="center">以后台守护的方式进行启动</td>
+</tr>
+<tr>
+<td align="center">&ndash;logpath</td>
+<td align="center">指定日志文件输出路径</td>
+</tr>
+<tr>
+<td align="center">&ndash;config</td>
+<td align="center">指定一个配置文件</td>
+</tr>
+<tr>
+<td align="center">&ndash;auth</td>
+<td align="center">以安全方式启动数据库，默认不验证</td>
+</tr>
+</tbody>
+</table>
+<h4 id="mongoconf">mongo.conf</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">dbpath</span><span class="o">=</span>/Users/demon/coding/mongo/data
+<span class="nv">logpath</span><span class="o">=</span>/Users/demon/coding/mongo/log
+<span class="nv">port</span><span class="o">=</span><span class="m">50000</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="导入导出数据">导入导出数据</h3>
+<p>这命令是保存成了文件格式</p>
+<ul>
+<li>mongoimport 导出数据</li>
+<li>mongoexport 导入数据</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">参数</th>
+<th align="center">含义</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">-h</td>
+<td align="center">[ &ndash;host ]	连接的数据库</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">&ndash;port</td>
+<td align="center">端口号</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">-u</td>
+<td align="center">用户名</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">-p</td>
+<td align="center">密码</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">-d</td>
+<td align="center">导出的数据库</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">-d</td>
+<td align="center">导出的数据库</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">-c</td>
+<td align="center">指定导出的集合</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">-o</td>
+<td align="center">导出的文件存储路径</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">-q</td>
+<td align="center">进行过滤</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>准备数据</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">use</span> <span class="nx">school</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">students</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;=</span><span class="mi">10</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="nx">students</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;luke&#39;</span><span class="o">+</span><span class="nx">i</span><span class="p">,</span><span class="nx">age</span><span class="o">:</span><span class="nx">i</span><span class="p">});</span>
+<span class="p">}</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">students</span><span class="p">);</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">find</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>备份记录</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">mongoexport</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">50000</span>  <span class="o">-</span><span class="nx">d</span> <span class="nx">school</span> <span class="o">-</span><span class="nx">c</span> <span class="nx">students</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">stu</span><span class="p">.</span><span class="nx">json</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>删除记录</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">&gt; db.students.remove<span class="o">({})</span><span class="p">;</span>
+WriteResult<span class="o">({</span> <span class="s2">&#34;nRemoved&#34;</span> : <span class="m">10</span> <span class="o">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>导入记录</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">mongoimport</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">50000</span> <span class="o">--</span><span class="nx">db</span> <span class="nx">school</span> <span class="o">--</span><span class="nx">collection</span> <span class="nx">students</span> <span class="o">--</span><span class="nx">file</span>
+<span class="nx">stu</span><span class="p">.</span><span class="nx">json</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="备份与恢复">备份与恢复</h3>
+<h4 id="mongodump">mongodump</h4>
+<p>在Mongodb中我们使用mongodump命令来备份MongoDB数据。该命令可以导出所有数据到指定目录中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">mongodump</span> <span class="o">-</span><span class="nx">h</span> <span class="nx">dbhost</span> <span class="o">-</span><span class="nx">d</span> <span class="nx">dbname</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">dbdirectory</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>-h MongDB所在服务器地址，例如：127.0.0.1，当然也可以指定端口号：127.0.0.1:27017</li>
+<li>-d 需要备份的数据库实例，例如：test</li>
+<li>-o 备份的数据存放位置</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">mongodump</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">50000</span> <span class="o">-</span><span class="nx">d</span> <span class="nx">school</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">data</span><span class="p">.</span><span class="nx">dmp</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="mongorestore">mongorestore</h4>
+<p><strong>mongodb</strong>使用 <strong>mongorestore</strong> 命令来恢复备份的数据。</p>
+<ul>
+<li>&ndash;host MongoDB所在服务器地址</li>
+<li>&ndash;db -d 需要恢复的数据库实例</li>
+<li>最后的一个参数，设置备份数据所在位置</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">mongorestore</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">50000</span> <span class="nx">data</span><span class="p">.</span><span class="nx">dmp</span>
+<span class="nx">mongorestore</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">50000</span> <span class="o">-</span><span class="nx">d</span> <span class="nx">school</span> <span class="nx">data</span><span class="p">.</span><span class="nx">bmp</span><span class="o">/</span><span class="nx">school</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>Mongodump可以backup整个数据库，而mongoexport要对每个collection进行操作，最主要的区别也是选择的标准是mongoexport输出的JSON比Mongodump的BSON可读性更高，进而可以直接对JSON文件进行操作然后还原数据（BSON转换JSON存在潜在兼容问题）。</p>
+</blockquote>
+<h3 id="锁定和解锁数据库">锁定和解锁数据库</h3>
+<p>为了数据的完整性和一致性，导出前要先锁定写入，导出后再解锁。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">&gt; use admin<span class="p">;</span>
+switched to db admin
+&gt; db.runCommand<span class="o">({</span>fsync:1,lock:1<span class="o">})</span><span class="p">;</span>
+<span class="o">{</span>
+        <span class="s2">&#34;info&#34;</span> : <span class="s2">&#34;now locked against writes, use db.fsyncUnlock() to unlock&#34;</span>,
+        <span class="s2">&#34;seeAlso&#34;</span> : <span class="s2">&#34;http://dochub.mongodb.org/core/fsynccommand&#34;</span>,
+        <span class="s2">&#34;ok&#34;</span> : <span class="m">1</span>
+<span class="o">}</span>
+&gt; db.fsyncUnlock<span class="o">()</span><span class="p">;</span>
+<span class="o">{</span> <span class="s2">&#34;ok&#34;</span> : 1, <span class="s2">&#34;info&#34;</span> : <span class="s2">&#34;unlock completed&#34;</span> <span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="用户管理">用户管理</h3>
+<h4 id="查看角色">查看角色</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">show</span> <span class="nx">roles</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="内置角色">内置角色</h4>
+<ul>
+<li>数据库用户角色：read、readWrite；</li>
+<li>数据库管理角色：dbAdmin、dbOwner、userAdmin;</li>
+<li>集群管理角色：clusterAdmin、clusterManager、clusterMonitor、hostManage；</li>
+<li>备份恢复角色：backup、restore；</li>
+<li>所有数据库角色：readAnyDatabase、readWriteAnyDatabase、userAdminAnyDatabase、dbAdminAnyDatabase</li>
+<li>超级用户角色：root</li>
+<li>内部角色：__system</li>
+</ul>
+<h4 id="创建用户的方法">创建用户的方法</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">&gt; db.createUser<span class="o">({</span>user:<span class="s1">&#39;luke2&#39;</span>,pwd:<span class="s1">&#39;123456&#39;</span>,roles:<span class="o">[{</span>role:<span class="s1">&#39;read&#39;</span>,db:<span class="s1">&#39;school&#39;</span><span class="o">}]})</span><span class="p">;</span>
+Successfully added user: <span class="o">{</span>
+        <span class="s2">&#34;user&#34;</span> : <span class="s2">&#34;luke2&#34;</span>,
+        <span class="s2">&#34;roles&#34;</span> : <span class="o">[</span>
+                <span class="o">{</span>
+                        <span class="s2">&#34;role&#34;</span> : <span class="s2">&#34;read&#34;</span>,
+                        <span class="s2">&#34;db&#34;</span> : <span class="s2">&#34;school&#34;</span>
+                <span class="o">}</span>
+        <span class="o">]</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="查看用户的权限">查看用户的权限</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="o">&gt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span><span class="nx">usersInfo</span><span class="o">:</span><span class="s1">&#39;luke2&#39;</span><span class="p">,</span><span class="nx">showPrivileges</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
+<span class="p">{</span>
+        <span class="s2">&#34;users&#34;</span> <span class="o">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                        <span class="s2">&#34;_id&#34;</span> <span class="o">:</span> <span class="s2">&#34;admin.luke2&#34;</span><span class="p">,</span>
+                        <span class="s2">&#34;user&#34;</span> <span class="o">:</span> <span class="s2">&#34;luke2&#34;</span><span class="p">,</span>
+                        <span class="s2">&#34;db&#34;</span> <span class="o">:</span> <span class="s2">&#34;admin&#34;</span><span class="p">,</span>
+                        <span class="s2">&#34;roles&#34;</span> <span class="o">:</span> <span class="p">[</span>
+                                <span class="p">{</span>
+                                        <span class="s2">&#34;role&#34;</span> <span class="o">:</span> <span class="s2">&#34;read&#34;</span><span class="p">,</span>
+                                        <span class="s2">&#34;db&#34;</span> <span class="o">:</span> <span class="s2">&#34;school&#34;</span>
+                                <span class="p">}</span>
+                <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="数据库高级命令">数据库高级命令</h3>
+<h4 id="准备数据">准备数据</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">students</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;luke1&#39;</span><span class="p">,</span><span class="nx">home</span><span class="o">:</span><span class="s1">&#39;北京&#39;</span><span class="p">,</span><span class="nx">age</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span>
+        <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;luke2&#39;</span><span class="p">,</span><span class="nx">home</span><span class="o">:</span><span class="s1">&#39;北京&#39;</span><span class="p">,</span><span class="nx">age</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span>
+        <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;luke3&#39;</span><span class="p">,</span><span class="nx">home</span><span class="o">:</span><span class="s1">&#39;北京&#39;</span><span class="p">,</span><span class="nx">age</span><span class="o">:</span><span class="mi">3</span><span class="p">},</span>
+        <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;luke4&#39;</span><span class="p">,</span><span class="nx">home</span><span class="o">:</span><span class="s1">&#39;广东&#39;</span><span class="p">,</span><span class="nx">age</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span>
+        <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;luke5&#39;</span><span class="p">,</span><span class="nx">home</span><span class="o">:</span><span class="s1">&#39;广东&#39;</span><span class="p">,</span><span class="nx">age</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span>
+        <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;luke6&#39;</span><span class="p">,</span><span class="nx">home</span><span class="o">:</span><span class="s1">&#39;广东&#39;</span><span class="p">,</span><span class="nx">age</span><span class="o">:</span><span class="mi">3</span><span class="p">}</span>
+<span class="p">]</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">students</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="count">count</h4>
+<p>查看记录数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">find</span><span class="p">().</span><span class="nx">count</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="查找不重复的值-distinct">查找不重复的值 distinct</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span><span class="nx">distinct</span><span class="o">:</span><span class="s1">&#39;students&#39;</span><span class="p">,</span><span class="nx">key</span><span class="o">:</span><span class="s1">&#39;home&#39;</span><span class="p">}).</span><span class="nx">values</span><span class="p">;</span>
+
+<span class="c1">//[ &#34;北京&#34;, &#34;广东&#34; ]
+</span></code></pre></td></tr></table>
+</div>
+</div><h4 id="group-分组">group 分组</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span>
+        <span class="nx">group</span><span class="o">:</span><span class="p">{</span>
+                <span class="nx">ns</span><span class="o">:</span><span class="nx">集合名称</span><span class="err">，</span>
+                <span class="nx">key</span><span class="o">:</span><span class="nx">分组的键</span><span class="p">,</span>
+                <span class="nx">initial</span><span class="o">:</span><span class="nx">初始值</span><span class="p">,</span>
+                <span class="nx">$reduce</span><span class="o">:</span><span class="nx">分解器</span>
+                <span class="nx">condition</span><span class="o">:</span><span class="nx">条件</span><span class="p">,</span>
+                <span class="nx">finalize</span><span class="o">:</span><span class="nx">完成时的处理器</span>
+        <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="按城市分组求每个城市里符合条件的人的年龄总和">按城市分组，求每个城市里符合条件的人的年龄总和</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span>
+        <span class="nx">group</span><span class="o">:</span><span class="p">{</span>
+                <span class="nx">ns</span><span class="o">:</span><span class="s1">&#39;students&#39;</span><span class="p">,</span>
+                <span class="nx">key</span><span class="o">:</span><span class="p">{</span><span class="nx">home</span><span class="o">:</span><span class="kc">true</span><span class="p">},</span>
+                <span class="nx">initial</span><span class="o">:</span><span class="p">{</span><span class="nx">total</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span>
+                <span class="nx">$reduce</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span><span class="nx">result</span><span class="p">){</span>
+                      <span class="nx">result</span><span class="p">.</span><span class="nx">total</span> <span class="o">+=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">age</span><span class="p">;</span>
+                <span class="p">},</span>
+                <span class="nx">condition</span><span class="o">:</span><span class="p">{</span><span class="nx">age</span><span class="o">:</span><span class="p">{</span><span class="nx">$gt</span><span class="o">:</span><span class="mi">1</span><span class="p">}},</span>
+                <span class="nx">finalize</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
+                    <span class="nx">result</span><span class="p">.</span><span class="nx">desc</span> <span class="o">=</span> <span class="s1">&#39;本城市的总年龄为&#39;</span><span class="o">+</span><span class="nx">result</span><span class="p">.</span><span class="nx">total</span><span class="p">;</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="删除集合">删除集合</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span><span class="nx">drop</span><span class="o">:</span><span class="s1">&#39;students&#39;</span><span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="固定集合">固定集合</h3>
+<p>MongoDB 固定集合（Capped Collections）是性能出色且有着固定大小的集合，对于大小固定，我们可以想象其就像一个环形队列，当集合空间用完后，再插入的元素就会覆盖最初始的头部的元素！ firstinfirstout</p>
+<h4 id="特性">特性</h4>
+<ul>
+<li>没有索引</li>
+<li>插入和查询速度速度非常快 不需要重新分配空间</li>
+<li>特别适合存储日志</li>
+</ul>
+<h4 id="创建固定集合">创建固定集合</h4>
+<ul>
+<li>我们通过createCollection来创建一个固定集合，且capped选项设置为true：</li>
+<li>还可以指定文档个数,加上max:1000属性：</li>
+<li>判断集合是否为固定集合: db.logs.isCapped()</li>
+<li>size 是整个集合空间大小，单位为【KB】</li>
+<li>max 是集合文档个数上线，单位是【个】</li>
+<li>如果空间大小到达上限，则插入下一个文档时，会覆盖第一个文档；如果文档个数到达上限，同样插入下一个文档时，会覆盖第一个文档。两个参数上限判断取的是【与】的逻辑。</li>
+<li>capped 封顶的</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"> <span class="nx">db</span><span class="p">.</span><span class="nx">createCollection</span><span class="p">(</span><span class="s1">&#39;logs&#39;</span><span class="p">,{</span><span class="nx">size</span><span class="o">:</span><span class="mi">50</span><span class="p">,</span><span class="nx">max</span><span class="o">:</span><span class="mi">5</span><span class="p">,</span><span class="nx">capped</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="非固定集合转为固定集合">非固定集合转为固定集合</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span><span class="nx">convertToCapped</span><span class="o">:</span><span class="s2">&#34;logs&#34;</span><span class="p">,</span><span class="nx">size</span><span class="o">:</span><span class="mi">5</span><span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="索引">索引</h3>
+<ul>
+<li>索引通常能够极大的提高查询的效率，如果没有索引，MongoDB在读取数据时必须扫描集合中的每个文件并选取那些符合查询条件的记录。</li>
+<li>这种扫描全集合的查询效率是非常低的，特别在处理大量的数据时，查询可以要花费几十秒甚至几分钟，这对网站的性能是非常致命的。</li>
+<li>索引是特殊的数据结构，索引存储在一个易于遍历读取的数据集合中，索引是对数据库表中一列或多列的值进行排序的一种结构</li>
+<li>使用索引，方便范围查询和匹配查询。</li>
+</ul>
+<h4 id="createindex-方法">createIndex() 方法</h4>
+<p>MongoDB使用 createIndex() 方法来创建索引。</p>
+<blockquote>
+<p>注意在 3.0.0 版本前创建索引方法为 db.collection.ensureIndex()，之后的版本使用了 db.collection.createIndex() 方法，ensureIndex() 还能用，但只是 createIndex() 的别名。</p>
+</blockquote>
+<p><strong>语法</strong>
+createIndex()方法基本语法格式如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>语法中 Key 值为你要创建的索引字段，1 为指定按升序创建索引，如果你想按降序来创建索引指定为 -1 即可。</p>
+<p><strong>实例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">col</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">({</span><span class="s2">&#34;title&#34;</span><span class="o">:</span><span class="mi">1</span><span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>createIndex() 方法中你也可以设置使用多个字段创建索引（关系型数据库中称作复合索引）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">col</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">({</span><span class="s2">&#34;title&#34;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&#34;description&#34;</span><span class="o">:-</span><span class="mi">1</span><span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="指定使用的索引">指定使用的索引</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;zfpx299999&#39;</span><span class="p">,</span><span class="nx">age</span><span class="o">:</span><span class="mi">299999</span><span class="p">}).</span><span class="nx">hint</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span><span class="mi">1</span><span class="p">}).</span><span class="nx">explain</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="创建唯一索引并删除重复记录">创建唯一索引并删除重复记录</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">person</span><span class="p">.</span><span class="nx">ensureIndex</span><span class="p">({</span> <span class="s2">&#34;name&#34;</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span> <span class="p">},{</span> <span class="s2">&#34;name&#34;</span> <span class="o">:</span> <span class="s2">&#34;indexname&#34;</span><span class="p">,</span> <span class="s2">&#34;unique&#34;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span><span class="nx">dropDups</span><span class="o">:</span><span class="kc">true</span> <span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="删除索引">删除索引</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">dropIndex</span><span class="p">(</span><span class="s1">&#39;namedIndex&#39;</span><span class="p">);</span><span class="c1">//删除指定的索引
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">dropIndex</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">);</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span><span class="nx">dropIndexes</span><span class="o">:</span><span class="s2">&#34;students&#34;</span><span class="p">,</span><span class="nx">index</span><span class="o">:</span><span class="s2">&#34;namedIndex&#34;</span><span class="p">});</span><span class="c1">//删除所有的索引
+</span></code></pre></td></tr></table>
+</div>
+</div><h4 id="在后台创建索引">在后台创建索引</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">students</span><span class="p">.</span><span class="nx">ensureIndex</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span><span class="mi">1</span><span class="p">},{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;nameIndex&#39;</span><span class="p">,</span><span class="nx">unique</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span><span class="nx">background</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="过期索引">过期索引</h4>
+<p>在一定的时间后会过期，过期后相应数据数据被删除,比如 session、日志、缓存和临时文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">stus</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="nx">time</span><span class="o">:</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()});</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">stus</span><span class="p">.</span><span class="nx">ensureIndex</span><span class="p">({</span><span class="nx">time</span><span class="o">:</span><span class="mi">1</span><span class="p">},{</span><span class="nx">expireAfterSeconds</span><span class="o">:</span><span class="mi">10</span><span class="p">});</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">stus</span><span class="p">.</span><span class="nx">find</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>索引字段的值必须Date对象，不能是其它类型比如时间戳</li>
+<li>删除时间不精确，每60秒跑一次。删除也要时间，所以有误差。</li>
+</ol>
+<h4 id="全文索引">全文索引</h4>
+<p>大篇幅的文章中搜索关键词,MongoDB为我们提供了全文索引</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">db</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="nx">content</span><span class="o">:</span><span class="s1">&#39;I am a gir&#39;</span><span class="p">});</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="nx">content</span><span class="o">:</span><span class="s1">&#39;I am a boy&#39;</span><span class="p">});</span>
+<span class="nx">$text</span><span class="o">:</span><span class="nx">表示要在全文索引中查东西</span>
+<span class="nx">$search</span><span class="o">:</span><span class="nx">后边跟查找的内容</span><span class="p">,</span> <span class="nx">默认全部匹配</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nx">$text</span><span class="o">:</span><span class="p">{</span><span class="nx">$search</span><span class="o">:</span><span class="s1">&#39;boy&#39;</span><span class="p">}});</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nx">$text</span><span class="o">:</span><span class="p">{</span><span class="nx">$search</span><span class="o">:</span><span class="s1">&#39;girl&#39;</span><span class="p">}});</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nx">$text</span><span class="o">:</span><span class="p">{</span><span class="nx">$search</span><span class="o">:</span><span class="s1">&#39;boy girl&#39;</span><span class="p">}});</span><span class="c1">//多次查找，多个关键字为或的关系
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nx">$text</span><span class="o">:</span><span class="p">{</span><span class="nx">$search</span><span class="o">:</span><span class="s2">&#34;a b&#34;</span><span class="p">}});</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nx">$text</span><span class="o">:</span><span class="p">{</span><span class="nx">$search</span><span class="o">:</span><span class="s2">&#34;boy -girl&#34;</span><span class="p">}});</span> <span class="c1">// -表示取消
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nx">$text</span><span class="o">:</span><span class="p">{</span><span class="nx">$search</span><span class="o">:</span><span class="s2">&#34;a \&#34;coco cola\&#34; b &#34;</span><span class="p">}});</span> <span class="c1">//支持转义符的,用\斜杠来转义
+</span></code></pre></td></tr></table>
+</div>
+</div><h4 id="索引使用的注意事项">索引使用的注意事项</h4>
+<ul>
+<li>1为正序 -1为倒序</li>
+<li>索引虽然可以提升查询性能，但会降低插件性能，对于插入多查询少不要创索引</li>
+<li>数据量不大时不需要使用索引。性能的提升并不明显，反而大大增加了内存和硬盘的消耗。</li>
+<li>查询数据超过表数据量30%时，不要使用索引字段查询</li>
+<li>排序工作的时候可以建立索引以提高排序速度</li>
+<li>数字索引，要比字符串索引快的多</li>
+</ul>
+<h3 id="mongodb-复制副本集">MongoDB 复制（副本集）</h3>
+<p><strong>MongoDB</strong>复制是将数据同步在多个服务器的过程。
 复制提供了数据的冗余备份，并在多个服务器上存储数据副本，提高了数据的可用性， 并可以保证数据的安全性。
-复制还允许您从硬件故障和服务中断中恢复数据。</p><h4 id=mongodb复制原理>MongoDB复制原理</h4><p>mongodb的复制至少需要两个节点。其中一个是主节点，负责处理客户端请求，其余的都是从节点，负责复制主节点上的数据。
+复制还允许您从硬件故障和服务中断中恢复数据。</p>
+<h4 id="mongodb复制原理">MongoDB复制原理</h4>
+<p>mongodb的复制至少需要两个节点。其中一个是主节点，负责处理客户端请求，其余的都是从节点，负责复制主节点上的数据。
 mongodb各个节点常见的搭配方式为：一主一从、一主多从。
-主节点记录在其上的所有操作oplog，从节点定期轮询主节点获取这些操作，然后对自己的数据副本执行这些操作，从而保证从节点的数据与主节点一致。</p><h4 id=流程>流程</h4><ol><li>一台活跃服务器和二个备份服务器</li><li>当活跃服务器出现故障，这时集群根据权重算法推选出出活跃服务器</li><li>当原来的主服务器恢复后又会变成从服务器</li></ol><h4 id=配置副本集>配置副本集</h4><p>A服务器</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>dbpath</span><span class=o>=</span><span class=nx>E</span><span class=o>:</span><span class=err>\</span><span class=nx>repl</span><span class=err>\</span><span class=nx>repl1</span>
-<span class=nx>port</span><span class=o>=</span><span class=mi>2001</span>
-<span class=nx>replSet</span><span class=o>=</span><span class=nx>group</span>
-</code></pre></td></tr></table></div></div><p>B服务器</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>dbpath</span><span class=o>=</span><span class=nx>E</span><span class=o>:</span><span class=err>\</span><span class=nx>repl</span><span class=err>\</span><span class=nx>repl2</span>
-<span class=nx>port</span><span class=o>=</span><span class=mi>2002</span>
-<span class=nx>replSet</span><span class=o>=</span><span class=nx>group</span>
-</code></pre></td></tr></table></div></div><p>C服务器</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>dbpath</span><span class=o>=</span><span class=nx>E</span><span class=o>:</span><span class=err>\</span><span class=nx>repl</span><span class=err>\</span><span class=nx>repl3</span>
-<span class=nx>port</span><span class=o>=</span><span class=mi>2003</span>
-<span class=nx>replSet</span><span class=o>=</span><span class=nx>group</span>
-</code></pre></td></tr></table></div></div><h4 id=初始化副本集>初始化副本集</h4><p>rs.initiate() 启动一个新的副本集
+主节点记录在其上的所有操作oplog，从节点定期轮询主节点获取这些操作，然后对自己的数据副本执行这些操作，从而保证从节点的数据与主节点一致。</p>
+<h4 id="流程">流程</h4>
+<ol>
+<li>一台活跃服务器和二个备份服务器</li>
+<li>当活跃服务器出现故障，这时集群根据权重算法推选出出活跃服务器</li>
+<li>当原来的主服务器恢复后又会变成从服务器</li>
+</ol>
+<h4 id="配置副本集">配置副本集</h4>
+<p>A服务器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">dbpath</span><span class="o">=</span><span class="nx">E</span><span class="o">:</span><span class="err">\</span><span class="nx">repl</span><span class="err">\</span><span class="nx">repl1</span>
+<span class="nx">port</span><span class="o">=</span><span class="mi">2001</span>
+<span class="nx">replSet</span><span class="o">=</span><span class="nx">group</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>B服务器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">dbpath</span><span class="o">=</span><span class="nx">E</span><span class="o">:</span><span class="err">\</span><span class="nx">repl</span><span class="err">\</span><span class="nx">repl2</span>
+<span class="nx">port</span><span class="o">=</span><span class="mi">2002</span>
+<span class="nx">replSet</span><span class="o">=</span><span class="nx">group</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>C服务器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">dbpath</span><span class="o">=</span><span class="nx">E</span><span class="o">:</span><span class="err">\</span><span class="nx">repl</span><span class="err">\</span><span class="nx">repl3</span>
+<span class="nx">port</span><span class="o">=</span><span class="mi">2003</span>
+<span class="nx">replSet</span><span class="o">=</span><span class="nx">group</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="初始化副本集">初始化副本集</h4>
+<p>rs.initiate() 启动一个新的副本集
 rs.conf() 查看副本集的配置
-rs.status() 命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>use</span> <span class=nx>admin</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>conf</span><span class=o>=</span>
-<span class=p>{</span>
-    <span class=s2>&#34;_id&#34;</span> <span class=o>:</span> <span class=s2>&#34;group&#34;</span><span class=p>,</span>
-    <span class=s2>&#34;members&#34;</span> <span class=o>:</span> <span class=p>[</span>
-        <span class=p>{</span> <span class=s2>&#34;_id&#34;</span> <span class=o>:</span> <span class=mi>0</span><span class=p>,</span>  <span class=s2>&#34;host&#34;</span> <span class=o>:</span> <span class=s2>&#34;127.0.0.1:2001&#34;</span>  <span class=p>},</span>
-        <span class=p>{</span> <span class=s2>&#34;_id&#34;</span> <span class=o>:</span> <span class=mi>1</span><span class=p>,</span>  <span class=s2>&#34;host&#34;</span> <span class=o>:</span> <span class=s2>&#34;127.0.0.1:2002&#34;</span>  <span class=p>},</span>
-        <span class=p>{</span> <span class=s2>&#34;_id&#34;</span> <span class=o>:</span> <span class=mi>2</span><span class=p>,</span>  <span class=s2>&#34;host&#34;</span> <span class=o>:</span> <span class=s2>&#34;127.0.0.1:2003&#34;</span>  <span class=p>}</span>
-    <span class=p>]</span>
-<span class=p>}</span>
-<span class=nx>rs</span><span class=p>.</span><span class=nx>initiate</span><span class=p>(</span><span class=nx>conf</span><span class=p>);</span>
-<span class=nx>rs</span><span class=p>.</span><span class=nx>status</span><span class=p>();</span>
-</code></pre></td></tr></table></div></div><h4 id=高级参数>高级参数</h4><ul><li>standard 常规节点 参与投票有可能成为活跃节点</li><li>passive 副本节点 参与投票，但不能成为活跃节点</li><li>arbiter 仲裁节点 只参与投票，不复制节点，也不能成为活跃节点</li><li>priority 0到1000之间，0代表是副本节点，1到1000是常规节点</li><li>arbiterOnly:true 仲裁节点</li></ul><h4 id=读写分离操作>读写分离操作</h4><p>一般情况下作为副本节点是不能进行数据库操作的，但是在读取密集的系统中读写分离是必要的</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js> <span class=nx>rs</span><span class=p>.</span><span class=nx>slaveOk</span><span class=p>();</span>
-</code></pre></td></tr></table></div></div><h4 id=oplog>Oplog</h4><p>它被存储在本地数据库local中，会记录每一个操作。 如果希望在故障恢复的时候尽可能更多，可以把这个size设置的大一点</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=o>--</span><span class=nx>oplogSize</span> <span class=mi>1024</span>
-<span class=nx>use</span> <span class=nx>local</span><span class=p>;</span>
- <span class=nx>db</span><span class=p>.</span><span class=nx>oplog</span><span class=p>.</span><span class=nx>rs</span><span class=p>.</span><span class=nx>find</span><span class=p>().</span><span class=nx>limit</span><span class=p>(</span><span class=mi>2</span><span class=p>);</span>
-</code></pre></td></tr></table></div></div><p>MongoDB的副本集与我们常见的主从有所不同，主从在主机宕机后所有服务将停止，而副本集在主机宕机后，副本会接管主节点成为主节点，不会出现宕机的情况。</p><h3 id=mongodb-分片>MongoDB 分片</h3><h4 id=分片>分片</h4><p>在Mongodb里面存在另一种集群，就是分片技术,可以满足MongoDB数据量大量增长的需求。</p><p>当MongoDB存储海量的数据时，一台机器可能不足以存储数据，也可能不足以提供可接受的读写吞吐量。这时，我们就可以通过在多台机器上分割数据，使得数据库系统能存储和处理更多的数据。</p><h4 id=为什么使用分片>为什么使用分片</h4><ul><li>复制所有的写入操作到主节点</li><li>延迟的敏感数据会在主节点查询</li><li>单个副本集限制在12个节点</li><li>当请求量巨大时会出现内存不足。</li><li>本地磁盘不足</li><li>垂直扩展价格昂贵</li></ul><p>MongoDB分片
-下图展示了在MongoDB中使用分片集群结构分布：</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/mongodb-sharding.png alt></p><p>上图中主要有如下所述三个主要组件：</p><ul><li><p><strong>Shard</strong>:
-用于存储实际的数据块，实际生产环境中一个shard server角色可由几台机器组个一个replica set承担，防止主机单点故障</p></li><li><p><strong>Config Server</strong>:
-mongod实例，存储了整个 ClusterMetadata，其中包括 chunk信息。</p></li><li><p><strong>Query Routers</strong>:
-前端路由，客户端由此接入，且让整个集群看上去像单一数据库，前端应用可以透明使用。</p></li></ul><h4 id=分片实例>分片实例</h4><p>分片结构端口分布如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nx>Shard</span> <span class=nx>Server</span> <span class=mi>1</span><span class=err>：</span><span class=mi>27020</span>
-<span class=nx>Shard</span> <span class=nx>Server</span> <span class=mi>2</span><span class=err>：</span><span class=mi>27021</span>
-<span class=nx>Shard</span> <span class=nx>Server</span> <span class=mi>3</span><span class=err>：</span><span class=mi>27022</span>
-<span class=nx>Shard</span> <span class=nx>Server</span> <span class=mi>4</span><span class=err>：</span><span class=mi>27023</span>
-<span class=nx>Config</span> <span class=nx>Server</span> <span class=err>：</span><span class=mi>27100</span>
-<span class=nx>Route</span> <span class=nx>Process</span><span class=err>：</span><span class=mi>40000</span>
-</code></pre></td></tr></table></div></div><p>步骤一：启动Shard Server</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=nx>mkdir</span> <span class=o>-</span><span class=nx>p</span> <span class=o>/</span><span class=nx>www</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>shard</span><span class=o>/</span><span class=nx>s0</span>
-<span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=nx>mkdir</span> <span class=o>-</span><span class=nx>p</span> <span class=o>/</span><span class=nx>www</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>shard</span><span class=o>/</span><span class=nx>s1</span>
-<span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=nx>mkdir</span> <span class=o>-</span><span class=nx>p</span> <span class=o>/</span><span class=nx>www</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>shard</span><span class=o>/</span><span class=nx>s2</span>
-<span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=nx>mkdir</span> <span class=o>-</span><span class=nx>p</span> <span class=o>/</span><span class=nx>www</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>shard</span><span class=o>/</span><span class=nx>s3</span>
-<span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=nx>mkdir</span> <span class=o>-</span><span class=nx>p</span> <span class=o>/</span><span class=nx>www</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>shard</span><span class=o>/</span><span class=nx>log</span>
-<span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>bin</span><span class=o>/</span><span class=nx>mongod</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>27020</span> <span class=o>--</span><span class=nx>dbpath</span><span class=o>=</span><span class=err>/www/mongoDB/shard/s0 --logpath=/www/mongoDB/shard/log/s0.log --logappend --fork</span>
-<span class=p>....</span>
-<span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>bin</span><span class=o>/</span><span class=nx>mongod</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>27023</span> <span class=o>--</span><span class=nx>dbpath</span><span class=o>=</span><span class=err>/www/mongoDB/shard/s3 --logpath=/www/mongoDB/shard/log/s3.log --logappend --fork</span>
-</code></pre></td></tr></table></div></div><p>步骤二： 启动Config Server</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=nx>mkdir</span> <span class=o>-</span><span class=nx>p</span> <span class=o>/</span><span class=nx>www</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>shard</span><span class=o>/</span><span class=nx>config</span>
-<span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=o>/</span><span class=p>]</span><span class=err>#</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>bin</span><span class=o>/</span><span class=nx>mongod</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>27100</span> <span class=o>--</span><span class=nx>dbpath</span><span class=o>=</span><span class=err>/www/mongoDB/shard/config --logpath=/www/mongoDB/shard/log/config.log --logappend --fork</span>
-</code></pre></td></tr></table></div></div><p>注意：这里我们完全可以像启动普通mongodb服务一样启动，不需要添加—shardsvr和configsvr参数。因为这两个参数的作用就是改变启动端口的，所以我们自行指定了端口就可以。</p><p>步骤三： 启动Route Process</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=err>/usr/local/mongoDB/bin/mongos --port 40000 --configdb localhost:27100 --fork --logpath=/www/mongoDB/shard/log/route.log --chunkSize 500</span>
-</code></pre></td></tr></table></div></div><p>mongos启动参数中，chunkSize这一项是用来指定chunk的大小的，单位是MB，默认大小为200MB.</p><p>步骤四： 配置Sharding</p><p>接下来，我们使用MongoDB Shell登录到mongos，添加Shard节点</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=p>[</span><span class=nx>root</span><span class=err>@</span><span class=mi>100</span> <span class=nx>shard</span><span class=p>]</span><span class=err>#</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>mongoDB</span><span class=o>/</span><span class=nx>bin</span><span class=o>/</span><span class=nx>mongo</span> <span class=nx>admin</span> <span class=o>--</span><span class=nx>port</span> <span class=mi>40000</span>
-<span class=nx>MongoDB</span> <span class=nx>shell</span> <span class=nx>version</span><span class=o>:</span> <span class=mf>2.0.7</span>
-<span class=nx>connecting</span> <span class=nx>to</span><span class=o>:</span> <span class=mf>127.0.0.1</span><span class=o>:</span><span class=mi>40000</span><span class=o>/</span><span class=nx>admin</span>
-<span class=nx>mongos</span><span class=o>&gt;</span> <span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span> <span class=nx>addshard</span><span class=o>:</span><span class=s2>&#34;localhost:27020&#34;</span> <span class=p>})</span>
-<span class=p>{</span> <span class=s2>&#34;shardAdded&#34;</span> <span class=o>:</span> <span class=s2>&#34;shard0000&#34;</span><span class=p>,</span> <span class=s2>&#34;ok&#34;</span> <span class=o>:</span> <span class=mi>1</span> <span class=p>}</span>
-<span class=p>......</span>
-<span class=nx>mongos</span><span class=o>&gt;</span> <span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span> <span class=nx>addshard</span><span class=o>:</span><span class=s2>&#34;localhost:27029&#34;</span> <span class=p>})</span>
-<span class=p>{</span> <span class=s2>&#34;shardAdded&#34;</span> <span class=o>:</span> <span class=s2>&#34;shard0009&#34;</span><span class=p>,</span> <span class=s2>&#34;ok&#34;</span> <span class=o>:</span> <span class=mi>1</span> <span class=p>}</span>
-<span class=nx>mongos</span><span class=o>&gt;</span> <span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span> <span class=nx>enablesharding</span><span class=o>:</span><span class=s2>&#34;test&#34;</span> <span class=p>})</span> <span class=err>#</span><span class=nx>设置分片存储的数据库</span>
-<span class=p>{</span> <span class=s2>&#34;ok&#34;</span> <span class=o>:</span> <span class=mi>1</span> <span class=p>}</span>
-<span class=nx>mongos</span><span class=o>&gt;</span> <span class=nx>db</span><span class=p>.</span><span class=nx>runCommand</span><span class=p>({</span> <span class=nx>shardcollection</span><span class=o>:</span> <span class=s2>&#34;test.log&#34;</span><span class=p>,</span> <span class=nx>key</span><span class=o>:</span> <span class=p>{</span> <span class=nx>id</span><span class=o>:</span><span class=mi>1</span><span class=p>,</span><span class=nx>time</span><span class=o>:</span><span class=mi>1</span><span class=p>}})</span>
-<span class=p>{</span> <span class=s2>&#34;collectionsharded&#34;</span> <span class=o>:</span> <span class=s2>&#34;test.log&#34;</span><span class=p>,</span> <span class=s2>&#34;ok&#34;</span> <span class=o>:</span> <span class=mi>1</span> <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>步骤五： 程序代码内无需太大更改，直接按照连接普通的mongo数据库那样，将数据库连接接入接口40000</p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
+rs.status() 命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">use</span> <span class="nx">admin</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">conf</span><span class="o">=</span>
+<span class="p">{</span>
+    <span class="s2">&#34;_id&#34;</span> <span class="o">:</span> <span class="s2">&#34;group&#34;</span><span class="p">,</span>
+    <span class="s2">&#34;members&#34;</span> <span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="s2">&#34;_id&#34;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="s2">&#34;host&#34;</span> <span class="o">:</span> <span class="s2">&#34;127.0.0.1:2001&#34;</span>  <span class="p">},</span>
+        <span class="p">{</span> <span class="s2">&#34;_id&#34;</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="s2">&#34;host&#34;</span> <span class="o">:</span> <span class="s2">&#34;127.0.0.1:2002&#34;</span>  <span class="p">},</span>
+        <span class="p">{</span> <span class="s2">&#34;_id&#34;</span> <span class="o">:</span> <span class="mi">2</span><span class="p">,</span>  <span class="s2">&#34;host&#34;</span> <span class="o">:</span> <span class="s2">&#34;127.0.0.1:2003&#34;</span>  <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+<span class="nx">rs</span><span class="p">.</span><span class="nx">initiate</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
+<span class="nx">rs</span><span class="p">.</span><span class="nx">status</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="高级参数">高级参数</h4>
+<ul>
+<li>standard 常规节点 参与投票有可能成为活跃节点</li>
+<li>passive 副本节点 参与投票，但不能成为活跃节点</li>
+<li>arbiter 仲裁节点 只参与投票，不复制节点，也不能成为活跃节点</li>
+<li>priority 0到1000之间，0代表是副本节点，1到1000是常规节点</li>
+<li>arbiterOnly:true 仲裁节点</li>
+</ul>
+<h4 id="读写分离操作">读写分离操作</h4>
+<p>一般情况下作为副本节点是不能进行数据库操作的，但是在读取密集的系统中读写分离是必要的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"> <span class="nx">rs</span><span class="p">.</span><span class="nx">slaveOk</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="oplog">Oplog</h4>
+<p>它被存储在本地数据库local中，会记录每一个操作。 如果希望在故障恢复的时候尽可能更多，可以把这个size设置的大一点</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="o">--</span><span class="nx">oplogSize</span> <span class="mi">1024</span>
+<span class="nx">use</span> <span class="nx">local</span><span class="p">;</span>
+ <span class="nx">db</span><span class="p">.</span><span class="nx">oplog</span><span class="p">.</span><span class="nx">rs</span><span class="p">.</span><span class="nx">find</span><span class="p">().</span><span class="nx">limit</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>MongoDB的副本集与我们常见的主从有所不同，主从在主机宕机后所有服务将停止，而副本集在主机宕机后，副本会接管主节点成为主节点，不会出现宕机的情况。</p>
+<h3 id="mongodb-分片">MongoDB 分片</h3>
+<h4 id="分片">分片</h4>
+<p>在Mongodb里面存在另一种集群，就是分片技术,可以满足MongoDB数据量大量增长的需求。</p>
+<p>当MongoDB存储海量的数据时，一台机器可能不足以存储数据，也可能不足以提供可接受的读写吞吐量。这时，我们就可以通过在多台机器上分割数据，使得数据库系统能存储和处理更多的数据。</p>
+<h4 id="为什么使用分片">为什么使用分片</h4>
+<ul>
+<li>复制所有的写入操作到主节点</li>
+<li>延迟的敏感数据会在主节点查询</li>
+<li>单个副本集限制在12个节点</li>
+<li>当请求量巨大时会出现内存不足。</li>
+<li>本地磁盘不足</li>
+<li>垂直扩展价格昂贵</li>
+</ul>
+<p>MongoDB分片
+下图展示了在MongoDB中使用分片集群结构分布：</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/mongodb-sharding.png" alt=""></p>
+<p>上图中主要有如下所述三个主要组件：</p>
+<ul>
+<li>
+<p><strong>Shard</strong>:
+用于存储实际的数据块，实际生产环境中一个shard server角色可由几台机器组个一个replica set承担，防止主机单点故障</p>
+</li>
+<li>
+<p><strong>Config Server</strong>:
+mongod实例，存储了整个 ClusterMetadata，其中包括 chunk信息。</p>
+</li>
+<li>
+<p><strong>Query Routers</strong>:
+前端路由，客户端由此接入，且让整个集群看上去像单一数据库，前端应用可以透明使用。</p>
+</li>
+</ul>
+<h4 id="分片实例">分片实例</h4>
+<p>分片结构端口分布如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">Shard</span> <span class="nx">Server</span> <span class="mi">1</span><span class="err">：</span><span class="mi">27020</span>
+<span class="nx">Shard</span> <span class="nx">Server</span> <span class="mi">2</span><span class="err">：</span><span class="mi">27021</span>
+<span class="nx">Shard</span> <span class="nx">Server</span> <span class="mi">3</span><span class="err">：</span><span class="mi">27022</span>
+<span class="nx">Shard</span> <span class="nx">Server</span> <span class="mi">4</span><span class="err">：</span><span class="mi">27023</span>
+<span class="nx">Config</span> <span class="nx">Server</span> <span class="err">：</span><span class="mi">27100</span>
+<span class="nx">Route</span> <span class="nx">Process</span><span class="err">：</span><span class="mi">40000</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>步骤一：启动Shard Server</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="nx">mkdir</span> <span class="o">-</span><span class="nx">p</span> <span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">shard</span><span class="o">/</span><span class="nx">s0</span>
+<span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="nx">mkdir</span> <span class="o">-</span><span class="nx">p</span> <span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">shard</span><span class="o">/</span><span class="nx">s1</span>
+<span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="nx">mkdir</span> <span class="o">-</span><span class="nx">p</span> <span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">shard</span><span class="o">/</span><span class="nx">s2</span>
+<span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="nx">mkdir</span> <span class="o">-</span><span class="nx">p</span> <span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">shard</span><span class="o">/</span><span class="nx">s3</span>
+<span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="nx">mkdir</span> <span class="o">-</span><span class="nx">p</span> <span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">shard</span><span class="o">/</span><span class="nx">log</span>
+<span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span><span class="nx">mongod</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">27020</span> <span class="o">--</span><span class="nx">dbpath</span><span class="o">=</span><span class="err">/www/mongoDB/shard/s0 --logpath=/www/mongoDB/shard/log/s0.log --logappend --fork</span>
+<span class="p">....</span>
+<span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span><span class="nx">mongod</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">27023</span> <span class="o">--</span><span class="nx">dbpath</span><span class="o">=</span><span class="err">/www/mongoDB/shard/s3 --logpath=/www/mongoDB/shard/log/s3.log --logappend --fork</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>步骤二： 启动Config Server</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="nx">mkdir</span> <span class="o">-</span><span class="nx">p</span> <span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">shard</span><span class="o">/</span><span class="nx">config</span>
+<span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="o">/</span><span class="p">]</span><span class="err">#</span> <span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span><span class="nx">mongod</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">27100</span> <span class="o">--</span><span class="nx">dbpath</span><span class="o">=</span><span class="err">/www/mongoDB/shard/config --logpath=/www/mongoDB/shard/log/config.log --logappend --fork</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>注意：这里我们完全可以像启动普通mongodb服务一样启动，不需要添加—shardsvr和configsvr参数。因为这两个参数的作用就是改变启动端口的，所以我们自行指定了端口就可以。</p>
+<p>步骤三： 启动Route Process</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="err">/usr/local/mongoDB/bin/mongos --port 40000 --configdb localhost:27100 --fork --logpath=/www/mongoDB/shard/log/route.log --chunkSize 500</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>mongos启动参数中，chunkSize这一项是用来指定chunk的大小的，单位是MB，默认大小为200MB.</p>
+<p>步骤四： 配置Sharding</p>
+<p>接下来，我们使用MongoDB Shell登录到mongos，添加Shard节点</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="mi">100</span> <span class="nx">shard</span><span class="p">]</span><span class="err">#</span> <span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="nx">mongoDB</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span><span class="nx">mongo</span> <span class="nx">admin</span> <span class="o">--</span><span class="nx">port</span> <span class="mi">40000</span>
+<span class="nx">MongoDB</span> <span class="nx">shell</span> <span class="nx">version</span><span class="o">:</span> <span class="mf">2.0.7</span>
+<span class="nx">connecting</span> <span class="nx">to</span><span class="o">:</span> <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">40000</span><span class="o">/</span><span class="nx">admin</span>
+<span class="nx">mongos</span><span class="o">&gt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span> <span class="nx">addshard</span><span class="o">:</span><span class="s2">&#34;localhost:27020&#34;</span> <span class="p">})</span>
+<span class="p">{</span> <span class="s2">&#34;shardAdded&#34;</span> <span class="o">:</span> <span class="s2">&#34;shard0000&#34;</span><span class="p">,</span> <span class="s2">&#34;ok&#34;</span> <span class="o">:</span> <span class="mi">1</span> <span class="p">}</span>
+<span class="p">......</span>
+<span class="nx">mongos</span><span class="o">&gt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span> <span class="nx">addshard</span><span class="o">:</span><span class="s2">&#34;localhost:27029&#34;</span> <span class="p">})</span>
+<span class="p">{</span> <span class="s2">&#34;shardAdded&#34;</span> <span class="o">:</span> <span class="s2">&#34;shard0009&#34;</span><span class="p">,</span> <span class="s2">&#34;ok&#34;</span> <span class="o">:</span> <span class="mi">1</span> <span class="p">}</span>
+<span class="nx">mongos</span><span class="o">&gt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span> <span class="nx">enablesharding</span><span class="o">:</span><span class="s2">&#34;test&#34;</span> <span class="p">})</span> <span class="err">#</span><span class="nx">设置分片存储的数据库</span>
+<span class="p">{</span> <span class="s2">&#34;ok&#34;</span> <span class="o">:</span> <span class="mi">1</span> <span class="p">}</span>
+<span class="nx">mongos</span><span class="o">&gt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">runCommand</span><span class="p">({</span> <span class="nx">shardcollection</span><span class="o">:</span> <span class="s2">&#34;test.log&#34;</span><span class="p">,</span> <span class="nx">key</span><span class="o">:</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="nx">time</span><span class="o">:</span><span class="mi">1</span><span class="p">}})</span>
+<span class="p">{</span> <span class="s2">&#34;collectionsharded&#34;</span> <span class="o">:</span> <span class="s2">&#34;test.log&#34;</span><span class="p">,</span> <span class="s2">&#34;ok&#34;</span> <span class="o">:</span> <span class="mi">1</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>步骤五： 程序代码内无需太大更改，直接按照连接普通的mongo数据库那样，将数据库连接接入接口40000</p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

@@ -1,1 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Promise on luke's blog</title><link>https://goyth.cn/tags/promise/</link><description>Recent content in Promise on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><lastBuildDate>Fri, 03 Aug 2018 21:53:54 +0800</lastBuildDate><atom:link href="https://goyth.cn/tags/promise/index.xml" rel="self" type="application/rss+xml"/><item><title>Promise实现原理</title><link>https://goyth.cn/post/promise/</link><pubDate>Fri, 03 Aug 2018 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/promise/</guid><description>1.&lt;code>promise&lt;/code> 函数的参数（executor）是一个函数，这个函数有两个参数&lt;code>resolve&lt;/code>和&lt;code>reject&lt;/code>，这两个参数也都是函数，分别在&lt;code>promise&lt;/code>成功和失败时调用。 2. 当构建一个&lt;code>promise&lt;/code>实例时，会自动调用这个函数（executor） 3. 每个&lt;code>promise&lt;/code>对象都有一个&lt;code>onFulfilledCallback&lt;/code>队列和一个&lt;code>onRejectedCallback&lt;/code>队列，用来分别存储成功和失败时调用的回调函数</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Promise on luke&#39;s blog</title>
+    <link>https://goyth.cn/tags/promise/</link>
+    <description>Recent content in Promise on luke&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
+    <lastBuildDate>Fri, 03 Aug 2018 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/tags/promise/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Promise实现原理</title>
+      <link>https://goyth.cn/post/promise/</link>
+      <pubDate>Fri, 03 Aug 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/promise/</guid>
+      <description>1.&lt;code&gt;promise&lt;/code&gt; 函数的参数（executor）是一个函数，这个函数有两个参数&lt;code&gt;resolve&lt;/code&gt;和&lt;code&gt;reject&lt;/code&gt;，这两个参数也都是函数，分别在&lt;code&gt;promise&lt;/code&gt;成功和失败时调用。 2. 当构建一个&lt;code&gt;promise&lt;/code&gt;实例时，会自动调用这个函数（executor） 3. 每个&lt;code&gt;promise&lt;/code&gt;对象都有一个&lt;code&gt;onFulfilledCallback&lt;/code&gt;队列和一个&lt;code&gt;onRejectedCallback&lt;/code&gt;队列，用来分别存储成功和失败时调用的回调函数</description>
+    </item>
+    
+  </channel>
+</rss>

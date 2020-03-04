@@ -1,262 +1,366 @@
-<!doctype html><html lang=en><head><title>Express路由与中间件原理（中间件篇） | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="Express路由与中间件原理（中间件篇）"><meta property="og:description" content="Express 路由原理见 Express路由与中间件原理（路由篇） Express 中间件通常用来一些公用的逻辑，并可以将处理的结果挂载在 req、res 上，以供后面的中间件函数，或路由函数使用。因此通常情况下中间件函数会放在路由的前面。在 Express 中，注册一个中间件与注册一个路由一样， …"><meta property="og:url" content="https://goyth.cn/post/expressmiddleware/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/expressmiddleware/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
-<a href=https://goyth.cn/categories class=nav_item>Category</a>
-<a href=https://goyth.cn/tags class=nav_item>Tag</a>
-<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
-<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">20. July 2019</p><h1 class=post_title>Express路由与中间件原理（中间件篇）</h1><div class=post_body><div class=post_inner><h2 id=express-中间件>Express 中间件</h2><p><code>Express</code> 路由原理见 <a href=http://www.goyth.com/2019/07/20/expressRouter/>Express路由与中间件原理（路由篇）</a></p><p><code>Express</code> 中间件通常用来一些公用的逻辑，并可以将处理的结果挂载在 <code>req</code>、<code>res</code> 上，以供后面的中间件函数，或路由函数使用。因此通常情况下中间件函数会放在路由的前面</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>let</span> <span class=nx>express</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;express&#39;</span><span class=p>)</span>
-<span class=c1>// let express = require(&#39;./express&#39;)
-</span><span class=c1></span>
-<span class=kd>let</span> <span class=nx>app</span> <span class=o>=</span> <span class=nx>express</span><span class=p>();</span>
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Express路由与中间件原理（中间件篇） | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'Express路由与中间件原理（中间件篇）' />
+<meta property = 'og:description' content = 'Express 路由原理见 Express路由与中间件原理（路由篇） Express 中间件通常用来一些公用的逻辑，并可以将处理的结果挂载在 req、res 上，以供后面的中间件函数，或路由函数使用。因此通常情况下中间件函数会放在路由的前面。在 Express 中，注册一个中间件与注册一个路由一样， …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/expressmiddleware/' />
+<meta property = 'og:image' content = 'https://goyth.cn/images/stuck.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>use</span><span class=p>(</span><span class=s1>&#39;/&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>,</span> <span class=nx>next</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
-  <span class=nx>next</span><span class=p>()</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=mi>2</span><span class=p>)</span>
-<span class=p>})</span>
+  <link rel='canonical' href='https://goyth.cn/post/expressmiddleware/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>use</span><span class=p>(</span><span class=s1>&#39;/&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>,</span> <span class=nx>next</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span>
-  <span class=nx>next</span><span class=p>()</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=mi>4</span><span class=p>)</span>
-<span class=p>})</span>
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>use</span><span class=p>(</span><span class=s1>&#39;/user&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>,</span> <span class=nx>next</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span>
-  <span class=nx>next</span><span class=p>()</span>
-<span class=p>})</span>
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>use</span><span class=p>(</span><span class=s1>&#39;/user&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>,</span> <span class=nx>next</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=mi>6</span><span class=p>)</span>
-  <span class=nx>next</span><span class=p>()</span>
-<span class=p>})</span>
 
-</code></pre></td></tr></table></div></div><p>在 <code>Express</code> 中，注册一个中间件与注册一个路由一样，也是放在 <code>app.routes</code> 中，只是中间件的 <code>method</code> 为 middle。</p><p>但是在中间件函数中，有可能要执行异步逻辑，中间件函数中是通过调用 <code>next</code> 回调函数，来执行下一个中间件函数或路由，因此我们不能再通过循环来遍历 <code>app.routes</code> ，而是应该通过回调函数来进行调用</p><h3 id=第三版>第三版</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
-</span><span class=lnt>  2
-</span><span class=lnt>  3
-</span><span class=lnt>  4
-</span><span class=lnt>  5
-</span><span class=lnt>  6
-</span><span class=lnt>  7
-</span><span class=lnt>  8
-</span><span class=lnt>  9
-</span><span class=lnt> 10
-</span><span class=lnt> 11
-</span><span class=lnt> 12
-</span><span class=lnt> 13
-</span><span class=lnt> 14
-</span><span class=lnt> 15
-</span><span class=lnt> 16
-</span><span class=lnt> 17
-</span><span class=lnt> 18
-</span><span class=lnt> 19
-</span><span class=lnt> 20
-</span><span class=lnt> 21
-</span><span class=lnt> 22
-</span><span class=lnt> 23
-</span><span class=lnt> 24
-</span><span class=lnt> 25
-</span><span class=lnt> 26
-</span><span class=lnt> 27
-</span><span class=lnt> 28
-</span><span class=lnt> 29
-</span><span class=lnt> 30
-</span><span class=lnt> 31
-</span><span class=lnt> 32
-</span><span class=lnt> 33
-</span><span class=lnt> 34
-</span><span class=lnt> 35
-</span><span class=lnt> 36
-</span><span class=lnt> 37
-</span><span class=lnt> 38
-</span><span class=lnt> 39
-</span><span class=lnt> 40
-</span><span class=lnt> 41
-</span><span class=lnt> 42
-</span><span class=lnt> 43
-</span><span class=lnt> 44
-</span><span class=lnt> 45
-</span><span class=lnt> 46
-</span><span class=lnt> 47
-</span><span class=lnt> 48
-</span><span class=lnt> 49
-</span><span class=lnt> 50
-</span><span class=lnt> 51
-</span><span class=lnt> 52
-</span><span class=lnt> 53
-</span><span class=lnt> 54
-</span><span class=lnt> 55
-</span><span class=lnt> 56
-</span><span class=lnt> 57
-</span><span class=lnt> 58
-</span><span class=lnt> 59
-</span><span class=lnt> 60
-</span><span class=lnt> 61
-</span><span class=lnt> 62
-</span><span class=lnt> 63
-</span><span class=lnt> 64
-</span><span class=lnt> 65
-</span><span class=lnt> 66
-</span><span class=lnt> 67
-</span><span class=lnt> 68
-</span><span class=lnt> 69
-</span><span class=lnt> 70
-</span><span class=lnt> 71
-</span><span class=lnt> 72
-</span><span class=lnt> 73
-</span><span class=lnt> 74
-</span><span class=lnt> 75
-</span><span class=lnt> 76
-</span><span class=lnt> 77
-</span><span class=lnt> 78
-</span><span class=lnt> 79
-</span><span class=lnt> 80
-</span><span class=lnt> 81
-</span><span class=lnt> 82
-</span><span class=lnt> 83
-</span><span class=lnt> 84
-</span><span class=lnt> 85
-</span><span class=lnt> 86
-</span><span class=lnt> 87
-</span><span class=lnt> 88
-</span><span class=lnt> 89
-</span><span class=lnt> 90
-</span><span class=lnt> 91
-</span><span class=lnt> 92
-</span><span class=lnt> 93
-</span><span class=lnt> 94
-</span><span class=lnt> 95
-</span><span class=lnt> 96
-</span><span class=lnt> 97
-</span><span class=lnt> 98
-</span><span class=lnt> 99
-</span><span class=lnt>100
-</span><span class=lnt>101
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=c1>// express.js
-</span><span class=c1></span><span class=kd>let</span> <span class=nx>http</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;http&#39;</span><span class=p>)</span>
-<span class=kd>let</span> <span class=nx>url</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;url&#39;</span><span class=p>)</span>
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>20. July 2019</p>
+      <h1 class = 'post_title'>Express路由与中间件原理（中间件篇）</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h2 id="express-中间件">Express 中间件</h2>
+<p><code>Express</code> 路由原理见 <a href="http://www.goyth.com/2019/07/20/expressRouter/">Express路由与中间件原理（路由篇）</a></p>
+<p><code>Express</code> 中间件通常用来一些公用的逻辑，并可以将处理的结果挂载在 <code>req</code>、<code>res</code> 上，以供后面的中间件函数，或路由函数使用。因此通常情况下中间件函数会放在路由的前面</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">)</span>
+<span class="c1">// let express = require(&#39;./express&#39;)
+</span><span class="c1"></span>
+<span class="kd">let</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
 
-<span class=kd>function</span> <span class=nx>application</span><span class=p>()</span> <span class=p>{</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="nx">next</span><span class="p">()</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">})</span>
 
-  <span class=kd>let</span> <span class=nx>app</span> <span class=o>=</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=c1>// 获取请求方法
-</span><span class=c1></span>    <span class=kd>let</span> <span class=nx>method</span> <span class=o>=</span> <span class=nx>req</span><span class=p>.</span><span class=nx>method</span><span class=p>.</span><span class=nx>toLowerCase</span><span class=p>();</span>
-    <span class=c1>// 获取请求路径
-</span><span class=c1></span>    <span class=kd>let</span> <span class=p>{</span>
-      <span class=nx>pathname</span>
-    <span class=p>}</span> <span class=o>=</span> <span class=nx>url</span><span class=p>.</span><span class=nx>parse</span><span class=p>(</span><span class=nx>req</span><span class=p>.</span><span class=nx>url</span><span class=p>)</span>
-    <span class=c1>// 使用 next 回调函数来遍历 app.routes
-</span><span class=c1></span>    <span class=kd>function</span> <span class=nx>next</span><span class=p>(</span><span class=nx>index</span><span class=p>)</span> <span class=p>{</span>
-      <span class=k>if</span> <span class=p>(</span><span class=nx>index</span> <span class=o>&gt;=</span> <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>length</span><span class=p>)</span> <span class=p>{</span>
-        <span class=k>return</span> <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=sb>`cannot </span><span class=si>${</span><span class=nx>method</span><span class=si>}</span><span class=sb>  </span><span class=si>${</span><span class=nx>pathname</span><span class=si>}</span><span class=sb>`</span><span class=p>);</span>
-      <span class=p>}</span>
-      <span class=kd>let</span> <span class=nx>layer</span> <span class=o>=</span> <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>[</span><span class=nx>index</span><span class=p>];</span>
-      <span class=c1>// 中间件
-</span><span class=c1></span>      <span class=k>if</span> <span class=p>(</span><span class=nx>layer</span><span class=p>.</span><span class=nx>method</span> <span class=o>===</span> <span class=s1>&#39;middle&#39;</span><span class=p>)</span> <span class=p>{</span>
-        <span class=kd>let</span> <span class=p>{</span>
-          <span class=nx>path</span><span class=p>,</span>
-          <span class=nx>callback</span>
-        <span class=p>}</span> <span class=o>=</span> <span class=nx>layer</span><span class=p>;</span>
-        <span class=k>if</span> <span class=p>(</span><span class=nx>path</span> <span class=o>===</span> <span class=s1>&#39;/&#39;</span> <span class=o>||</span> <span class=nx>pathname</span><span class=p>.</span><span class=nx>startsWith</span><span class=p>(</span><span class=nx>path</span> <span class=o>+</span> <span class=s1>&#39;/&#39;</span><span class=p>)</span> <span class=o>||</span> <span class=nx>pathname</span> <span class=o>===</span> <span class=nx>path</span><span class=p>)</span> <span class=p>{</span>
-          <span class=nx>callback</span><span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>,</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-            <span class=nx>next</span><span class=p>(</span><span class=nx>index</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
-          <span class=p>});</span>
-        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span> <span class=c1>// 如果不匹配则取下一个中间件或路由
-</span><span class=c1></span>          <span class=nx>next</span><span class=p>(</span><span class=nx>index</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
-        <span class=p>}</span>
-      <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>  <span class=c1>//  路由
-</span><span class=c1></span>        <span class=kd>let</span> <span class=nx>layerPath</span> <span class=o>=</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>path</span>
-        <span class=kd>let</span> <span class=nx>layerMethod</span> <span class=o>=</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>method</span>
-        <span class=k>if</span> <span class=p>(</span><span class=nx>layerPath</span><span class=p>.</span><span class=nx>params</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=nx>layerMethod</span> <span class=o>===</span> <span class=nx>method</span> <span class=o>||</span> <span class=s2>&#34;all&#34;</span> <span class=o>===</span> <span class=nx>layerMethod</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=nx>layerPath</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nx>pathname</span><span class=p>))</span> <span class=p>{</span>
-          <span class=c1>// 过滤掉第一项
-</span><span class=c1></span>          <span class=kd>let</span> <span class=p>[,</span> <span class=p>...</span><span class=nx>args</span><span class=p>]</span> <span class=o>=</span> <span class=nx>pathname</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>layer</span><span class=p>.</span><span class=nx>path</span><span class=p>)</span>
-          <span class=nx>req</span><span class=p>.</span><span class=nx>params</span> <span class=o>=</span> <span class=nx>layerPath</span><span class=p>.</span><span class=nx>params</span><span class=p>.</span><span class=nx>reduce</span><span class=p>((</span><span class=nx>memo</span><span class=p>,</span> <span class=nx>current</span><span class=p>,</span> <span class=nx>index</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>(</span><span class=nx>memo</span><span class=p>[</span><span class=nx>current</span><span class=p>]</span> <span class=o>=</span> <span class=nx>args</span><span class=p>[</span><span class=nx>index</span><span class=p>],</span> <span class=nx>memo</span><span class=p>),</span> <span class=p>{});</span>
-          <span class=k>return</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>callback</span><span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>);</span>
-        <span class=p>}</span> <span class=k>else</span> <span class=k>if</span> <span class=p>((</span><span class=nx>layerMethod</span> <span class=o>===</span> <span class=nx>method</span> <span class=o>||</span> <span class=s2>&#34;all&#34;</span> <span class=o>===</span> <span class=nx>layerMethod</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=nx>layerPath</span> <span class=o>===</span> <span class=nx>pathname</span> <span class=o>||</span> <span class=p>(</span><span class=s2>&#34;*&#34;</span> <span class=o>===</span> <span class=nx>layerPath</span><span class=p>)))</span> <span class=p>{</span>
-          <span class=k>return</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>callback</span><span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span>
-        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span> <span class=c1>// 如果不匹配则取下一个中间件或路由
-</span><span class=c1></span>          <span class=nx>next</span><span class=p>(</span><span class=nx>index</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
-        <span class=p>}</span>
-      <span class=p>}</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+  <span class="nx">next</span><span class="p">()</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="p">})</span>
 
-    <span class=p>}</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+  <span class="nx">next</span><span class="p">()</span>
+<span class="p">})</span>
 
-    <span class=nx>next</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+  <span class="nx">next</span><span class="p">()</span>
+<span class="p">})</span>
 
-    <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=sb>`cannot </span><span class=si>${</span><span class=nx>method</span><span class=si>}</span><span class=sb>  </span><span class=si>${</span><span class=nx>pathname</span><span class=si>}</span><span class=sb>`</span><span class=p>)</span>
-  <span class=p>}</span>
-  <span class=c1>// 存放中间件或路由的 layer 数组
-</span><span class=c1></span>  <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span> <span class=o>=</span> <span class=p>[];</span>
-  <span class=c1>// 中间件注册方法
-</span><span class=c1></span>  <span class=nx>app</span><span class=p>.</span><span class=nx>use</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(</span><span class=nx>path</span><span class=p>,</span> <span class=nx>callback</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>callback</span><span class=p>)</span> <span class=p>{</span>
-      <span class=nx>callback</span> <span class=o>=</span> <span class=nx>path</span><span class=p>;</span>
-      <span class=nx>path</span> <span class=o>=</span> <span class=s1>&#39;/&#39;</span><span class=p>;</span>
-    <span class=p>}</span>
-    <span class=kd>let</span> <span class=nx>layer</span> <span class=o>=</span> <span class=p>{</span>
-      <span class=nx>method</span><span class=o>:</span> <span class=s1>&#39;middle&#39;</span><span class=p>,</span>
-      <span class=nx>path</span><span class=p>,</span>
-      <span class=nx>callback</span>
-    <span class=p>}</span>
-    <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>layer</span><span class=p>)</span>
-  <span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 <code>Express</code> 中，注册一个中间件与注册一个路由一样，也是放在 <code>app.routes</code> 中，只是中间件的 <code>method</code> 为 middle。</p>
+<p>但是在中间件函数中，有可能要执行异步逻辑，中间件函数中是通过调用 <code>next</code> 回调函数，来执行下一个中间件函数或路由，因此我们不能再通过循环来遍历 <code>app.routes</code> ，而是应该通过回调函数来进行调用</p>
+<h3 id="第三版">第三版</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// express.js
+</span><span class="c1"></span><span class="kd">let</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span>
 
-  <span class=p>;[</span><span class=s1>&#39;get&#39;</span><span class=p>,</span> <span class=s1>&#39;post&#39;</span><span class=p>,</span> <span class=s1>&#39;all&#39;</span><span class=p>].</span><span class=nx>forEach</span><span class=p>(</span><span class=nx>method</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=nx>app</span><span class=p>[</span><span class=nx>method</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=nx>path</span><span class=p>,</span> <span class=nx>callback</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-      <span class=c1>// /user/:id/:name -&gt; /user/:([^\/]+)/:([^\/]+)
-</span><span class=c1></span>      <span class=k>if</span> <span class=p>(</span><span class=nx>path</span><span class=p>.</span><span class=nx>includes</span><span class=p>(</span><span class=s1>&#39;:&#39;</span><span class=p>))</span> <span class=p>{</span>
-        <span class=kd>let</span> <span class=nx>params</span> <span class=o>=</span> <span class=p>[]</span>
-        <span class=nx>path</span> <span class=o>=</span> <span class=nx>path</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=sr>/:([^\/]+)/g</span><span class=p>,</span> <span class=p>(...</span><span class=nx>args</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-          <span class=nx>params</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>args</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
-          <span class=k>return</span> <span class=s1>&#39;([^\/]+)&#39;</span>
-        <span class=p>})</span>
-        <span class=nx>path</span> <span class=o>=</span> <span class=k>new</span> <span class=nb>RegExp</span><span class=p>(</span><span class=nx>path</span><span class=p>);</span>
-        <span class=nx>path</span><span class=p>.</span><span class=nx>params</span> <span class=o>=</span> <span class=nx>params</span>
-      <span class=p>}</span>
+<span class="kd">function</span> <span class="nx">application</span><span class="p">()</span> <span class="p">{</span>
 
-      <span class=kd>let</span> <span class=nx>layer</span> <span class=o>=</span> <span class=p>{</span>
-        <span class=nx>method</span><span class=p>,</span>
-        <span class=nx>path</span><span class=p>,</span>
-        <span class=nx>callback</span>
-      <span class=p>}</span>
-      <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>layer</span><span class=p>)</span>
-    <span class=p>}</span>
-  <span class=p>});</span>
+  <span class="kd">let</span> <span class="nx">app</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// 获取请求方法
+</span><span class="c1"></span>    <span class="kd">let</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    <span class="c1">// 获取请求路径
+</span><span class="c1"></span>    <span class="kd">let</span> <span class="p">{</span>
+      <span class="nx">pathname</span>
+    <span class="p">}</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span>
+    <span class="c1">// 使用 next 回调函数来遍历 app.routes
+</span><span class="c1"></span>    <span class="kd">function</span> <span class="nx">next</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&gt;=</span> <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="sb">`cannot </span><span class="si">${</span><span class="nx">method</span><span class="si">}</span><span class="sb">  </span><span class="si">${</span><span class="nx">pathname</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="kd">let</span> <span class="nx">layer</span> <span class="o">=</span> <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+      <span class="c1">// 中间件
+</span><span class="c1"></span>      <span class="k">if</span> <span class="p">(</span><span class="nx">layer</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="s1">&#39;middle&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="p">{</span>
+          <span class="nx">path</span><span class="p">,</span>
+          <span class="nx">callback</span>
+        <span class="p">}</span> <span class="o">=</span> <span class="nx">layer</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">path</span> <span class="o">===</span> <span class="s1">&#39;/&#39;</span> <span class="o">||</span> <span class="nx">pathname</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="nx">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="nx">pathname</span> <span class="o">===</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">callback</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">next</span><span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+          <span class="p">});</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// 如果不匹配则取下一个中间件或路由
+</span><span class="c1"></span>          <span class="nx">next</span><span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>  <span class="c1">//  路由
+</span><span class="c1"></span>        <span class="kd">let</span> <span class="nx">layerPath</span> <span class="o">=</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">path</span>
+        <span class="kd">let</span> <span class="nx">layerMethod</span> <span class="o">=</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">method</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">layerPath</span><span class="p">.</span><span class="nx">params</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">layerMethod</span> <span class="o">===</span> <span class="nx">method</span> <span class="o">||</span> <span class="s2">&#34;all&#34;</span> <span class="o">===</span> <span class="nx">layerMethod</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">layerPath</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">pathname</span><span class="p">))</span> <span class="p">{</span>
+          <span class="c1">// 过滤掉第一项
+</span><span class="c1"></span>          <span class="kd">let</span> <span class="p">[,</span> <span class="p">...</span><span class="nx">args</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pathname</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">layer</span><span class="p">.</span><span class="nx">path</span><span class="p">)</span>
+          <span class="nx">req</span><span class="p">.</span><span class="nx">params</span> <span class="o">=</span> <span class="nx">layerPath</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">memo</span><span class="p">,</span> <span class="nx">current</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">memo</span><span class="p">[</span><span class="nx">current</span><span class="p">]</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="nx">index</span><span class="p">],</span> <span class="nx">memo</span><span class="p">),</span> <span class="p">{});</span>
+          <span class="k">return</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">callback</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">((</span><span class="nx">layerMethod</span> <span class="o">===</span> <span class="nx">method</span> <span class="o">||</span> <span class="s2">&#34;all&#34;</span> <span class="o">===</span> <span class="nx">layerMethod</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">layerPath</span> <span class="o">===</span> <span class="nx">pathname</span> <span class="o">||</span> <span class="p">(</span><span class="s2">&#34;*&#34;</span> <span class="o">===</span> <span class="nx">layerPath</span><span class="p">)))</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">callback</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// 如果不匹配则取下一个中间件或路由
+</span><span class="c1"></span>          <span class="nx">next</span><span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
 
-  <span class=nx>app</span><span class=p>.</span><span class=nx>listen</span> <span class=o>=</span> <span class=p>(...</span><span class=nx>args</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=kd>let</span> <span class=nx>server</span> <span class=o>=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>createServer</span><span class=p>(</span><span class=nx>app</span><span class=p>)</span>
-    <span class=nx>server</span><span class=p>.</span><span class=nx>listen</span><span class=p>(...</span><span class=nx>args</span><span class=p>)</span>
-  <span class=p>}</span>
+    <span class="p">}</span>
 
-  <span class=k>return</span> <span class=nx>app</span><span class=p>;</span>
-<span class=p>}</span>
+    <span class="nx">next</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-<span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=nx>application</span><span class=p>;</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="sb">`cannot </span><span class="si">${</span><span class="nx">method</span><span class="si">}</span><span class="sb">  </span><span class="si">${</span><span class="nx">pathname</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="c1">// 存放中间件或路由的 layer 数组
+</span><span class="c1"></span>  <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="c1">// 中间件注册方法
+</span><span class="c1"></span>  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">callback</span> <span class="o">=</span> <span class="nx">path</span><span class="p">;</span>
+      <span class="nx">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">layer</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;middle&#39;</span><span class="p">,</span>
+      <span class="nx">path</span><span class="p">,</span>
+      <span class="nx">callback</span>
+    <span class="p">}</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">layer</span><span class="p">)</span>
+  <span class="p">}</span>
 
-</code></pre></td></tr></table></div></div><h2 id=总结>总结</h2><p>第三版实现了与<code>Express</code>相同的路由与中间件功能，但是与源码相比还是有一些区别的，这里只是提供了一个简化版的思路。<code>Express</code>源码考虑的东西很多，但是大体思想是类似的。总结一下这一版路由与中间件的实现思想就是维护一个队列，通过 <code>app.get</code> 、<code>app.post</code>、 <code>app.all</code>、<code>app.use</code> 来构建一个 <code>layer</code> 对象，这个 <code>layer</code> 对象中包含了，<code>method</code>、<code>path</code>、<code>callback</code> 函数，然后将 <code>layer</code> 对象存放在队列中。
-当请求到来时，通过<code>next</code> 回调函数来遍历队列中的每一项，如果 <code>method</code> 与 <code>path</code> 都匹配的话，则执行该 <code>callback</code>。</p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
+  <span class="p">;[</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">].</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">method</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">app</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+      <span class="c1">// /user/:id/:name -&gt; /user/:([^\/]+)/:([^\/]+)
+</span><span class="c1"></span>      <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="nx">path</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/:([^\/]+)/g</span><span class="p">,</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+          <span class="nx">params</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+          <span class="k">return</span> <span class="s1">&#39;([^\/]+)&#39;</span>
+        <span class="p">})</span>
+        <span class="nx">path</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
+        <span class="nx">path</span><span class="p">.</span><span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span>
+      <span class="p">}</span>
+
+      <span class="kd">let</span> <span class="nx">layer</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">method</span><span class="p">,</span>
+        <span class="nx">path</span><span class="p">,</span>
+        <span class="nx">callback</span>
+      <span class="p">}</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">layer</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">app</span><span class="p">.</span><span class="nx">listen</span> <span class="o">=</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+    <span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">app</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">application</span><span class="p">;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>第三版实现了与<code>Express</code>相同的路由与中间件功能，但是与源码相比还是有一些区别的，这里只是提供了一个简化版的思路。<code>Express</code>源码考虑的东西很多，但是大体思想是类似的。总结一下这一版路由与中间件的实现思想就是维护一个队列，通过 <code>app.get</code> 、<code>app.post</code>、 <code>app.all</code>、<code>app.use</code> 来构建一个 <code>layer</code> 对象，这个 <code>layer</code> 对象中包含了，<code>method</code>、<code>path</code>、<code>callback</code> 函数，然后将 <code>layer</code> 对象存放在队列中。
+当请求到来时，通过<code>next</code> 回调函数来遍历队列中的每一项，如果 <code>method</code> 与 <code>path</code> 都匹配的话，则执行该 <code>callback</code>。</p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

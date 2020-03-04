@@ -1,6 +1,242 @@
-<!doctype html><html lang=en><head><title>浏览器的缓存机制梳理 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="浏览器的缓存机制梳理"><meta property="og:description" content="概述 浏览器的缓存机制也就是我们说的HTTP缓存机制，其机制是根据HTTP报文的缓存标识进行的，所以在分析浏览器缓存机制之前，我们先使用图文简单介绍一下HTTP报文，HTTP报文分为两种：
-HTTP请求(Request)报文，报文格式为：请求行 – HTTP头(通用信息头，请求头，实体头) – 请求 …"><meta property="og:url" content="https://goyth.cn/post/browsecache/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/browsecache/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
-<a href=https://goyth.cn/categories class=nav_item>Category</a>
-<a href=https://goyth.cn/tags class=nav_item>Tag</a>
-<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
-<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">01. July 2018</p><h1 class=post_title>浏览器的缓存机制梳理</h1><div class=post_body><div class=post_inner><h3 id=概述>概述</h3><p>浏览器的缓存机制也就是我们说的HTTP缓存机制，其机制是根据HTTP报文的缓存标识进行的，所以在分析浏览器缓存机制之前，我们先使用图文简单介绍一下HTTP报文，HTTP报文分为两种：</p><p>HTTP请求(Request)报文，报文格式为：请求行 – HTTP头(通用信息头，请求头，实体头) – 请求报文主体(只有POST才有报文主体)，如下图</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-01.webp alt></p><p>HTTP响应(Response)报文，报文格式为：状态行 – HTTP头(通用信息头，响应头，实体头) – 响应报文主体，如下图</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-02.webp alt></p><p>注：通用信息头指的是请求和响应报文都支持的头域，分别为Cache-Control、Connection、Date、Pragma、Transfer-Encoding、Upgrade、Via；实体头则是实体信息的实体头域，分别为Allow、Content-Base、Content-Encoding、Content-Language、Content-Length、Content-Location、Content-MD5、Content-Range、Content-Type、Etag、Expires、Last-Modified、extension-header。这里只是为了方便理解，将通用信息头，响应头/请求头，实体头都归为了HTTP头。</p><p>以上的概念在这里我们不做多讲解，只简单介绍，有兴趣的童鞋可以自行研究。</p><h3 id=缓存过程分析>缓存过程分析</h3><p>浏览器与服务器通信的方式为应答模式，即是：浏览器发起HTTP请求 – 服务器响应该请求。那么浏览器第一次向服务器发起该请求后拿到请求结果，会根据响应报文中HTTP头的缓存标识，决定是否缓存结果，是则将请求结果和缓存标识存入浏览器缓存中，简单的过程如下图：</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-03.webp alt></p><p>由上图我们可以知道：</p><ul><li><p>浏览器每次发起请求，都会先在浏览器缓存中查找该请求的结果以及缓存标识</p></li><li><p>浏览器每次拿到返回的请求结果都会将该结果和缓存标识存入浏览器缓存中</p></li></ul><p>以上两点结论就是浏览器缓存机制的关键，他确保了每个请求的缓存存入与读取，只要我们再理解浏览器缓存的使用规则，那么所有的问题就迎刃而解了，本文也将围绕着这点进行详细分析。为了方便大家理解，这里我们根据是否需要向服务器重新发起HTTP请求将缓存过程分为两个部分，分别是<strong>强制缓存</strong>和<strong>协商缓存</strong>。</p><h4 id=强制缓存>强制缓存</h4><p>强制缓存就是向浏览器缓存查找该请求结果，并根据该结果的缓存规则来决定是否使用该缓存结果的过程，强制缓存的情况主要有三种(暂不分析协商缓存过程)，如下：</p><ul><li>不存在该缓存结果和缓存标识，强制缓存失效，则直接向服务器发起请求（跟第一次发起请求一致），如下图：</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-04.webp alt></p><ul><li>存在该缓存结果和缓存标识，但该结果已失效，强制缓存失效，则使用协商缓存(暂不分析)，如下图</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-05.webp alt></p><ul><li>存在该缓存结果和缓存标识，且该结果尚未失效，强制缓存生效，直接返回该结果，如下图</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-06.webp alt></p><p><em><strong>那么强制缓存的缓存规则是什么？</strong></em></p><p>当浏览器向服务器发起请求时，服务器会将缓存规则放入HTTP响应报文的HTTP头中和请求结果一起返回给浏览器，控制强制缓存的字段分别是<code>Expires</code>和<code>Cache-Control</code>，其中<code>Cache-Control</code>优先级比<code>Expires</code>高。</p><h4 id=expires>Expires</h4><p><code>Expires</code>是HTTP/1.0控制网页缓存的字段，其值为服务器返回该请求结果缓存的到期时间，即再次发起该请求时，如果客户端的时间小于<code>Expires</code>的值时，直接使用缓存结果。</p><p><em><strong>Expires是HTTP/1.0的字段，但是现在浏览器默认使用的是HTTP/1.1，那么在HTTP/1.1中网页缓存还是否由Expires控制？</strong></em></p><p>到了HTTP/1.1，<code>Expire</code>已经被<code>Cache-Control</code>替代，原因在于<code>Expires</code>控制缓存的原理是使用客户端的时间与服务端返回的时间做对比，那么如果客户端与服务端的时间因为某些原因（例如时区不同；客户端和服务端有一方的时间不准确）发生误差，那么强制缓存则会直接失效，这样的话强制缓存的存在则毫无意义，那么<code>Cache-Control</code>又是如何控制的呢？</p><h4 id=cache-control>Cache-Control</h4><p>在HTTP/1.1中，<code>Cache-Control</code>是最重要的规则，主要用于控制网页缓存，主要取值为：</p><ul><li><p><strong>public</strong>：所有内容都将被缓存（客户端和代理服务器都可缓存）</p></li><li><p><strong>private</strong>：所有内容只有客户端可以缓存，<code>Cache-Control</code>的默认取值</p></li><li><p><strong>no-cache</strong>：客户端缓存内容，但是是否使用缓存则需要经过协商缓存来验证决定</p></li><li><p><strong>no-store</strong>：所有内容都不会被缓存，即不使用强制缓存，也不使用协商缓存</p></li><li><p><strong>max-age=xxx (xxx is numeric)</strong>：缓存内容将在xxx秒后失效</p></li></ul><p>接下来，我们直接看一个例子，如下：</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-07.png alt></p><p>由上面的例子我们可以知道：</p><ul><li><p>HTTP响应报文中<code>expires</code>的时间值，是一个绝对值</p></li><li><p>HTTP响应报文中<code>Cache-Control</code>为<code>max-age=600</code>，是相对值</p></li></ul><p>由于<code>Cache-Control</code>的优先级比<code>expires</code>，那么直接根据<code>Cache-Control</code>的值进行缓存，意思就是说在600秒内再次发起该请求，则会直接使用缓存结果，强制缓存生效。</p><p><em>注：在无法确定客户端的时间是否与服务端的时间同步的情况下，Cache-Control相比于expires是更好的选择，所以同时存在时，只有Cache-Control生效。</em></p><p>了解强制缓存的过程后，我们拓展性的思考一下：</p><p><em><strong>浏览器的缓存存放在哪里，如何在浏览器中判断强制缓存是否生效？</strong></em></p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-08.webp alt></p><p>这里我们以博客的请求为例，状态码为灰色的请求则代表使用了强制缓存，请求对应的<strong>Size</strong>值则代表该缓存存放的位置，分别为<strong>from memory cache</strong> 和 <strong>from disk cache</strong>。</p><p><em><strong>那么from memory cache 和 from disk cache又分别代表的是什么呢？什么时候会使用from disk cache，什么时候会使用from memory cache呢？</strong></em></p><p><strong>from memory cache</strong>代表使用内存中的缓存，<strong>from disk cache</strong>则代表使用的是硬盘中的缓存，浏览器读取缓存的顺序为memory –> disk。</p><p>虽然我已经直接把结论说出来了，但是相信有不少人对此不能理解，那么接下来我们一起详细分析一下缓存读取问题，这里仍让以我的博客为例进行分析：</p><p><strong>访问https://heyingye.github.io/ –> 200 –> 关闭博客的标签页 –> 重新打开https://heyingye.github.io/ –> 200(from disk cache) –> 刷新 –> 200(from memory cache)</strong></p><p>过程如下：</p><ul><li>访问https://heyingye.github.io/</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-09.webp alt></p><ul><li><p>关闭博客的标签页</p></li><li><p>重新打开https://heyingye.github.io/</p></li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-10.jpeg alt></p><ul><li>刷新</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-11.webp alt="from disk memory"></p><p><em><strong>看到这里可能有人小伙伴问了，最后一个步骤刷新的时候，不是同时存在着from disk cache和from memory cache吗？</strong></em></p><p>对于这个问题，我们需要了解内存缓存(from memory cache)和硬盘缓存(from disk cache)，如下:</p><ul><li><p><strong>内存缓存(from memory cache)</strong>：内存缓存具有两个特点，分别是快速读取和时效性：</p><ul><li><p><strong>快速读取</strong>：内存缓存会将编译解析后的文件，直接存入该进程的内存中，占据该进程一定的内存资源，以方便下次运行使用时的快速读取。</p></li><li><p><strong>时效性</strong>：一旦该进程关闭，则该进程的内存则会清空。</p></li></ul></li><li><p><strong>硬盘缓存(from disk cache)</strong>：硬盘缓存则是直接将缓存写入硬盘文件中，读取缓存需要对该缓存存放的硬盘文件进行I/O操作，然后重新解析该缓存内容，读取复杂，速度比内存缓存慢。</p></li></ul><p>在浏览器中，浏览器会在<strong>js</strong>和<strong>图片</strong>等文件解析执行后直接存入内存缓存中，那么当刷新页面时只需直接从内存缓存中读取(from memory cache)；而<strong>css文件</strong>则会存入硬盘文件中，所以每次渲染页面都需要从硬盘读取缓存(from disk cache)。</p><h4 id=协商缓存>协商缓存</h4><p><strong>协商缓存就是强制缓存失效后，浏览器携带缓存标识向服务器发起请求，由服务器根据缓存标识决定是否使用缓存的过程</strong>。主要有以下两种情况：</p><ul><li>协商缓存生效，返回<strong>304</strong>，如下</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-12.webp alt=协商缓存生效，返回304></p><ul><li>协商缓存失效，返回<strong>200</strong>和请求结果结果，如下</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-13.webp alt=协商缓存失效，返回200></p><p>同样，协商缓存的标识也是在响应报文的HTTP头中和请求结果一起返回给浏览器的，控制协商缓存的字段分别有：<code>Last-Modified / If-Modified-Since</code>和<code>Etag / If-None-Match</code>，其中<code>Etag / If-None-Match</code>的优先级比<code>Last-Modified / If-Modified-Since</code>高。</p><h5 id=last-modified--if-modified-since>Last-Modified / If-Modified-Since</h5><ul><li>Last-Modified是服务器响应请求时，返回该资源文件在服务器最后被修改的时间，如下。</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-14.webp alt=Last-Modified></p><ul><li><strong>If-Modified-Since</strong> 则是客户端再次发起该请求时，携带上次请求返回的<code>Last-Modified</code>值，通过此字段值告诉服务器该资源上次请求返回的最后被修改时间。服务器收到该请求，发现请求头含有<code>If-Modified-Since</code>字段，则会根据<code>If-Modified-Since</code>的字段值与该资源在服务器的最后被修改时间做对比，若服务器的资源最后被修改时间大于<code>If-Modified-Since</code>的字段值，则重新返回资源，状态码为<strong>200</strong>；否则则返回<strong>304</strong>，代表资源无更新，可继续使用缓存文件，如下。</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-15.webp alt=If-Modified-Since></p><h4 id=etag--if-none-match>Etag / If-None-Match</h4><ul><li><strong>Etag</strong> 是服务器响应请求时，返回当前资源文件的一个唯一标识(由服务器生成)，如下。</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-16.webp alt=Etag></p><ul><li><strong>If-None-Match</strong> 是客户端再次发起该请求时，携带上次请求返回的唯一标识<code>Etag</code>值，通过此字段值告诉服务器该资源上次请求返回的唯一标识值。服务器收到该请求后，发现该请求头中含有<code>If-None-Match</code>，则会根据<code>If-None-Match</code>的字段值与该资源在服务器的<code>Etag</code>值做对比，一致则返回<strong>304</strong>，代表资源无更新，继续使用缓存文件；不一致则重新返回资源文件，状态码为<strong>200</strong>，如下。</li></ul><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-17.webp alt=If-None-Match></p><p>注：Etag / If-None-Match优先级高于Last-Modified / If-Modified-Since，同时存在则只有Etag / If-None-Match生效。</p><h3 id=总结>总结</h3><p>强制缓存优先于协商缓存进行，若强制缓存(<code>Expires</code>和<code>Cache-Control</code>)生效则直接使用缓存，若不生效则进行协商缓存(<code>Last-Modified / If-Modified-Since</code>和<code>Etag / If-None-Match</code>)，协商缓存由服务器决定是否使用缓存，若协商缓存失效，那么代表该请求的缓存失效，重新获取请求结果，再存入浏览器缓存中；生效则返回<code>304</code>，继续使用缓存，主要过程如下：</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-18.webp alt></p><p><em>转载自：https://heyingye.github.io/2018/04/16/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6</em></p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>浏览器的缓存机制梳理 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = '浏览器的缓存机制梳理' />
+<meta property = 'og:description' content = '概述 浏览器的缓存机制也就是我们说的HTTP缓存机制，其机制是根据HTTP报文的缓存标识进行的，所以在分析浏览器缓存机制之前，我们先使用图文简单介绍一下HTTP报文，HTTP报文分为两种：
+HTTP请求(Request)报文，报文格式为：请求行 – HTTP头(通用信息头，请求头，实体头) – 请求 …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/browsecache/' />
+<meta property = 'og:image' content = 'https://goyth.cn/images/stuck.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://goyth.cn/post/browsecache/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>01. July 2018</p>
+      <h1 class = 'post_title'>浏览器的缓存机制梳理</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h3 id="概述">概述</h3>
+<p>浏览器的缓存机制也就是我们说的HTTP缓存机制，其机制是根据HTTP报文的缓存标识进行的，所以在分析浏览器缓存机制之前，我们先使用图文简单介绍一下HTTP报文，HTTP报文分为两种：</p>
+<p>HTTP请求(Request)报文，报文格式为：请求行 – HTTP头(通用信息头，请求头，实体头) – 请求报文主体(只有POST才有报文主体)，如下图</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-01.webp" alt=""></p>
+<p>HTTP响应(Response)报文，报文格式为：状态行 – HTTP头(通用信息头，响应头，实体头) – 响应报文主体，如下图</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-02.webp" alt=""></p>
+<p>注：通用信息头指的是请求和响应报文都支持的头域，分别为Cache-Control、Connection、Date、Pragma、Transfer-Encoding、Upgrade、Via；实体头则是实体信息的实体头域，分别为Allow、Content-Base、Content-Encoding、Content-Language、Content-Length、Content-Location、Content-MD5、Content-Range、Content-Type、Etag、Expires、Last-Modified、extension-header。这里只是为了方便理解，将通用信息头，响应头/请求头，实体头都归为了HTTP头。</p>
+<p>以上的概念在这里我们不做多讲解，只简单介绍，有兴趣的童鞋可以自行研究。</p>
+<h3 id="缓存过程分析">缓存过程分析</h3>
+<p>浏览器与服务器通信的方式为应答模式，即是：浏览器发起HTTP请求 – 服务器响应该请求。那么浏览器第一次向服务器发起该请求后拿到请求结果，会根据响应报文中HTTP头的缓存标识，决定是否缓存结果，是则将请求结果和缓存标识存入浏览器缓存中，简单的过程如下图：</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-03.webp" alt=""></p>
+<p>由上图我们可以知道：</p>
+<ul>
+<li>
+<p>浏览器每次发起请求，都会先在浏览器缓存中查找该请求的结果以及缓存标识</p>
+</li>
+<li>
+<p>浏览器每次拿到返回的请求结果都会将该结果和缓存标识存入浏览器缓存中</p>
+</li>
+</ul>
+<p>以上两点结论就是浏览器缓存机制的关键，他确保了每个请求的缓存存入与读取，只要我们再理解浏览器缓存的使用规则，那么所有的问题就迎刃而解了，本文也将围绕着这点进行详细分析。为了方便大家理解，这里我们根据是否需要向服务器重新发起HTTP请求将缓存过程分为两个部分，分别是<strong>强制缓存</strong>和<strong>协商缓存</strong>。</p>
+<h4 id="强制缓存">强制缓存</h4>
+<p>强制缓存就是向浏览器缓存查找该请求结果，并根据该结果的缓存规则来决定是否使用该缓存结果的过程，强制缓存的情况主要有三种(暂不分析协商缓存过程)，如下：</p>
+<ul>
+<li>不存在该缓存结果和缓存标识，强制缓存失效，则直接向服务器发起请求（跟第一次发起请求一致），如下图：</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-04.webp" alt=""></p>
+<ul>
+<li>存在该缓存结果和缓存标识，但该结果已失效，强制缓存失效，则使用协商缓存(暂不分析)，如下图</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-05.webp" alt=""></p>
+<ul>
+<li>存在该缓存结果和缓存标识，且该结果尚未失效，强制缓存生效，直接返回该结果，如下图</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-06.webp" alt=""></p>
+<p><em><strong>那么强制缓存的缓存规则是什么？</strong></em></p>
+<p>当浏览器向服务器发起请求时，服务器会将缓存规则放入HTTP响应报文的HTTP头中和请求结果一起返回给浏览器，控制强制缓存的字段分别是<code>Expires</code>和<code>Cache-Control</code>，其中<code>Cache-Control</code>优先级比<code>Expires</code>高。</p>
+<h4 id="expires">Expires</h4>
+<p><code>Expires</code>是HTTP/1.0控制网页缓存的字段，其值为服务器返回该请求结果缓存的到期时间，即再次发起该请求时，如果客户端的时间小于<code>Expires</code>的值时，直接使用缓存结果。</p>
+<p><em><strong>Expires是HTTP/1.0的字段，但是现在浏览器默认使用的是HTTP/1.1，那么在HTTP/1.1中网页缓存还是否由Expires控制？</strong></em></p>
+<p>到了HTTP/1.1，<code>Expire</code>已经被<code>Cache-Control</code>替代，原因在于<code>Expires</code>控制缓存的原理是使用客户端的时间与服务端返回的时间做对比，那么如果客户端与服务端的时间因为某些原因（例如时区不同；客户端和服务端有一方的时间不准确）发生误差，那么强制缓存则会直接失效，这样的话强制缓存的存在则毫无意义，那么<code>Cache-Control</code>又是如何控制的呢？</p>
+<h4 id="cache-control">Cache-Control</h4>
+<p>在HTTP/1.1中，<code>Cache-Control</code>是最重要的规则，主要用于控制网页缓存，主要取值为：</p>
+<ul>
+<li>
+<p><strong>public</strong>：所有内容都将被缓存（客户端和代理服务器都可缓存）</p>
+</li>
+<li>
+<p><strong>private</strong>：所有内容只有客户端可以缓存，<code>Cache-Control</code>的默认取值</p>
+</li>
+<li>
+<p><strong>no-cache</strong>：客户端缓存内容，但是是否使用缓存则需要经过协商缓存来验证决定</p>
+</li>
+<li>
+<p><strong>no-store</strong>：所有内容都不会被缓存，即不使用强制缓存，也不使用协商缓存</p>
+</li>
+<li>
+<p><strong>max-age=xxx (xxx is numeric)</strong>：缓存内容将在xxx秒后失效</p>
+</li>
+</ul>
+<p>接下来，我们直接看一个例子，如下：</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-07.png" alt=""></p>
+<p>由上面的例子我们可以知道：</p>
+<ul>
+<li>
+<p>HTTP响应报文中<code>expires</code>的时间值，是一个绝对值</p>
+</li>
+<li>
+<p>HTTP响应报文中<code>Cache-Control</code>为<code>max-age=600</code>，是相对值</p>
+</li>
+</ul>
+<p>由于<code>Cache-Control</code>的优先级比<code>expires</code>，那么直接根据<code>Cache-Control</code>的值进行缓存，意思就是说在600秒内再次发起该请求，则会直接使用缓存结果，强制缓存生效。</p>
+<p><em>注：在无法确定客户端的时间是否与服务端的时间同步的情况下，Cache-Control相比于expires是更好的选择，所以同时存在时，只有Cache-Control生效。</em></p>
+<p>了解强制缓存的过程后，我们拓展性的思考一下：</p>
+<p><em><strong>浏览器的缓存存放在哪里，如何在浏览器中判断强制缓存是否生效？</strong></em></p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-08.webp" alt=""></p>
+<p>这里我们以博客的请求为例，状态码为灰色的请求则代表使用了强制缓存，请求对应的<strong>Size</strong>值则代表该缓存存放的位置，分别为<strong>from memory cache</strong> 和 <strong>from disk cache</strong>。</p>
+<p><em><strong>那么from memory cache 和 from disk cache又分别代表的是什么呢？什么时候会使用from disk cache，什么时候会使用from memory cache呢？</strong></em></p>
+<p><strong>from memory cache</strong>代表使用内存中的缓存，<strong>from disk cache</strong>则代表使用的是硬盘中的缓存，浏览器读取缓存的顺序为memory –&gt; disk。</p>
+<p>虽然我已经直接把结论说出来了，但是相信有不少人对此不能理解，那么接下来我们一起详细分析一下缓存读取问题，这里仍让以我的博客为例进行分析：</p>
+<p><strong>访问https://heyingye.github.io/ –&gt; 200 –&gt; 关闭博客的标签页 –&gt; 重新打开https://heyingye.github.io/ –&gt; 200(from disk cache) –&gt; 刷新 –&gt; 200(from memory cache)</strong></p>
+<p>过程如下：</p>
+<ul>
+<li>访问https://heyingye.github.io/</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-09.webp" alt=""></p>
+<ul>
+<li>
+<p>关闭博客的标签页</p>
+</li>
+<li>
+<p>重新打开https://heyingye.github.io/</p>
+</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-10.jpeg" alt=""></p>
+<ul>
+<li>刷新</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-11.webp" alt="from disk memory"></p>
+<p><em><strong>看到这里可能有人小伙伴问了，最后一个步骤刷新的时候，不是同时存在着from disk cache和from memory cache吗？</strong></em></p>
+<p>对于这个问题，我们需要了解内存缓存(from memory cache)和硬盘缓存(from disk cache)，如下:</p>
+<ul>
+<li>
+<p><strong>内存缓存(from memory cache)</strong>：内存缓存具有两个特点，分别是快速读取和时效性：</p>
+<ul>
+<li>
+<p><strong>快速读取</strong>：内存缓存会将编译解析后的文件，直接存入该进程的内存中，占据该进程一定的内存资源，以方便下次运行使用时的快速读取。</p>
+</li>
+<li>
+<p><strong>时效性</strong>：一旦该进程关闭，则该进程的内存则会清空。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>硬盘缓存(from disk cache)</strong>：硬盘缓存则是直接将缓存写入硬盘文件中，读取缓存需要对该缓存存放的硬盘文件进行I/O操作，然后重新解析该缓存内容，读取复杂，速度比内存缓存慢。</p>
+</li>
+</ul>
+<p>在浏览器中，浏览器会在<strong>js</strong>和<strong>图片</strong>等文件解析执行后直接存入内存缓存中，那么当刷新页面时只需直接从内存缓存中读取(from memory cache)；而<strong>css文件</strong>则会存入硬盘文件中，所以每次渲染页面都需要从硬盘读取缓存(from disk cache)。</p>
+<h4 id="协商缓存">协商缓存</h4>
+<p><strong>协商缓存就是强制缓存失效后，浏览器携带缓存标识向服务器发起请求，由服务器根据缓存标识决定是否使用缓存的过程</strong>。主要有以下两种情况：</p>
+<ul>
+<li>协商缓存生效，返回<strong>304</strong>，如下</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-12.webp" alt="协商缓存生效，返回304"></p>
+<ul>
+<li>协商缓存失效，返回<strong>200</strong>和请求结果结果，如下</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-13.webp" alt="协商缓存失效，返回200"></p>
+<p>同样，协商缓存的标识也是在响应报文的HTTP头中和请求结果一起返回给浏览器的，控制协商缓存的字段分别有：<code>Last-Modified / If-Modified-Since</code>和<code>Etag / If-None-Match</code>，其中<code>Etag / If-None-Match</code>的优先级比<code>Last-Modified / If-Modified-Since</code>高。</p>
+<h5 id="last-modified--if-modified-since">Last-Modified / If-Modified-Since</h5>
+<ul>
+<li>Last-Modified是服务器响应请求时，返回该资源文件在服务器最后被修改的时间，如下。</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-14.webp" alt="Last-Modified"></p>
+<ul>
+<li><strong>If-Modified-Since</strong> 则是客户端再次发起该请求时，携带上次请求返回的<code>Last-Modified</code>值，通过此字段值告诉服务器该资源上次请求返回的最后被修改时间。服务器收到该请求，发现请求头含有<code>If-Modified-Since</code>字段，则会根据<code>If-Modified-Since</code>的字段值与该资源在服务器的最后被修改时间做对比，若服务器的资源最后被修改时间大于<code>If-Modified-Since</code>的字段值，则重新返回资源，状态码为<strong>200</strong>；否则则返回<strong>304</strong>，代表资源无更新，可继续使用缓存文件，如下。</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-15.webp" alt="If-Modified-Since"></p>
+<h4 id="etag--if-none-match">Etag / If-None-Match</h4>
+<ul>
+<li><strong>Etag</strong> 是服务器响应请求时，返回当前资源文件的一个唯一标识(由服务器生成)，如下。</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-16.webp" alt="Etag"></p>
+<ul>
+<li><strong>If-None-Match</strong> 是客户端再次发起该请求时，携带上次请求返回的唯一标识<code>Etag</code>值，通过此字段值告诉服务器该资源上次请求返回的唯一标识值。服务器收到该请求后，发现该请求头中含有<code>If-None-Match</code>，则会根据<code>If-None-Match</code>的字段值与该资源在服务器的<code>Etag</code>值做对比，一致则返回<strong>304</strong>，代表资源无更新，继续使用缓存文件；不一致则重新返回资源文件，状态码为<strong>200</strong>，如下。</li>
+</ul>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-17.webp" alt="If-None-Match"></p>
+<p>注：Etag / If-None-Match优先级高于Last-Modified / If-Modified-Since，同时存在则只有Etag / If-None-Match生效。</p>
+<h3 id="总结">总结</h3>
+<p>强制缓存优先于协商缓存进行，若强制缓存(<code>Expires</code>和<code>Cache-Control</code>)生效则直接使用缓存，若不生效则进行协商缓存(<code>Last-Modified / If-Modified-Since</code>和<code>Etag / If-None-Match</code>)，协商缓存由服务器决定是否使用缓存，若协商缓存失效，那么代表该请求的缓存失效，重新获取请求结果，再存入浏览器缓存中；生效则返回<code>304</code>，继续使用缓存，主要过程如下：</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browseCache-18.webp" alt=""></p>
+<p><em>转载自：https://heyingye.github.io/2018/04/16/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6</em></p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

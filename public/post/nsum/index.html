@@ -1,154 +1,256 @@
-<!doctype html><html lang=en><head><title>N sum 问题 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="N-Sum 问题"><meta property="og:description" content="问题描述 给定一个包含多个整数且排好序的数组 nums 和一个目标值 target，判断 nums 中是否存在 N(N>1) 个元素，使得 N 个元素之和与 target 相等？找出所有满足条件且不重复的N元组。
-解题思路 通过递归降幂将 N-Sum问题 降幂到 2-Sum 问题，然后采用两边 …"><meta property="og:url" content="https://goyth.cn/post/nsum/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/nsum/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
-<a href=https://goyth.cn/categories class=nav_item>Category</a>
-<a href=https://goyth.cn/tags class=nav_item>Tag</a>
-<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
-<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">25. May 2018</p><h1 class=post_title>N-Sum 问题</h1><div class=post_body><div class=post_inner><h2 id=问题描述>问题描述</h2><p>给定一个包含多个整数且排好序的数组 nums 和一个目标值 target，判断 nums 中是否存在 N(N>1) 个元素，使得 N 个元素之和与 target 相等？找出所有满足条件且不重复的N元组。</p><h3 id=解题思路>解题思路</h3><p>通过递归降幂将 N-Sum问题 降幂到 2-Sum 问题，然后采用两边加逼的办法求解</p><h3 id=javascript-版本>JavaScript 版本</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span><span class=lnt>44
-</span><span class=lnt>45
-</span><span class=lnt>46
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=cm>/**
-</span><span class=cm> * @param {number[]} nums
-</span><span class=cm> * @param {number} target
-</span><span class=cm> * @param {number} n
-</span><span class=cm> * @param {number[]} result
-</span><span class=cm> * @param {number[]} results 结果集
-</span><span class=cm> */</span>
-<span class=kd>function</span> <span class=nx>findNsum</span><span class=p>(</span><span class=nx>nums</span><span class=p>,</span> <span class=nx>target</span><span class=p>,</span> <span class=nx>n</span><span class=p>,</span> <span class=nx>result</span><span class=p>,</span> <span class=nx>results</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>n</span><span class=o>&lt;</span><span class=mi>2</span> <span class=o>||</span> <span class=nx>nums</span><span class=p>.</span><span class=nx>length</span> <span class=o>&lt;</span> <span class=nx>n</span> <span class=o>||</span> <span class=nx>target</span> <span class=o>&lt;</span> <span class=nx>nums</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>*</span> <span class=nx>n</span> <span class=o>||</span> <span class=nx>target</span> <span class=o>&gt;</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>nums</span><span class=p>.</span><span class=nx>length</span><span class=o>-</span><span class=mi>1</span><span class=p>]</span> <span class=o>*</span> <span class=nx>n</span><span class=p>)</span> <span class=k>return</span> <span class=p>;</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>n</span> <span class=o>===</span> <span class=mi>2</span><span class=p>){</span>
-        <span class=kd>let</span> <span class=nx>l</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span>
-            <span class=nx>r</span> <span class=o>=</span> <span class=nx>nums</span><span class=p>.</span><span class=nx>length</span> <span class=o>-</span> <span class=mi>1</span><span class=p>;</span>
-        <span class=k>while</span><span class=p>(</span><span class=nx>l</span> <span class=o>&lt;</span> <span class=nx>r</span><span class=p>){</span>
-            <span class=kd>let</span> <span class=nx>s</span> <span class=o>=</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>l</span><span class=p>]</span> <span class=o>+</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>r</span><span class=p>];</span>
-            <span class=k>if</span><span class=p>(</span><span class=nx>s</span> <span class=o>==</span> <span class=nx>target</span><span class=p>){</span>
-                <span class=nx>results</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>result</span><span class=p>.</span><span class=nx>concat</span><span class=p>(</span><span class=nx>nums</span><span class=p>[</span><span class=nx>l</span><span class=p>],</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>r</span><span class=p>]));</span>
-                <span class=nx>l</span><span class=o>++</span><span class=p>;</span>
-                <span class=nx>r</span><span class=o>--</span><span class=p>;</span>
-                <span class=k>while</span><span class=p>(</span><span class=nx>l</span> <span class=o>&lt;</span> <span class=nx>r</span> <span class=o>&amp;&amp;</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>l</span><span class=p>]</span> <span class=o>==</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>l</span><span class=o>-</span><span class=mi>1</span><span class=p>]){</span>
-                    <span class=nx>l</span><span class=o>++</span><span class=p>;</span>
-                <span class=p>}</span>
-                <span class=k>while</span><span class=p>(</span><span class=nx>l</span><span class=o>&lt;</span><span class=nx>r</span> <span class=o>&amp;&amp;</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>r</span><span class=p>]</span> <span class=o>==</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>r</span><span class=o>+</span><span class=mi>1</span><span class=p>]){</span>
-                    <span class=nx>r</span><span class=o>--</span><span class=p>;</span>
-                <span class=p>}</span>
-            <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>s</span> <span class=o>&lt;</span> <span class=nx>target</span><span class=p>){</span>
-                <span class=nx>l</span><span class=o>++</span><span class=p>;</span>
-                <span class=k>while</span><span class=p>(</span><span class=nx>l</span> <span class=o>&lt;</span> <span class=nx>r</span> <span class=o>&amp;&amp;</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>l</span><span class=p>]</span> <span class=o>==</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>l</span><span class=o>-</span><span class=mi>1</span><span class=p>]){</span>
-                    <span class=nx>l</span><span class=o>++</span><span class=p>;</span>
-                <span class=p>}</span>
-            <span class=p>}</span><span class=k>else</span><span class=p>{</span>
-                <span class=nx>r</span><span class=o>--</span><span class=p>;</span>
-                <span class=k>while</span><span class=p>(</span><span class=nx>l</span><span class=o>&lt;</span><span class=nx>r</span> <span class=o>&amp;&amp;</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>r</span><span class=p>]</span> <span class=o>==</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>r</span><span class=o>+</span><span class=mi>1</span><span class=p>]){</span>
-                    <span class=nx>r</span><span class=o>--</span><span class=p>;</span>
-                <span class=p>}</span>
-            <span class=p>}</span>
-        <span class=p>}</span>
-    <span class=p>}</span><span class=k>else</span><span class=p>{</span>
-        <span class=kd>let</span> <span class=nx>len</span> <span class=o>=</span> <span class=nx>nums</span><span class=p>.</span><span class=nx>length</span> <span class=o>-</span> <span class=nx>n</span> <span class=o>+</span> <span class=mi>1</span>
-        <span class=k>for</span><span class=p>(</span><span class=kd>let</span> <span class=nx>i</span> <span class=o>=</span> <span class=mi>0</span> <span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;</span> <span class=nx>len</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span><span class=p>){</span>
-            <span class=k>if</span><span class=p>(</span><span class=nx>i</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>||</span> <span class=p>(</span> <span class=nx>i</span><span class=o>&gt;</span><span class=mi>0</span> <span class=o>&amp;&amp;</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>!=</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>i</span> <span class=o>-</span> <span class=mi>1</span><span class=p>])){</span>
-                <span class=nx>findNsum</span><span class=p>(</span><span class=nx>nums</span><span class=p>.</span><span class=nx>slice</span><span class=p>(</span><span class=nx>i</span><span class=o>+</span><span class=mi>1</span><span class=p>),</span> <span class=nx>target</span> <span class=o>-</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>i</span><span class=p>],</span> <span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>,</span> <span class=nx>result</span><span class=p>.</span><span class=nx>concat</span><span class=p>(</span><span class=nx>nums</span><span class=p>[</span><span class=nx>i</span><span class=p>]),</span> <span class=nx>results</span><span class=p>);</span>
-            <span class=p>}</span>
-        <span class=p>}</span>
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>N sum 问题 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'N-Sum 问题' />
+<meta property = 'og:description' content = '问题描述 给定一个包含多个整数且排好序的数组 nums 和一个目标值 target，判断 nums 中是否存在 N(N&gt;1) 个元素，使得 N 个元素之和与 target 相等？找出所有满足条件且不重复的N元组。
+解题思路 通过递归降幂将 N-Sum问题 降幂到 2-Sum 问题，然后采用两边 …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/nsum/' />
+<meta property = 'og:image' content = 'https://goyth.cn/images/stuck.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
 
-    <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h3 id=python-版本>Python 版本</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-python data-lang=python>
-<span class=k>def</span> <span class=nf>findNsum</span><span class=p>(</span><span class=n>nums</span><span class=p>,</span> <span class=n>target</span><span class=p>,</span> <span class=n>N</span><span class=p>,</span> <span class=n>result</span><span class=p>,</span> <span class=n>results</span><span class=p>):</span>
-    <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>nums</span><span class=p>)</span> <span class=o>&lt;</span> <span class=n>N</span> <span class=ow>or</span> <span class=n>N</span> <span class=o>&lt;</span> <span class=mi>2</span> <span class=ow>or</span> <span class=n>target</span> <span class=o>&lt;</span> <span class=n>nums</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>*</span><span class=n>N</span> <span class=ow>or</span> <span class=n>target</span> <span class=o>&gt;</span> <span class=n>nums</span><span class=p>[</span><span class=o>-</span><span class=mi>1</span><span class=p>]</span><span class=o>*</span><span class=n>N</span><span class=p>:</span>  <span class=c1># early termination</span>
-        <span class=k>return</span>
-    <span class=k>if</span> <span class=n>N</span> <span class=o>==</span> <span class=mi>2</span><span class=p>:</span> <span class=c1># two pointers solve sorted 2-sum problem</span>
-        <span class=n>l</span><span class=p>,</span><span class=n>r</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span><span class=nb>len</span><span class=p>(</span><span class=n>nums</span><span class=p>)</span><span class=o>-</span><span class=mi>1</span>
-        <span class=k>while</span> <span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span><span class=p>:</span>
-            <span class=n>s</span> <span class=o>=</span> <span class=n>nums</span><span class=p>[</span><span class=n>l</span><span class=p>]</span> <span class=o>+</span> <span class=n>nums</span><span class=p>[</span><span class=n>r</span><span class=p>]</span>
-            <span class=k>if</span> <span class=n>s</span> <span class=o>==</span> <span class=n>target</span><span class=p>:</span>
-                <span class=n>results</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>result</span> <span class=o>+</span> <span class=p>[</span><span class=n>nums</span><span class=p>[</span><span class=n>l</span><span class=p>],</span> <span class=n>nums</span><span class=p>[</span><span class=n>r</span><span class=p>]])</span>
-                <span class=n>l</span> <span class=o>+=</span> <span class=mi>1</span>
-                <span class=n>r</span> <span class=o>-=</span> <span class=mi>1</span>
-                <span class=k>while</span> <span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span> <span class=ow>and</span> <span class=n>nums</span><span class=p>[</span><span class=n>l</span><span class=p>]</span> <span class=o>==</span> <span class=n>nums</span><span class=p>[</span><span class=n>l</span><span class=o>-</span><span class=mi>1</span><span class=p>]:</span>
-                    <span class=n>l</span> <span class=o>+=</span> <span class=mi>1</span>
-                <span class=k>while</span> <span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span> <span class=ow>and</span> <span class=n>nums</span><span class=p>[</span><span class=n>r</span><span class=p>]</span> <span class=o>==</span> <span class=n>nums</span><span class=p>[</span><span class=n>r</span><span class=o>+</span><span class=mi>1</span><span class=p>]:</span>
-                    <span class=n>r</span> <span class=o>-=</span> <span class=mi>1</span>
-            <span class=k>elif</span> <span class=n>s</span> <span class=o>&lt;</span> <span class=n>target</span><span class=p>:</span>
-                <span class=n>l</span> <span class=o>+=</span> <span class=mi>1</span>
-                <span class=k>while</span> <span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span> <span class=ow>and</span> <span class=n>nums</span><span class=p>[</span><span class=n>l</span><span class=p>]</span> <span class=o>==</span> <span class=n>nums</span><span class=p>[</span><span class=n>l</span><span class=o>-</span><span class=mi>1</span><span class=p>]:</span>
-                    <span class=n>l</span> <span class=o>+=</span> <span class=mi>1</span>
-            <span class=k>else</span><span class=p>:</span>
-                <span class=n>r</span> <span class=o>-=</span> <span class=mi>1</span>
-                <span class=k>while</span> <span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span> <span class=ow>and</span> <span class=n>nums</span><span class=p>[</span><span class=n>r</span><span class=p>]</span> <span class=o>==</span> <span class=n>nums</span><span class=p>[</span><span class=n>r</span><span class=o>+</span><span class=mi>1</span><span class=p>]:</span>
-                    <span class=n>r</span> <span class=o>-=</span> <span class=mi>1</span>
-    <span class=k>else</span><span class=p>:</span> <span class=c1># recursively reduce N</span>
-        <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>nums</span><span class=p>)</span><span class=o>-</span><span class=n>N</span><span class=o>+</span><span class=mi>1</span><span class=p>):</span>
-            <span class=k>if</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>0</span> <span class=ow>or</span> <span class=p>(</span><span class=n>i</span> <span class=o>&gt;</span> <span class=mi>0</span> <span class=ow>and</span> <span class=n>nums</span><span class=p>[</span><span class=n>i</span><span class=o>-</span><span class=mi>1</span><span class=p>]</span> <span class=o>!=</span> <span class=n>nums</span><span class=p>[</span><span class=n>i</span><span class=p>]):</span>
-                <span class=n>findNsum</span><span class=p>(</span><span class=n>nums</span><span class=p>[</span><span class=n>i</span><span class=o>+</span><span class=mi>1</span><span class=p>:],</span> <span class=n>target</span><span class=o>-</span><span class=n>nums</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>N</span><span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=n>result</span><span class=o>+</span><span class=p>[</span><span class=n>nums</span><span class=p>[</span><span class=n>i</span><span class=p>]],</span> <span class=n>results</span><span class=p>)</span>
-</code></pre></td></tr></table></div></div></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
+  <link rel='canonical' href='https://goyth.cn/post/nsum/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>25. May 2018</p>
+      <h1 class = 'post_title'>N-Sum 问题</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h2 id="问题描述">问题描述</h2>
+<p>给定一个包含多个整数且排好序的数组 nums 和一个目标值 target，判断 nums 中是否存在 N(N&gt;1) 个元素，使得 N 个元素之和与 target 相等？找出所有满足条件且不重复的N元组。</p>
+<h3 id="解题思路">解题思路</h3>
+<p>通过递归降幂将 N-Sum问题 降幂到 2-Sum 问题，然后采用两边加逼的办法求解</p>
+<h3 id="javascript-版本">JavaScript 版本</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm"> * @param {number[]} nums
+</span><span class="cm"> * @param {number} target
+</span><span class="cm"> * @param {number} n
+</span><span class="cm"> * @param {number[]} result
+</span><span class="cm"> * @param {number[]} results 结果集
+</span><span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">findNsum</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">n</span><span class="o">&lt;</span><span class="mi">2</span> <span class="o">||</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">n</span> <span class="o">||</span> <span class="nx">target</span> <span class="o">&lt;</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">n</span> <span class="o">||</span> <span class="nx">target</span> <span class="o">&gt;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">nums</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">n</span><span class="p">)</span> <span class="k">return</span> <span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">n</span> <span class="o">===</span> <span class="mi">2</span><span class="p">){</span>
+        <span class="kd">let</span> <span class="nx">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">r</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">while</span><span class="p">(</span><span class="nx">l</span> <span class="o">&lt;</span> <span class="nx">r</span><span class="p">){</span>
+            <span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">l</span><span class="p">]</span> <span class="o">+</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">r</span><span class="p">];</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">s</span> <span class="o">==</span> <span class="nx">target</span><span class="p">){</span>
+                <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">l</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">r</span><span class="p">]));</span>
+                <span class="nx">l</span><span class="o">++</span><span class="p">;</span>
+                <span class="nx">r</span><span class="o">--</span><span class="p">;</span>
+                <span class="k">while</span><span class="p">(</span><span class="nx">l</span> <span class="o">&lt;</span> <span class="nx">r</span> <span class="o">&amp;&amp;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">l</span><span class="p">]</span> <span class="o">==</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]){</span>
+                    <span class="nx">l</span><span class="o">++</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">while</span><span class="p">(</span><span class="nx">l</span><span class="o">&lt;</span><span class="nx">r</span> <span class="o">&amp;&amp;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">r</span><span class="p">]</span> <span class="o">==</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">r</span><span class="o">+</span><span class="mi">1</span><span class="p">]){</span>
+                    <span class="nx">r</span><span class="o">--</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">s</span> <span class="o">&lt;</span> <span class="nx">target</span><span class="p">){</span>
+                <span class="nx">l</span><span class="o">++</span><span class="p">;</span>
+                <span class="k">while</span><span class="p">(</span><span class="nx">l</span> <span class="o">&lt;</span> <span class="nx">r</span> <span class="o">&amp;&amp;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">l</span><span class="p">]</span> <span class="o">==</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]){</span>
+                    <span class="nx">l</span><span class="o">++</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                <span class="nx">r</span><span class="o">--</span><span class="p">;</span>
+                <span class="k">while</span><span class="p">(</span><span class="nx">l</span><span class="o">&lt;</span><span class="nx">r</span> <span class="o">&amp;&amp;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">r</span><span class="p">]</span> <span class="o">==</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">r</span><span class="o">+</span><span class="mi">1</span><span class="p">]){</span>
+                    <span class="nx">r</span><span class="o">--</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="p">(</span> <span class="nx">i</span><span class="o">&gt;</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])){</span>
+                <span class="nx">findNsum</span><span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="nx">target</span> <span class="o">-</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]),</span> <span class="nx">results</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="python-版本">Python 版本</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python">
+<span class="k">def</span> <span class="nf">findNsum</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">N</span> <span class="ow">or</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">target</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">N</span> <span class="ow">or</span> <span class="n">target</span> <span class="o">&gt;</span> <span class="n">nums</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">N</span><span class="p">:</span>  <span class="c1"># early termination</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># two pointers solve sorted 2-sum problem</span>
+        <span class="n">l</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">nums</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">+</span> <span class="n">nums</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span> <span class="o">+</span> <span class="p">[</span><span class="n">nums</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="n">r</span><span class="p">]])</span>
+                <span class="n">l</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">r</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="ow">and</span> <span class="n">nums</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">==</span> <span class="n">nums</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">l</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="ow">and</span> <span class="n">nums</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">==</span> <span class="n">nums</span><span class="p">[</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">r</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
+                <span class="n">l</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="ow">and</span> <span class="n">nums</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">==</span> <span class="n">nums</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">l</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">r</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="ow">and</span> <span class="n">nums</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">==</span> <span class="n">nums</span><span class="p">[</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">r</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># recursively reduce N</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="o">-</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="n">findNsum</span><span class="p">(</span><span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:],</span> <span class="n">target</span><span class="o">-</span><span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">result</span><span class="o">+</span><span class="p">[</span><span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">results</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

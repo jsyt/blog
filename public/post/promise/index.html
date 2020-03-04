@@ -1,705 +1,921 @@
-<!doctype html><html lang=en><head><title>Promise实现原理 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="Promise实现原理"><meta property="og:description" content="1.promise 函数的参数（executor）是一个函数，这个函数有两个参数resolve和reject，这两个参数也都是函数，分别在promise成功和失败时调用。 2. 当构建一个promise实例时，会自动调用这个函数（executor） 3. 每个promise …"><meta property="og:url" content="https://goyth.cn/post/promise/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/promise/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
-<a href=https://goyth.cn/categories class=nav_item>Category</a>
-<a href=https://goyth.cn/tags class=nav_item>Tag</a>
-<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
-<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">03. August 2018</p><h1 class=post_title>Promise实现原理</h1><div class=post_body><div class=post_inner><h3 id=promise>Promise</h3><p>模拟实现一个符合<a href=https://promisesaplus.com/>Promise A+规范</a>的promise，仅供学习其实现原理</p><ul><li><a href=https://github.com/jsyt/promise>源码地址链接</a></li></ul><h4 id=promise-a规范httpspromisesapluscom概述><a href=https://promisesaplus.com/>Promise A+规范</a>概述</h4><h4 id=promise雏形>promise雏形</h4><p>简单点说</p><ol><li><code>promise</code> 函数的参数（executor）是一个函数，这个函数有两个参数<code>resolve</code>和<code>reject</code>，这两个参数也都是函数，分别在<code>promise</code>成功和失败时调用。</li><li>当构建一个<code>promise</code>实例时，会自动调用这个函数（executor）</li><li>每个<code>promise</code>对象都有一个<code>onFulfilledCallback</code>队列和一个<code>onRejectedCallback</code>队列，用来分别存储成功和失败时调用的回调函数</li><li>每个<code>promise</code>有三种状态<code>pending</code> 、<code>fulfilled</code>、<code>rejected</code>，同一时刻只能处于其中一种状态，并且只能从<code>pending</code> 、状态转化成<code>fulfilled</code>状态，或者<code>rejected</code>状态，一旦状态发生转化就不能再被改变。</li><li>当调用<code>resolve(value)</code>函数时，<code>promise</code>的状态会从<code>pending</code>转化成<code>fulfilled</code>，并且将<code>resolve</code>参数中的<code>value</code>值赋值给此<code>promise</code>的<code>value</code>变量，promise的<code>value</code>被赋值后，就不能再次改变了；此时还会去取出<code>onFulfilledCallback</code>队列中所有的回调函数，并将此<code>promise</code>的<code>value</code>作为回调函数的参数，依次执行</li><li>当调用<code>rejected(reason)</code>函数时，<code>promise</code>的状态会从<code>pending</code>转化成<code>rejected</code>，并且将<code>rejected(reason)</code>函数中的<code>reason</code>参数赋值给此<code>promise</code>的<code>reason</code>变量，这个<code>reason</code>被赋值后，也是不能再次改变了；此时还会去取出<code>onRejectedCallback</code>队列中所有的回调函数，并将此<code>promise</code>的<code>reason</code>作为回调函数的参数，依次执行</li><li>当executor执行抛异常时捕获这个异常，并将异常的原因作为<code>reject</code>函数的参数，执行<code>reject</code>函数</li></ol><p>根据这些我们先写一个第一版的promise</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nb>Promise</span><span class=p>(</span><span class=nx>executor</span><span class=p>)</span> <span class=p>{</span>
-  <span class=kr>const</span> <span class=nx>self</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>=</span> <span class=s1>&#39;pending&#39;</span><span class=p>;</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>value</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>reason</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>onFulfilledCallback</span> <span class=o>=</span> <span class=p>[];</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>onRejectedCallback</span> <span class=o>=</span> <span class=p>[];</span>
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Promise实现原理 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'Promise实现原理' />
+<meta property = 'og:description' content = '1.promise 函数的参数（executor）是一个函数，这个函数有两个参数resolve和reject，这两个参数也都是函数，分别在promise成功和失败时调用。 2. 当构建一个promise实例时，会自动调用这个函数（executor） 3. 每个promise …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/promise/' />
+<meta property = 'og:image' content = 'https://goyth.cn/images/stuck.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
 
-  <span class=kd>function</span> <span class=nx>resolve</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;pending&#39;</span><span class=p>){</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>=</span> <span class=s1>&#39;fulfilled&#39;</span><span class=p>;</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>value</span> <span class=o>=</span> <span class=nx>value</span><span class=p>;</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>onFulfilledCallback</span><span class=p>.</span><span class=nx>foreach</span><span class=p>(</span><span class=nx>fn</span><span class=p>=&gt;</span><span class=nx>fn</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>value</span><span class=p>))</span>
-    <span class=p>}</span>
-  <span class=p>}</span>
+  <link rel='canonical' href='https://goyth.cn/post/promise/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
 
-  <span class=kd>function</span> <span class=nx>reject</span><span class=p>(</span><span class=nx>reason</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;pending&#39;</span><span class=p>){</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>=</span> <span class=s1>&#39;rejected&#39;</span><span class=p>;</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>reason</span> <span class=o>=</span> <span class=nx>reason</span><span class=p>;</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>onRejectedCallback</span><span class=p>.</span><span class=nx>foreach</span><span class=p>(</span><span class=nx>fn</span><span class=p>=&gt;</span><span class=nx>fn</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>reason</span><span class=p>))</span>
-    <span class=p>}</span>
-  <span class=p>}</span>
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
 
-  <span class=k>try</span><span class=p>{</span>
-    <span class=nx>executor</span><span class=p>(</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>
-  <span class=p>}</span><span class=k>catch</span><span class=p>(</span><span class=nx>e</span><span class=p>){</span>
-    <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
-  <span class=p>}</span>
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
 
 
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h4 id=promisethen>promise.then</h4><ol><li>每个<code>promise</code>必须提供一个<code>then</code>方法，并且<code>then</code>方法包含两个参数<code>onFulfilled</code> 和 <code>onRejected</code></li><li>这两个参数如果不是函数的话就直接忽略，并且将成功或失败的值传递给下一个then注册的回调函数及下一个then的<code>onFulfilled</code> 和 <code>onRejected</code></li><li>当执行then函数时，如果promise的状态是<code>pending</code>则将then中注册的成功和失败时对应的回调函数<code>onFulfilled</code> 和 <code>onRejected</code>分别放入onFulfilledCallback队列和一个onRejectedCallback队列中</li><li>如果promise的状态是<code>fulfilled</code>，就直接调用<code>onFulfilled</code>函数，并且将此<code>promise</code>的<code>value</code>作为<code>onFulfilled</code>函数的第一个参数执行</li><li>如果<code>promise</code>的状态为<code>rejected</code>，就直接调用<code>onRejected</code>函数，并且将此<code>promise</code>的<code>reason</code>作为<code>onRejected</code>函数的第一个参数执行</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Promise</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>then</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(</span><span class=nx>onFulfilled</span><span class=p>,</span> <span class=nx>onRejected</span><span class=p>)</span> <span class=p>{</span>
-  <span class=kr>const</span> <span class=nx>self</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
-  <span class=nx>onFulfilled</span> <span class=o>=</span> <span class=k>typeof</span> <span class=nx>onFulfilled</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span> <span class=o>?</span> <span class=nx>onFulfilled</span> <span class=o>:</span> <span class=nx>val</span> <span class=p>=&gt;</span> <span class=nx>val</span><span class=p>;</span>
-  <span class=nx>onRejected</span> <span class=o>=</span> <span class=k>typeof</span> <span class=nx>onRejected</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span> <span class=o>?</span> <span class=nx>onRejected</span> <span class=o>:</span> <span class=nx>err</span> <span class=p>=&gt;</span> <span class=p>{</span> <span class=k>throw</span> <span class=nx>err</span> <span class=p>};</span>
-  <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;fulfilled&#39;</span><span class=p>){</span>
-    <span class=nx>onFulfilled</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>value</span><span class=p>);</span>
-  <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;rejected&#39;</span><span class=p>){</span>
-    <span class=nx>onRejected</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>reason</span><span class=p>);</span>
-  <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;pending&#39;</span><span class=p>){</span>
-    <span class=nx>self</span><span class=p>.</span><span class=nx>onFulfilledCallback</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>onFulfilled</span><span class=p>);</span>
-    <span class=nx>self</span><span class=p>.</span><span class=nx>onRejectedCallback</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>onRejected</span><span class=p>);</span>
-  <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h4 id=promise-链式调用>promise 链式调用</h4><ol><li>此时的promise 是不支持链式调用的，所以我们应该在then中返回一个新的promise来支持链式调用
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>03. August 2018</p>
+      <h1 class = 'post_title'>Promise实现原理</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h3 id="promise">Promise</h3>
+<p>模拟实现一个符合<a href="https://promisesaplus.com/">Promise A+规范</a>的promise，仅供学习其实现原理</p>
+<ul>
+<li><a href="https://github.com/jsyt/promise">源码地址链接</a></li>
+</ul>
+<h4 id="promise-a规范httpspromisesapluscom概述"><a href="https://promisesaplus.com/">Promise A+规范</a>概述</h4>
+<h4 id="promise雏形">promise雏形</h4>
+<p>简单点说</p>
+<ol>
+<li><code>promise</code> 函数的参数（executor）是一个函数，这个函数有两个参数<code>resolve</code>和<code>reject</code>，这两个参数也都是函数，分别在<code>promise</code>成功和失败时调用。</li>
+<li>当构建一个<code>promise</code>实例时，会自动调用这个函数（executor）</li>
+<li>每个<code>promise</code>对象都有一个<code>onFulfilledCallback</code>队列和一个<code>onRejectedCallback</code>队列，用来分别存储成功和失败时调用的回调函数</li>
+<li>每个<code>promise</code>有三种状态<code>pending</code> 、<code>fulfilled</code>、<code>rejected</code>，同一时刻只能处于其中一种状态，并且只能从<code>pending</code> 、状态转化成<code>fulfilled</code>状态，或者<code>rejected</code>状态，一旦状态发生转化就不能再被改变。</li>
+<li>当调用<code>resolve(value)</code>函数时，<code>promise</code>的状态会从<code>pending</code>转化成<code>fulfilled</code>，并且将<code>resolve</code>参数中的<code>value</code>值赋值给此<code>promise</code>的<code>value</code>变量，promise的<code>value</code>被赋值后，就不能再次改变了；此时还会去取出<code>onFulfilledCallback</code>队列中所有的回调函数，并将此<code>promise</code>的<code>value</code>作为回调函数的参数，依次执行</li>
+<li>当调用<code>rejected(reason)</code>函数时，<code>promise</code>的状态会从<code>pending</code>转化成<code>rejected</code>，并且将<code>rejected(reason)</code>函数中的<code>reason</code>参数赋值给此<code>promise</code>的<code>reason</code>变量，这个<code>reason</code>被赋值后，也是不能再次改变了；此时还会去取出<code>onRejectedCallback</code>队列中所有的回调函数，并将此<code>promise</code>的<code>reason</code>作为回调函数的参数，依次执行</li>
+<li>当executor执行抛异常时捕获这个异常，并将异常的原因作为<code>reject</code>函数的参数，执行<code>reject</code>函数</li>
+</ol>
+<p>根据这些我们先写一个第一版的promise</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">executor</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s1">&#39;pending&#39;</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">onFulfilledCallback</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">onRejectedCallback</span> <span class="o">=</span> <span class="p">[];</span>
+
+  <span class="kd">function</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;pending&#39;</span><span class="p">){</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s1">&#39;fulfilled&#39;</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">onFulfilledCallback</span><span class="p">.</span><span class="nx">foreach</span><span class="p">(</span><span class="nx">fn</span><span class="p">=&gt;</span><span class="nx">fn</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">value</span><span class="p">))</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="kd">function</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;pending&#39;</span><span class="p">){</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s1">&#39;rejected&#39;</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="nx">reason</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">onRejectedCallback</span><span class="p">.</span><span class="nx">foreach</span><span class="p">(</span><span class="nx">fn</span><span class="p">=&gt;</span><span class="nx">fn</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reason</span><span class="p">))</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">try</span><span class="p">{</span>
+    <span class="nx">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+  <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+    <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+  <span class="p">}</span>
+
+
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="promisethen">promise.then</h4>
+<ol>
+<li>每个<code>promise</code>必须提供一个<code>then</code>方法，并且<code>then</code>方法包含两个参数<code>onFulfilled</code> 和 <code>onRejected</code></li>
+<li>这两个参数如果不是函数的话就直接忽略，并且将成功或失败的值传递给下一个then注册的回调函数及下一个then的<code>onFulfilled</code> 和 <code>onRejected</code></li>
+<li>当执行then函数时，如果promise的状态是<code>pending</code>则将then中注册的成功和失败时对应的回调函数<code>onFulfilled</code> 和 <code>onRejected</code>分别放入onFulfilledCallback队列和一个onRejectedCallback队列中</li>
+<li>如果promise的状态是<code>fulfilled</code>，就直接调用<code>onFulfilled</code>函数，并且将此<code>promise</code>的<code>value</code>作为<code>onFulfilled</code>函数的第一个参数执行</li>
+<li>如果<code>promise</code>的状态为<code>rejected</code>，就直接调用<code>onRejected</code>函数，并且将此<code>promise</code>的<code>reason</code>作为<code>onRejected</code>函数的第一个参数执行</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">onFulfilled</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="nx">onFulfilled</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onFulfilled</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">onFulfilled</span> <span class="o">:</span> <span class="nx">val</span> <span class="p">=&gt;</span> <span class="nx">val</span><span class="p">;</span>
+  <span class="nx">onRejected</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onRejected</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">onRejected</span> <span class="o">:</span> <span class="nx">err</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="k">throw</span> <span class="nx">err</span> <span class="p">};</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;fulfilled&#39;</span><span class="p">){</span>
+    <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;rejected&#39;</span><span class="p">){</span>
+    <span class="nx">onRejected</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reason</span><span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;pending&#39;</span><span class="p">){</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">onFulfilledCallback</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">onFulfilled</span><span class="p">);</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">onRejectedCallback</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">onRejected</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="promise-链式调用">promise 链式调用</h4>
+<ol>
+<li>此时的promise 是不支持链式调用的，所以我们应该在then中返回一个新的promise来支持链式调用
 为什么是新的promise，而不是直接返回this呢？
-因为promise的状态一旦发生转变，就不能再次改变了，而链式调用中的then返回的promise是可以选择resolve或者reject的，所以then必须返回一个新的promise</li><li>所有的then中注册的回调函数，都应该是异步执行，标准promise的then中注册的回调函数是属于微观任务，我们这里可以用setTimeout来模拟，但是要注意的是setTimeout属于宏观任务</li><li>所有的then中注册的异步回调函数都应该放在try{}catch中执行，当执行then 中的回调函数抛出异常时，应该捕获这个异常，并将异常对象传递给reject，并调用reject</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Promise</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>then</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>(</span><span class=nx>onFulfilled</span><span class=p>,</span> <span class=nx>onRejected</span><span class=p>)</span> <span class=p>{</span>
-  <span class=kr>const</span> <span class=nx>self</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
-  <span class=k>return</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=nx>onFulfilled</span> <span class=o>=</span> <span class=k>typeof</span> <span class=nx>onFulfilled</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span> <span class=o>?</span> <span class=nx>onFulfilled</span> <span class=o>:</span> <span class=nx>val</span> <span class=p>=&gt;</span> <span class=nx>val</span><span class=p>;</span>
-    <span class=nx>onRejected</span> <span class=o>=</span> <span class=k>typeof</span> <span class=nx>onRejected</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span> <span class=o>?</span> <span class=nx>onRejected</span> <span class=o>:</span> <span class=nx>err</span> <span class=p>=&gt;</span> <span class=p>{</span> <span class=k>throw</span> <span class=nx>err</span> <span class=p>};</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;fulfilled&#39;</span><span class=p>){</span>
-      <span class=nx>setTimeout</span><span class=p>(()=&gt;{</span>
-        <span class=k>try</span><span class=p>{</span>
-          <span class=nx>onFulfilled</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>value</span><span class=p>);</span>
-        <span class=p>}</span><span class=k>catch</span><span class=p>(</span><span class=nx>e</span><span class=p>){</span>
-          <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
-        <span class=p>}</span>
-      <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-    <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;rejected&#39;</span><span class=p>){</span>
-      <span class=nx>setTimeout</span><span class=p>(()=&gt;{</span>
-        <span class=k>try</span><span class=p>{</span>
-          <span class=nx>onRejected</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>reason</span><span class=p>);</span>
-        <span class=p>}</span><span class=k>catch</span><span class=p>(</span><span class=nx>e</span><span class=p>){</span>
-          <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
-        <span class=p>}</span>
-      <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-    <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;pending&#39;</span><span class=p>){</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>onFulfilledCallback</span><span class=p>.</span><span class=nx>push</span><span class=p>(()=&gt;{</span>
-        <span class=nx>setTimeout</span><span class=p>(()=&gt;{</span>
-          <span class=k>try</span><span class=p>{</span>
-            <span class=nx>onFulfilled</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>value</span><span class=p>);</span>
-          <span class=p>}</span><span class=k>catch</span><span class=p>(</span><span class=nx>e</span><span class=p>){</span>
-            <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
-          <span class=p>}</span>
-        <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-      <span class=p>}));</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>onRejectedCallback</span><span class=p>.</span><span class=nx>push</span><span class=p>(()=&gt;{</span>
-        <span class=nx>setTimeout</span><span class=p>(()=&gt;{</span>
-        <span class=k>try</span><span class=p>{</span>
-          <span class=nx>onRejected</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>reason</span><span class=p>);</span>
-        <span class=p>}</span><span class=k>catch</span><span class=p>(</span><span class=nx>e</span><span class=p>){</span>
-          <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
-        <span class=p>}</span>
-      <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-      <span class=p>}));</span>
-    <span class=p>}</span>
-  <span class=p>})</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h4 id=嵌套promise问题>嵌套promise问题</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>let</span> <span class=nx>promise1</span> <span class=o>=</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)=&gt;{</span>
-  <span class=nx>setTimeout</span><span class=p>(()=&gt;{</span>
-    <span class=nx>resolve</span><span class=p>(</span><span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)=&gt;{</span>
-      <span class=nx>setTimeout</span><span class=p>(()=&gt;{</span>
-        <span class=nx>resolve</span><span class=p>(</span><span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)=&gt;{</span>
-          <span class=nx>setTimeout</span><span class=p>(()=&gt;{</span>
-            <span class=nx>resolve</span><span class=p>(</span><span class=s1>&#39;666&#39;</span><span class=p>)</span>
-          <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-        <span class=p>}))</span>
-      <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-    <span class=p>}))</span>
-  <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-<span class=p>})</span>
+因为promise的状态一旦发生转变，就不能再次改变了，而链式调用中的then返回的promise是可以选择resolve或者reject的，所以then必须返回一个新的promise</li>
+<li>所有的then中注册的回调函数，都应该是异步执行，标准promise的then中注册的回调函数是属于微观任务，我们这里可以用setTimeout来模拟，但是要注意的是setTimeout属于宏观任务</li>
+<li>所有的then中注册的异步回调函数都应该放在try{}catch中执行，当执行then 中的回调函数抛出异常时，应该捕获这个异常，并将异常对象传递给reject，并调用reject</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">onFulfilled</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">onFulfilled</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onFulfilled</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">onFulfilled</span> <span class="o">:</span> <span class="nx">val</span> <span class="p">=&gt;</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="nx">onRejected</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onRejected</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">onRejected</span> <span class="o">:</span> <span class="nx">err</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="k">throw</span> <span class="nx">err</span> <span class="p">};</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;fulfilled&#39;</span><span class="p">){</span>
+      <span class="nx">setTimeout</span><span class="p">(()=&gt;{</span>
+        <span class="k">try</span><span class="p">{</span>
+          <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+          <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;rejected&#39;</span><span class="p">){</span>
+      <span class="nx">setTimeout</span><span class="p">(()=&gt;{</span>
+        <span class="k">try</span><span class="p">{</span>
+          <span class="nx">onRejected</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reason</span><span class="p">);</span>
+        <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+          <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;pending&#39;</span><span class="p">){</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">onFulfilledCallback</span><span class="p">.</span><span class="nx">push</span><span class="p">(()=&gt;{</span>
+        <span class="nx">setTimeout</span><span class="p">(()=&gt;{</span>
+          <span class="k">try</span><span class="p">{</span>
+            <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+          <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+          <span class="p">}</span>
+        <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="p">}));</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">onRejectedCallback</span><span class="p">.</span><span class="nx">push</span><span class="p">(()=&gt;{</span>
+        <span class="nx">setTimeout</span><span class="p">(()=&gt;{</span>
+        <span class="k">try</span><span class="p">{</span>
+          <span class="nx">onRejected</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reason</span><span class="p">);</span>
+        <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+          <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="p">}));</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="嵌套promise问题">嵌套promise问题</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">promise1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)=&gt;{</span>
+  <span class="nx">setTimeout</span><span class="p">(()=&gt;{</span>
+    <span class="nx">resolve</span><span class="p">(</span><span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)=&gt;{</span>
+      <span class="nx">setTimeout</span><span class="p">(()=&gt;{</span>
+        <span class="nx">resolve</span><span class="p">(</span><span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)=&gt;{</span>
+          <span class="nx">setTimeout</span><span class="p">(()=&gt;{</span>
+            <span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;666&#39;</span><span class="p">)</span>
+          <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">}))</span>
+      <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">}))</span>
+  <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">})</span>
 
-<span class=kd>let</span> <span class=nx>promise2</span> <span class=o>=</span> <span class=nx>promise1</span><span class=p>.</span><span class=nx>then</span><span class=p>((</span><span class=nx>value</span><span class=p>)=&gt;{</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=c1>//666
-</span><span class=c1></span><span class=p>})</span>
+<span class="kd">let</span> <span class="nx">promise2</span> <span class="o">=</span> <span class="nx">promise1</span><span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">value</span><span class="p">)=&gt;{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="c1">//666
+</span><span class="c1"></span><span class="p">})</span>
 
-</code></pre></td></tr></table></div></div><p>我们知道当调用resolve(value)时，如果resolve中的参数value是一个普通值，则会将value传递给then中注册的成功时的回调函数，并调用此回调函数。但是如果value不是一个普通值，而是一个promise的话，则会执行这个promise，如果执行这个promise得到的结果仍然为一个promise，则继续递归执行，直到最终执行结果为一个普通值，并且将这个执行结果作为第一个promise的执行结果，Promise A+ 规范定义了这个解析流程</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/resolvePromise.png alt></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span><span class=lnt>44
-</span><span class=lnt>45
-</span><span class=lnt>46
-</span><span class=lnt>47
-</span><span class=lnt>48
-</span><span class=lnt>49
-</span><span class=lnt>50
-</span><span class=lnt>51
-</span><span class=lnt>52
-</span><span class=lnt>53
-</span><span class=lnt>54
-</span><span class=lnt>55
-</span><span class=lnt>56
-</span><span class=lnt>57
-</span><span class=lnt>58
-</span><span class=lnt>59
-</span><span class=lnt>60
-</span><span class=lnt>61
-</span><span class=lnt>62
-</span><span class=lnt>63
-</span><span class=lnt>64
-</span><span class=lnt>65
-</span><span class=lnt>66
-</span><span class=lnt>67
-</span><span class=lnt>68
-</span><span class=lnt>69
-</span><span class=lnt>70
-</span><span class=lnt>71
-</span><span class=lnt>72
-</span><span class=lnt>73
-</span><span class=lnt>74
-</span><span class=lnt>75
-</span><span class=lnt>76
-</span><span class=lnt>77
-</span><span class=lnt>78
-</span><span class=lnt>79
-</span><span class=lnt>80
-</span><span class=lnt>81
-</span><span class=lnt>82
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span> <span class=p>{</span>
-  <span class=k>if</span><span class=p>(</span><span class=nx>promise2</span> <span class=o>===</span> <span class=nx>x</span><span class=p>)</span> <span class=p>{</span>   <span class=c1>//2.3.1 If promise and x refer to the same object, reject promise with a TypeError as the reason.
-</span><span class=c1></span>    <span class=k>return</span> <span class=nx>reject</span><span class=p>(</span><span class=k>new</span> <span class=nx>TypeError</span><span class=p>(</span><span class=s1>&#39;circular reference&#39;</span><span class=p>));</span>
-  <span class=p>}</span>
-  <span class=kd>let</span> <span class=nx>called</span> <span class=o>=</span> <span class=kc>false</span><span class=p>;</span>  <span class=c1>// 2.3.3.3.3 If both resolvePromise and rejectPromise are called, or multiple calls to the same argument are made, the first call takes precedence, and any further calls are ignored.
-</span><span class=c1></span>  <span class=k>if</span><span class=p>(</span><span class=nx>x</span> <span class=o>!=</span> <span class=kc>null</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=k>typeof</span> <span class=nx>x</span> <span class=o>===</span> <span class=s1>&#39;object&#39;</span> <span class=o>||</span> <span class=k>typeof</span> <span class=nx>x</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span><span class=p>)){</span>    <span class=c1>// 2.3.3  if x is an object or function,
-</span><span class=c1></span>    <span class=k>try</span> <span class=p>{</span>
-      <span class=kd>let</span> <span class=nx>then</span> <span class=o>=</span> <span class=nx>x</span><span class=p>.</span><span class=nx>then</span><span class=p>;</span>    <span class=c1>// 2.3.3.1 Let then be x.then
-</span><span class=c1></span>      <span class=k>if</span><span class=p>(</span><span class=k>typeof</span> <span class=nx>then</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span><span class=p>){</span>  <span class=c1>// 2.3.3.3 If then is a function, call it with x as self, first argument resolvePromise, and second argument rejectPromise, where:
-</span><span class=c1></span>        <span class=nx>then</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span><span class=p>=&gt;{</span>
-          <span class=k>if</span><span class=p>(</span><span class=nx>called</span><span class=p>)</span> <span class=k>return</span><span class=p>;</span>   <span class=c1>// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
-</span><span class=c1></span>          <span class=nx>called</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
-          <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>y</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.3.3.3.1 If/when resolvePromise is called with a value y, run [[Resolve]](promise, y)
-</span><span class=c1></span>        <span class=p>},</span> <span class=nx>reason</span><span class=p>=&gt;{</span>
-          <span class=k>if</span><span class=p>(</span><span class=nx>called</span><span class=p>)</span> <span class=k>return</span><span class=p>;</span>  <span class=c1>// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
-</span><span class=c1></span>          <span class=nx>called</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
-          <span class=nx>reject</span><span class=p>(</span><span class=nx>reason</span><span class=p>)</span>  <span class=c1>// 2.3.3.3.2 If/when rejectPromise is called with a reason r, reject promise with r.
-</span><span class=c1></span>        <span class=p>})</span>
-      <span class=p>}</span><span class=k>else</span><span class=p>{</span>  <span class=c1>// 2.3.3.4 If then is not a function, fulfill promise with x.
-</span><span class=c1></span>        <span class=nx>resolve</span><span class=p>(</span><span class=nx>x</span><span class=p>)</span>
-      <span class=p>}</span>
-    <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>  <span class=c1>// 2.3.3.2 If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
-</span><span class=c1></span>      <span class=k>if</span><span class=p>(</span><span class=nx>called</span><span class=p>)</span> <span class=k>return</span><span class=p>;</span>  <span class=c1>// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
-</span><span class=c1></span>      <span class=nx>called</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
-      <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.3.3.3.4.2 Otherwise, reject promise with e as the reason
-</span><span class=c1></span>    <span class=p>}</span>
-  <span class=p>}</span><span class=k>else</span><span class=p>{</span>  <span class=c1>// 2.3.4 If x is not an object or function, fulfill promise with x.
-</span><span class=c1></span>    <span class=nx>resolve</span><span class=p>(</span><span class=nx>x</span><span class=p>)</span>
-  <span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们知道当调用resolve(value)时，如果resolve中的参数value是一个普通值，则会将value传递给then中注册的成功时的回调函数，并调用此回调函数。但是如果value不是一个普通值，而是一个promise的话，则会执行这个promise，如果执行这个promise得到的结果仍然为一个promise，则继续递归执行，直到最终执行结果为一个普通值，并且将这个执行结果作为第一个promise的执行结果，Promise A+ 规范定义了这个解析流程</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/resolvePromise.png" alt=""></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">promise2</span> <span class="o">===</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>   <span class="c1">//2.3.1 If promise and x refer to the same object, reject promise with a TypeError as the reason.
+</span><span class="c1"></span>    <span class="k">return</span> <span class="nx">reject</span><span class="p">(</span><span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;circular reference&#39;</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="kd">let</span> <span class="nx">called</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>  <span class="c1">// 2.3.3.3.3 If both resolvePromise and rejectPromise are called, or multiple calls to the same argument are made, the first call takes precedence, and any further calls are ignored.
+</span><span class="c1"></span>  <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)){</span>    <span class="c1">// 2.3.3  if x is an object or function,
+</span><span class="c1"></span>    <span class="k">try</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">then</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">then</span><span class="p">;</span>    <span class="c1">// 2.3.3.1 Let then be x.then
+</span><span class="c1"></span>      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">then</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">){</span>  <span class="c1">// 2.3.3.3 If then is a function, call it with x as self, first argument resolvePromise, and second argument rejectPromise, where:
+</span><span class="c1"></span>        <span class="nx">then</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">=&gt;{</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">called</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>   <span class="c1">// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
+</span><span class="c1"></span>          <span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+          <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.3.3.3.1 If/when resolvePromise is called with a value y, run [[Resolve]](promise, y)
+</span><span class="c1"></span>        <span class="p">},</span> <span class="nx">reason</span><span class="p">=&gt;{</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">called</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>  <span class="c1">// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
+</span><span class="c1"></span>          <span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+          <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span>  <span class="c1">// 2.3.3.3.2 If/when rejectPromise is called with a reason r, reject promise with r.
+</span><span class="c1"></span>        <span class="p">})</span>
+      <span class="p">}</span><span class="k">else</span><span class="p">{</span>  <span class="c1">// 2.3.3.4 If then is not a function, fulfill promise with x.
+</span><span class="c1"></span>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 2.3.3.2 If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
+</span><span class="c1"></span>      <span class="k">if</span><span class="p">(</span><span class="nx">called</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>  <span class="c1">// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
+</span><span class="c1"></span>      <span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.3.3.3.4.2 Otherwise, reject promise with e as the reason
+</span><span class="c1"></span>    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>  <span class="c1">// 2.3.4 If x is not an object or function, fulfill promise with x.
+</span><span class="c1"></span>    <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+  <span class="p">}</span>
 
-<span class=p>}</span>
+<span class="p">}</span>
 
-<span class=nb>Promise</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>then</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>onFulfilled</span><span class=p>,</span> <span class=nx>onRejected</span><span class=p>){</span>
-  <span class=kr>const</span> <span class=nx>self</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
-  <span class=c1>// 2.2.1 Both onFulfilled and onRejected are optional arguments:
-</span><span class=c1></span>  <span class=nx>onFulfilled</span> <span class=o>=</span> <span class=k>typeof</span> <span class=nx>onFulfilled</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span> <span class=o>?</span> <span class=nx>onFulfilled</span> <span class=o>:</span> <span class=nx>value</span> <span class=p>=&gt;</span> <span class=nx>value</span>
-  <span class=nx>onRejected</span> <span class=o>=</span> <span class=k>typeof</span> <span class=nx>onRejected</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span> <span class=o>?</span> <span class=nx>onRejected</span> <span class=o>:</span> <span class=nx>reason</span> <span class=p>=&gt;</span> <span class=p>{</span> <span class=k>throw</span> <span class=nx>reason</span> <span class=p>}</span>
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">onFulfilled</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">){</span>
+  <span class="kr">const</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="c1">// 2.2.1 Both onFulfilled and onRejected are optional arguments:
+</span><span class="c1"></span>  <span class="nx">onFulfilled</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onFulfilled</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">onFulfilled</span> <span class="o">:</span> <span class="nx">value</span> <span class="p">=&gt;</span> <span class="nx">value</span>
+  <span class="nx">onRejected</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onRejected</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">onRejected</span> <span class="o">:</span> <span class="nx">reason</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="k">throw</span> <span class="nx">reason</span> <span class="p">}</span>
 
-  <span class=kd>let</span> <span class=nx>promise2</span> <span class=o>=</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>){</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=nx>PENDING</span><span class=p>){</span>
-        <span class=nx>self</span><span class=p>.</span><span class=nx>resolveCallback</span><span class=p>.</span><span class=nx>push</span><span class=p>(()=&gt;{</span>
-          <span class=nx>setTimeout</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-            <span class=k>try</span> <span class=p>{</span>
-              <span class=kd>let</span> <span class=nx>x</span> <span class=o>=</span> <span class=nx>onFulfilled</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>value</span><span class=p>)</span>
-              <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
-</span><span class=c1></span>            <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
-              <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
-</span><span class=c1></span>            <span class=p>}</span>
-          <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-        <span class=p>});</span>
-        <span class=nx>self</span><span class=p>.</span><span class=nx>rejectCallback</span><span class=p>.</span><span class=nx>push</span><span class=p>(()=&gt;{</span>
-          <span class=nx>setTimeout</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-            <span class=k>try</span> <span class=p>{</span>
-              <span class=kd>let</span> <span class=nx>x</span> <span class=o>=</span> <span class=nx>onRejected</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>reason</span><span class=p>)</span>
-              <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
-</span><span class=c1></span>            <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
-              <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
-</span><span class=c1></span>            <span class=p>}</span>
-          <span class=p>},</span> <span class=mi>0</span><span class=p>);</span>
-        <span class=p>});</span>
-    <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=nx>FULFILLED</span><span class=p>){</span>  <span class=c1>// 2.2.6.1 If/when promise is fulfilled, all respective onFulfilled callbacks must execute in the order of their originating calls to then.
-</span><span class=c1></span>        <span class=nx>setTimeout</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-          <span class=k>try</span> <span class=p>{</span>
-            <span class=kd>let</span> <span class=nx>x</span> <span class=o>=</span> <span class=nx>onFulfilled</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>value</span><span class=p>)</span>  <span class=c1>// 2.2.2.1 it must be called after promise is fulfilled, with promise’s value as its first argument.
-</span><span class=c1></span>            <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
-</span><span class=c1></span>          <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
-            <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
-</span><span class=c1></span>          <span class=p>}</span>
-        <span class=p>},</span> <span class=mi>0</span><span class=p>);</span>
-    <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=nx>REJECTED</span><span class=p>){</span>  <span class=c1>// 2.2.6.2 If/when promise is rejected, all respective onRejected callbacks must execute in the order of their originating calls to then.
-</span><span class=c1></span>        <span class=nx>setTimeout</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-          <span class=k>try</span> <span class=p>{</span>
-            <span class=kd>let</span> <span class=nx>x</span> <span class=o>=</span> <span class=nx>onRejected</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>reason</span><span class=p>)</span>
-            <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
-</span><span class=c1></span>          <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
-            <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
-</span><span class=c1></span>          <span class=p>}</span>
-        <span class=p>},</span> <span class=mi>0</span><span class=p>);</span>
-    <span class=p>}</span>
-  <span class=p>})</span>
-  <span class=k>return</span> <span class=nx>promise2</span><span class=p>;</span>  <span class=c1>// 2.2.7 then must return a promise
-</span><span class=c1></span><span class=p>}</span>
-</code></pre></td></tr></table></div></div><h4 id=整理一下最终版本>整理一下，最终版本</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
-</span><span class=lnt>  2
-</span><span class=lnt>  3
-</span><span class=lnt>  4
-</span><span class=lnt>  5
-</span><span class=lnt>  6
-</span><span class=lnt>  7
-</span><span class=lnt>  8
-</span><span class=lnt>  9
-</span><span class=lnt> 10
-</span><span class=lnt> 11
-</span><span class=lnt> 12
-</span><span class=lnt> 13
-</span><span class=lnt> 14
-</span><span class=lnt> 15
-</span><span class=lnt> 16
-</span><span class=lnt> 17
-</span><span class=lnt> 18
-</span><span class=lnt> 19
-</span><span class=lnt> 20
-</span><span class=lnt> 21
-</span><span class=lnt> 22
-</span><span class=lnt> 23
-</span><span class=lnt> 24
-</span><span class=lnt> 25
-</span><span class=lnt> 26
-</span><span class=lnt> 27
-</span><span class=lnt> 28
-</span><span class=lnt> 29
-</span><span class=lnt> 30
-</span><span class=lnt> 31
-</span><span class=lnt> 32
-</span><span class=lnt> 33
-</span><span class=lnt> 34
-</span><span class=lnt> 35
-</span><span class=lnt> 36
-</span><span class=lnt> 37
-</span><span class=lnt> 38
-</span><span class=lnt> 39
-</span><span class=lnt> 40
-</span><span class=lnt> 41
-</span><span class=lnt> 42
-</span><span class=lnt> 43
-</span><span class=lnt> 44
-</span><span class=lnt> 45
-</span><span class=lnt> 46
-</span><span class=lnt> 47
-</span><span class=lnt> 48
-</span><span class=lnt> 49
-</span><span class=lnt> 50
-</span><span class=lnt> 51
-</span><span class=lnt> 52
-</span><span class=lnt> 53
-</span><span class=lnt> 54
-</span><span class=lnt> 55
-</span><span class=lnt> 56
-</span><span class=lnt> 57
-</span><span class=lnt> 58
-</span><span class=lnt> 59
-</span><span class=lnt> 60
-</span><span class=lnt> 61
-</span><span class=lnt> 62
-</span><span class=lnt> 63
-</span><span class=lnt> 64
-</span><span class=lnt> 65
-</span><span class=lnt> 66
-</span><span class=lnt> 67
-</span><span class=lnt> 68
-</span><span class=lnt> 69
-</span><span class=lnt> 70
-</span><span class=lnt> 71
-</span><span class=lnt> 72
-</span><span class=lnt> 73
-</span><span class=lnt> 74
-</span><span class=lnt> 75
-</span><span class=lnt> 76
-</span><span class=lnt> 77
-</span><span class=lnt> 78
-</span><span class=lnt> 79
-</span><span class=lnt> 80
-</span><span class=lnt> 81
-</span><span class=lnt> 82
-</span><span class=lnt> 83
-</span><span class=lnt> 84
-</span><span class=lnt> 85
-</span><span class=lnt> 86
-</span><span class=lnt> 87
-</span><span class=lnt> 88
-</span><span class=lnt> 89
-</span><span class=lnt> 90
-</span><span class=lnt> 91
-</span><span class=lnt> 92
-</span><span class=lnt> 93
-</span><span class=lnt> 94
-</span><span class=lnt> 95
-</span><span class=lnt> 96
-</span><span class=lnt> 97
-</span><span class=lnt> 98
-</span><span class=lnt> 99
-</span><span class=lnt>100
-</span><span class=lnt>101
-</span><span class=lnt>102
-</span><span class=lnt>103
-</span><span class=lnt>104
-</span><span class=lnt>105
-</span><span class=lnt>106
-</span><span class=lnt>107
-</span><span class=lnt>108
-</span><span class=lnt>109
-</span><span class=lnt>110
-</span><span class=lnt>111
-</span><span class=lnt>112
-</span><span class=lnt>113
-</span><span class=lnt>114
-</span><span class=lnt>115
-</span><span class=lnt>116
-</span><span class=lnt>117
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nb>Promise</span><span class=p>(</span><span class=nx>executor</span><span class=p>)</span> <span class=p>{</span>
-  <span class=kr>const</span> <span class=nx>self</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>=</span> <span class=s1>&#39;pending&#39;</span><span class=p>;</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>value</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>reason</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>onFulfilledCallback</span> <span class=o>=</span> <span class=p>[];</span>
-  <span class=nx>self</span><span class=p>.</span><span class=nx>onRejectedCallback</span> <span class=o>=</span> <span class=p>[];</span>
+  <span class="kd">let</span> <span class="nx">promise2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">PENDING</span><span class="p">){</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">resolveCallback</span><span class="p">.</span><span class="nx">push</span><span class="p">(()=&gt;{</span>
+          <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+              <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+              <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+</span><span class="c1"></span>            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
+</span><span class="c1"></span>            <span class="p">}</span>
+          <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">});</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">rejectCallback</span><span class="p">.</span><span class="nx">push</span><span class="p">(()=&gt;{</span>
+          <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+              <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onRejected</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reason</span><span class="p">)</span>
+              <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+</span><span class="c1"></span>            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
+</span><span class="c1"></span>            <span class="p">}</span>
+          <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">FULFILLED</span><span class="p">){</span>  <span class="c1">// 2.2.6.1 If/when promise is fulfilled, all respective onFulfilled callbacks must execute in the order of their originating calls to then.
+</span><span class="c1"></span>        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+          <span class="k">try</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>  <span class="c1">// 2.2.2.1 it must be called after promise is fulfilled, with promise’s value as its first argument.
+</span><span class="c1"></span>            <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+</span><span class="c1"></span>          <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
+</span><span class="c1"></span>          <span class="p">}</span>
+        <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">REJECTED</span><span class="p">){</span>  <span class="c1">// 2.2.6.2 If/when promise is rejected, all respective onRejected callbacks must execute in the order of their originating calls to then.
+</span><span class="c1"></span>        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+          <span class="k">try</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onRejected</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reason</span><span class="p">)</span>
+            <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+</span><span class="c1"></span>          <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
+</span><span class="c1"></span>          <span class="p">}</span>
+        <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+  <span class="k">return</span> <span class="nx">promise2</span><span class="p">;</span>  <span class="c1">// 2.2.7 then must return a promise
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="整理一下最终版本">整理一下，最终版本</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">executor</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s1">&#39;pending&#39;</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">onFulfilledCallback</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">onRejectedCallback</span> <span class="o">=</span> <span class="p">[];</span>
 
-  <span class=kd>function</span> <span class=nx>resolve</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;pending&#39;</span><span class=p>){</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>=</span> <span class=s1>&#39;fulfilled&#39;</span><span class=p>;</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>value</span> <span class=o>=</span> <span class=nx>value</span><span class=p>;</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>onFulfilledCallback</span><span class=p>.</span><span class=nx>forEach</span><span class=p>(</span><span class=nx>fn</span><span class=p>=&gt;</span><span class=nx>fn</span><span class=p>())</span>
-    <span class=p>}</span>
-  <span class=p>}</span>
+  <span class="kd">function</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;pending&#39;</span><span class="p">){</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s1">&#39;fulfilled&#39;</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">onFulfilledCallback</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">fn</span><span class="p">=&gt;</span><span class="nx">fn</span><span class="p">())</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 
-  <span class=kd>function</span> <span class=nx>reject</span><span class=p>(</span><span class=nx>reason</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=s1>&#39;pending&#39;</span><span class=p>){</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>=</span> <span class=s1>&#39;rejected&#39;</span><span class=p>;</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>reason</span> <span class=o>=</span> <span class=nx>reason</span><span class=p>;</span>
-      <span class=nx>self</span><span class=p>.</span><span class=nx>onRejectedCallback</span><span class=p>.</span><span class=nx>forEach</span><span class=p>(</span><span class=nx>fn</span><span class=p>=&gt;</span><span class=nx>fn</span><span class=p>())</span>
-    <span class=p>}</span>
-  <span class=p>}</span>
+  <span class="kd">function</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;pending&#39;</span><span class="p">){</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s1">&#39;rejected&#39;</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="nx">reason</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">onRejectedCallback</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">fn</span><span class="p">=&gt;</span><span class="nx">fn</span><span class="p">())</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 
-  <span class=k>try</span><span class=p>{</span>
-    <span class=nx>executor</span><span class=p>(</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>
-  <span class=p>}</span><span class=k>catch</span><span class=p>(</span><span class=nx>e</span><span class=p>){</span>
-    <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
-  <span class=p>}</span>
-<span class=p>}</span>
-
-
-<span class=kd>function</span> <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span> <span class=p>{</span>
-  <span class=k>if</span><span class=p>(</span><span class=nx>promise2</span> <span class=o>===</span> <span class=nx>x</span><span class=p>)</span> <span class=p>{</span>   <span class=c1>//2.3.1 If promise and x refer to the same object, reject promise with a TypeError as the reason.
-</span><span class=c1></span>    <span class=k>return</span> <span class=nx>reject</span><span class=p>(</span><span class=k>new</span> <span class=nx>TypeError</span><span class=p>(</span><span class=s1>&#39;circular reference&#39;</span><span class=p>));</span>
-  <span class=p>}</span>
-  <span class=kd>let</span> <span class=nx>called</span> <span class=o>=</span> <span class=kc>false</span><span class=p>;</span>  <span class=c1>// 2.3.3.3.3 If both resolvePromise and rejectPromise are called, or multiple calls to the same argument are made, the first call takes precedence, and any further calls are ignored.
-</span><span class=c1></span>  <span class=k>if</span><span class=p>(</span><span class=nx>x</span> <span class=o>!=</span> <span class=kc>null</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=k>typeof</span> <span class=nx>x</span> <span class=o>===</span> <span class=s1>&#39;object&#39;</span> <span class=o>||</span> <span class=k>typeof</span> <span class=nx>x</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span><span class=p>)){</span>    <span class=c1>// 2.3.3  if x is an object or function,
-</span><span class=c1></span>    <span class=k>try</span> <span class=p>{</span>
-      <span class=kd>let</span> <span class=nx>then</span> <span class=o>=</span> <span class=nx>x</span><span class=p>.</span><span class=nx>then</span><span class=p>;</span>    <span class=c1>// 2.3.3.1 Let then be x.then
-</span><span class=c1></span>      <span class=k>if</span><span class=p>(</span><span class=k>typeof</span> <span class=nx>then</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span><span class=p>){</span>  <span class=c1>// 2.3.3.3 If then is a function, call it with x as self, first argument resolvePromise, and second argument rejectPromise, where:
-</span><span class=c1></span>        <span class=nx>then</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span><span class=p>=&gt;{</span>
-          <span class=k>if</span><span class=p>(</span><span class=nx>called</span><span class=p>)</span> <span class=k>return</span><span class=p>;</span>   <span class=c1>// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
-</span><span class=c1></span>          <span class=nx>called</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
-          <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>y</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.3.3.3.1 If/when resolvePromise is called with a value y, run [[Resolve]](promise, y)
-</span><span class=c1></span>        <span class=p>},</span> <span class=nx>reason</span><span class=p>=&gt;{</span>
-          <span class=k>if</span><span class=p>(</span><span class=nx>called</span><span class=p>)</span> <span class=k>return</span><span class=p>;</span>  <span class=c1>// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
-</span><span class=c1></span>          <span class=nx>called</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
-          <span class=nx>reject</span><span class=p>(</span><span class=nx>reason</span><span class=p>)</span>  <span class=c1>// 2.3.3.3.2 If/when rejectPromise is called with a reason r, reject promise with r.
-</span><span class=c1></span>        <span class=p>})</span>
-      <span class=p>}</span><span class=k>else</span><span class=p>{</span>  <span class=c1>// 2.3.3.4 If then is not a function, fulfill promise with x.
-</span><span class=c1></span>        <span class=nx>resolve</span><span class=p>(</span><span class=nx>x</span><span class=p>)</span>
-      <span class=p>}</span>
-    <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>  <span class=c1>// 2.3.3.2 If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
-</span><span class=c1></span>      <span class=k>if</span><span class=p>(</span><span class=nx>called</span><span class=p>)</span> <span class=k>return</span><span class=p>;</span>  <span class=c1>// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
-</span><span class=c1></span>      <span class=nx>called</span> <span class=o>=</span> <span class=kc>true</span><span class=p>;</span>
-      <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.3.3.3.4.2 Otherwise, reject promise with e as the reason
-</span><span class=c1></span>    <span class=p>}</span>
-  <span class=p>}</span><span class=k>else</span><span class=p>{</span>  <span class=c1>// 2.3.4 If x is not an object or function, fulfill promise with x.
-</span><span class=c1></span>    <span class=nx>resolve</span><span class=p>(</span><span class=nx>x</span><span class=p>)</span>
-  <span class=p>}</span>
-
-<span class=p>}</span>
-
-<span class=nb>Promise</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>then</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>onFulfilled</span><span class=p>,</span> <span class=nx>onRejected</span><span class=p>){</span>
-  <span class=kr>const</span> <span class=nx>self</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
-  <span class=c1>// 2.2.1 Both onFulfilled and onRejected are optional arguments:
-</span><span class=c1></span>  <span class=nx>onFulfilled</span> <span class=o>=</span> <span class=k>typeof</span> <span class=nx>onFulfilled</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span> <span class=o>?</span> <span class=nx>onFulfilled</span> <span class=o>:</span> <span class=nx>value</span> <span class=p>=&gt;</span> <span class=nx>value</span>
-  <span class=nx>onRejected</span> <span class=o>=</span> <span class=k>typeof</span> <span class=nx>onRejected</span> <span class=o>===</span> <span class=s1>&#39;function&#39;</span> <span class=o>?</span> <span class=nx>onRejected</span> <span class=o>:</span> <span class=nx>reason</span> <span class=p>=&gt;</span> <span class=p>{</span> <span class=k>throw</span> <span class=nx>reason</span> <span class=p>}</span>
-
-  <span class=kd>let</span> <span class=nx>promise2</span> <span class=o>=</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>){</span>
-    <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=nx>PENDING</span><span class=p>){</span>
-        <span class=nx>self</span><span class=p>.</span><span class=nx>resolveCallback</span><span class=p>.</span><span class=nx>push</span><span class=p>(()=&gt;{</span>
-          <span class=nx>setTimeout</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-            <span class=k>try</span> <span class=p>{</span>
-              <span class=kd>let</span> <span class=nx>x</span> <span class=o>=</span> <span class=nx>onFulfilled</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>value</span><span class=p>)</span>
-              <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
-</span><span class=c1></span>            <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
-              <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
-</span><span class=c1></span>            <span class=p>}</span>
-          <span class=p>},</span> <span class=mi>0</span><span class=p>)</span>
-        <span class=p>});</span>
-        <span class=nx>self</span><span class=p>.</span><span class=nx>rejectCallback</span><span class=p>.</span><span class=nx>push</span><span class=p>(()=&gt;{</span>
-          <span class=nx>setTimeout</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-            <span class=k>try</span> <span class=p>{</span>
-              <span class=kd>let</span> <span class=nx>x</span> <span class=o>=</span> <span class=nx>onRejected</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>reason</span><span class=p>)</span>
-              <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
-</span><span class=c1></span>            <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
-              <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
-</span><span class=c1></span>            <span class=p>}</span>
-          <span class=p>},</span> <span class=mi>0</span><span class=p>);</span>
-        <span class=p>});</span>
-    <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=nx>FULFILLED</span><span class=p>){</span>  <span class=c1>// 2.2.6.1 If/when promise is fulfilled, all respective onFulfilled callbacks must execute in the order of their originating calls to then.
-</span><span class=c1></span>        <span class=nx>setTimeout</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-          <span class=k>try</span> <span class=p>{</span>
-            <span class=kd>let</span> <span class=nx>x</span> <span class=o>=</span> <span class=nx>onFulfilled</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>value</span><span class=p>)</span>  <span class=c1>// 2.2.2.1 it must be called after promise is fulfilled, with promise’s value as its first argument.
-</span><span class=c1></span>            <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
-</span><span class=c1></span>          <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
-            <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
-</span><span class=c1></span>          <span class=p>}</span>
-        <span class=p>},</span> <span class=mi>0</span><span class=p>);</span>
-    <span class=p>}</span><span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>state</span> <span class=o>===</span> <span class=nx>REJECTED</span><span class=p>){</span>  <span class=c1>// 2.2.6.2 If/when promise is rejected, all respective onRejected callbacks must execute in the order of their originating calls to then.
-</span><span class=c1></span>        <span class=nx>setTimeout</span><span class=p>(()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-          <span class=k>try</span> <span class=p>{</span>
-            <span class=kd>let</span> <span class=nx>x</span> <span class=o>=</span> <span class=nx>onRejected</span><span class=p>(</span><span class=nx>self</span><span class=p>.</span><span class=nx>reason</span><span class=p>)</span>
-            <span class=nx>resolvePromise</span><span class=p>(</span><span class=nx>promise2</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)</span>  <span class=c1>// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
-</span><span class=c1></span>          <span class=p>}</span> <span class=k>catch</span> <span class=p>(</span><span class=nx>e</span><span class=p>)</span> <span class=p>{</span>
-            <span class=nx>reject</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>  <span class=c1>// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
-</span><span class=c1></span>          <span class=p>}</span>
-        <span class=p>},</span> <span class=mi>0</span><span class=p>);</span>
-    <span class=p>}</span>
-  <span class=p>})</span>
-  <span class=k>return</span> <span class=nx>promise2</span><span class=p>;</span>  <span class=c1>// 2.2.7 then must return a promise
-</span><span class=c1></span><span class=p>}</span>
+  <span class="k">try</span><span class="p">{</span>
+    <span class="nx">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+  <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+    <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 
 
-<span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=nb>Promise</span><span class=p>;</span>
-</code></pre></td></tr></table></div></div><h3 id=测试>测试</h3><h4 id=安装promises-aplus-tests>安装promises-aplus-tests</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>npm i -g promises-aplus-tests
-</code></pre></td></tr></table></div></div><h4 id=添加测试代码>添加测试代码</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Promise</span><span class=p>.</span><span class=nx>deferred</span> <span class=o>=</span> <span class=nb>Promise</span><span class=p>.</span><span class=nx>defer</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(){</span>
-  <span class=kd>let</span> <span class=nx>defer</span> <span class=o>=</span> <span class=p>{};</span>
-  <span class=nx>defer</span><span class=p>.</span><span class=nx>promise</span> <span class=o>=</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)=&gt;{</span>
-    <span class=nx>defer</span><span class=p>.</span><span class=nx>resolve</span> <span class=o>=</span> <span class=nx>resolve</span><span class=p>;</span>
-    <span class=nx>defer</span><span class=p>.</span><span class=nx>reject</span> <span class=o>=</span> <span class=nx>reject</span><span class=p>;</span>
-  <span class=p>})</span>
-  <span class=k>return</span> <span class=nx>defer</span><span class=p>;</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h5 id=测试命令>测试命令</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>promises-aplus-tests promise.js
-</code></pre></td></tr></table></div></div><h4 id=测试结果872-passing>测试结果(872 passing)</h4><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/promiseTest.png alt=测试结果></p><h2 id=promise-其他常用方法实现>Promise 其他常用方法实现</h2><h3 id=promiseresolve>Promise.resolve</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Promise</span><span class=p>.</span><span class=nx>resolve</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>value</span><span class=p>){</span>
-  <span class=k>return</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)=&gt;{</span>
-    <span class=nx>resolve</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span>
-  <span class=p>})</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h4 id=promisereject>Promise.reject</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Promise</span><span class=p>.</span><span class=nx>reject</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>reason</span><span class=p>){</span>
-  <span class=k>return</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)=&gt;{</span>
-    <span class=nx>reject</span><span class=p>(</span><span class=nx>reason</span><span class=p>)</span>
-  <span class=p>})</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h4 id=promisecatch>promise.catch</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Promise</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=k>catch</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>onRejected</span><span class=p>){</span>
-  <span class=k>return</span> <span class=k>this</span><span class=p>.</span><span class=nx>then</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>onRejected</span><span class=p>)</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h4 id=promiseall>Promise.all</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Promise</span><span class=p>.</span><span class=nx>all</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>arr</span><span class=p>){</span>
-  <span class=kd>let</span> <span class=nx>index</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-  <span class=kd>let</span> <span class=nx>result</span> <span class=o>=</span> <span class=p>[]</span>
-  <span class=k>return</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)=&gt;{</span>
-    <span class=nx>arr</span><span class=p>.</span><span class=nx>forEach</span><span class=p>((</span><span class=nx>promise</span><span class=p>,</span> <span class=nx>i</span><span class=p>)=&gt;{</span>
-      <span class=nx>promise</span><span class=p>.</span><span class=nx>then</span><span class=p>(</span><span class=nx>val</span><span class=p>=&gt;{</span>
-        <span class=nx>result</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>=</span> <span class=nx>val</span>
-        <span class=k>if</span><span class=p>(</span><span class=o>++</span><span class=nx>index</span> <span class=o>===</span> <span class=nx>arr</span><span class=p>.</span><span class=nx>length</span><span class=p>)</span> <span class=p>{</span>  <span class=c1>// 由于then注册的回调函数是异步执行的，无法确定回调函数什么时候执行完成，所以必须得把判断放到回调函数中，这样才能确保所有的异步任务执行完成后在调用resolve
-</span><span class=c1></span>          <span class=nx>resolve</span><span class=p>(</span><span class=nx>result</span><span class=p>)</span>
-        <span class=p>}</span>
-      <span class=p>},</span> <span class=nx>reject</span><span class=p>);</span>
-    <span class=p>})</span>
-  <span class=p>})</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h4 id=promiserace>Promise.race</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=nb>Promise</span><span class=p>.</span><span class=nx>race</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>arr</span><span class=p>){</span>
-  <span class=k>return</span> <span class=k>new</span> <span class=nb>Promise</span><span class=p>((</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>)=&gt;{</span>
-    <span class=nx>arr</span><span class=p>.</span><span class=nx>forEach</span><span class=p>((</span><span class=nx>promise</span><span class=p>,</span> <span class=nx>i</span><span class=p>)=&gt;{</span>
-      <span class=nx>promise</span><span class=p>.</span><span class=nx>then</span><span class=p>(</span><span class=nx>resolve</span><span class=p>,</span> <span class=nx>reject</span><span class=p>);</span>
-    <span class=p>})</span>
-  <span class=p>})</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
+<span class="kd">function</span> <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">promise2</span> <span class="o">===</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>   <span class="c1">//2.3.1 If promise and x refer to the same object, reject promise with a TypeError as the reason.
+</span><span class="c1"></span>    <span class="k">return</span> <span class="nx">reject</span><span class="p">(</span><span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;circular reference&#39;</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="kd">let</span> <span class="nx">called</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>  <span class="c1">// 2.3.3.3.3 If both resolvePromise and rejectPromise are called, or multiple calls to the same argument are made, the first call takes precedence, and any further calls are ignored.
+</span><span class="c1"></span>  <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)){</span>    <span class="c1">// 2.3.3  if x is an object or function,
+</span><span class="c1"></span>    <span class="k">try</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">then</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">then</span><span class="p">;</span>    <span class="c1">// 2.3.3.1 Let then be x.then
+</span><span class="c1"></span>      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">then</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">){</span>  <span class="c1">// 2.3.3.3 If then is a function, call it with x as self, first argument resolvePromise, and second argument rejectPromise, where:
+</span><span class="c1"></span>        <span class="nx">then</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">=&gt;{</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">called</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>   <span class="c1">// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
+</span><span class="c1"></span>          <span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+          <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.3.3.3.1 If/when resolvePromise is called with a value y, run [[Resolve]](promise, y)
+</span><span class="c1"></span>        <span class="p">},</span> <span class="nx">reason</span><span class="p">=&gt;{</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">called</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>  <span class="c1">// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
+</span><span class="c1"></span>          <span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+          <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span>  <span class="c1">// 2.3.3.3.2 If/when rejectPromise is called with a reason r, reject promise with r.
+</span><span class="c1"></span>        <span class="p">})</span>
+      <span class="p">}</span><span class="k">else</span><span class="p">{</span>  <span class="c1">// 2.3.3.4 If then is not a function, fulfill promise with x.
+</span><span class="c1"></span>        <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 2.3.3.2 If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
+</span><span class="c1"></span>      <span class="k">if</span><span class="p">(</span><span class="nx">called</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>  <span class="c1">// 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
+</span><span class="c1"></span>      <span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.3.3.3.4.2 Otherwise, reject promise with e as the reason
+</span><span class="c1"></span>    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>  <span class="c1">// 2.3.4 If x is not an object or function, fulfill promise with x.
+</span><span class="c1"></span>    <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">onFulfilled</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">){</span>
+  <span class="kr">const</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="c1">// 2.2.1 Both onFulfilled and onRejected are optional arguments:
+</span><span class="c1"></span>  <span class="nx">onFulfilled</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onFulfilled</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">onFulfilled</span> <span class="o">:</span> <span class="nx">value</span> <span class="p">=&gt;</span> <span class="nx">value</span>
+  <span class="nx">onRejected</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onRejected</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">onRejected</span> <span class="o">:</span> <span class="nx">reason</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="k">throw</span> <span class="nx">reason</span> <span class="p">}</span>
+
+  <span class="kd">let</span> <span class="nx">promise2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">PENDING</span><span class="p">){</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">resolveCallback</span><span class="p">.</span><span class="nx">push</span><span class="p">(()=&gt;{</span>
+          <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+              <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+              <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+</span><span class="c1"></span>            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
+</span><span class="c1"></span>            <span class="p">}</span>
+          <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">});</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">rejectCallback</span><span class="p">.</span><span class="nx">push</span><span class="p">(()=&gt;{</span>
+          <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+              <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onRejected</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reason</span><span class="p">)</span>
+              <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+</span><span class="c1"></span>            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
+</span><span class="c1"></span>            <span class="p">}</span>
+          <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">FULFILLED</span><span class="p">){</span>  <span class="c1">// 2.2.6.1 If/when promise is fulfilled, all respective onFulfilled callbacks must execute in the order of their originating calls to then.
+</span><span class="c1"></span>        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+          <span class="k">try</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>  <span class="c1">// 2.2.2.1 it must be called after promise is fulfilled, with promise’s value as its first argument.
+</span><span class="c1"></span>            <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+</span><span class="c1"></span>          <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
+</span><span class="c1"></span>          <span class="p">}</span>
+        <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">REJECTED</span><span class="p">){</span>  <span class="c1">// 2.2.6.2 If/when promise is rejected, all respective onRejected callbacks must execute in the order of their originating calls to then.
+</span><span class="c1"></span>        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+          <span class="k">try</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onRejected</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reason</span><span class="p">)</span>
+            <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">promise2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>  <span class="c1">// 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+</span><span class="c1"></span>          <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>  <span class="c1">// 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
+</span><span class="c1"></span>          <span class="p">}</span>
+        <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+  <span class="k">return</span> <span class="nx">promise2</span><span class="p">;</span>  <span class="c1">// 2.2.7 then must return a promise
+</span><span class="c1"></span><span class="p">}</span>
+
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nb">Promise</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="测试">测试</h3>
+<h4 id="安装promises-aplus-tests">安装promises-aplus-tests</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">npm i -g promises-aplus-tests
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="添加测试代码">添加测试代码</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Promise</span><span class="p">.</span><span class="nx">deferred</span> <span class="o">=</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">defer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="kd">let</span> <span class="nx">defer</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="nx">defer</span><span class="p">.</span><span class="nx">promise</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)=&gt;{</span>
+    <span class="nx">defer</span><span class="p">.</span><span class="nx">resolve</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">;</span>
+    <span class="nx">defer</span><span class="p">.</span><span class="nx">reject</span> <span class="o">=</span> <span class="nx">reject</span><span class="p">;</span>
+  <span class="p">})</span>
+  <span class="k">return</span> <span class="nx">defer</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="测试命令">测试命令</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">promises-aplus-tests promise.js
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="测试结果872-passing">测试结果(872 passing)</h4>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/promiseTest.png" alt="测试结果"></p>
+<h2 id="promise-其他常用方法实现">Promise 其他常用方法实现</h2>
+<h3 id="promiseresolve">Promise.resolve</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)=&gt;{</span>
+    <span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="promisereject">Promise.reject</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">reason</span><span class="p">){</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)=&gt;{</span>
+    <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="promisecatch">promise.catch</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="k">catch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">onRejected</span><span class="p">){</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="promiseall">Promise.all</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arr</span><span class="p">){</span>
+  <span class="kd">let</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)=&gt;{</span>
+    <span class="nx">arr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">promise</span><span class="p">,</span> <span class="nx">i</span><span class="p">)=&gt;{</span>
+      <span class="nx">promise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">val</span><span class="p">=&gt;{</span>
+        <span class="nx">result</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">++</span><span class="nx">index</span> <span class="o">===</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 由于then注册的回调函数是异步执行的，无法确定回调函数什么时候执行完成，所以必须得把判断放到回调函数中，这样才能确保所有的异步任务执行完成后在调用resolve
+</span><span class="c1"></span>          <span class="nx">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">},</span> <span class="nx">reject</span><span class="p">);</span>
+    <span class="p">})</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="promiserace">Promise.race</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Promise</span><span class="p">.</span><span class="nx">race</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arr</span><span class="p">){</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)=&gt;{</span>
+    <span class="nx">arr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">promise</span><span class="p">,</span> <span class="nx">i</span><span class="p">)=&gt;{</span>
+      <span class="nx">promise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">);</span>
+    <span class="p">})</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

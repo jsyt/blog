@@ -1,377 +1,530 @@
-<!doctype html><html lang=en><head><title>Java script 之函数防抖与节流 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="JavaScript 之函数防抖与节流"><meta property="og:description" content="函数防抖（debounce) 函数防抖是指在函数调用动作触发n秒后才开始执行，n秒内若再次触发，则重新开始计时，再次等待n秒后才开始执行。如果n秒内不断触发，那就不断重新开始计时，一直等到有一个n秒内没有触发，才开始执行此函数。
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Java script 之函数防抖与节流 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'JavaScript 之函数防抖与节流' />
+<meta property = 'og:description' content = '函数防抖（debounce) 函数防抖是指在函数调用动作触发n秒后才开始执行，n秒内若再次触发，则重新开始计时，再次等待n秒后才开始执行。如果n秒内不断触发，那就不断重新开始计时，一直等到有一个n秒内没有触发，才开始执行此函数。
 根据描述，我们可以用setTimeout来实现一个简单版的防抖函数
-第 …"><meta property="og:url" content="https://goyth.cn/post/debounceandthrottle/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/debounceandthrottle/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
-<a href=https://goyth.cn/categories class=nav_item>Category</a>
-<a href=https://goyth.cn/tags class=nav_item>Tag</a>
-<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
-<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">10. May 2018</p><h1 class=post_title>JavaScript 之函数防抖与节流</h1><div class=post_body><div class=post_inner><h2 id=函数防抖debounce>函数防抖（debounce)</h2><p>函数防抖是指在函数调用动作触发n秒后才开始执行，n秒内若再次触发，则重新开始计时，再次等待n秒后才开始执行。如果n秒内不断触发，那就不断重新开始计时，一直等到有一个n秒内没有触发，才开始执行此函数。</p><p>根据描述，我们可以用<code>setTimeout</code>来实现一个简单版的防抖函数</p><h3 id=第一版>第一版</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=err>／</span><span class=o>**</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>fn</span> <span class=nx>回调函数</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>delay</span> <span class=nx>延迟时间</span>
-<span class=o>*</span><span class=err>／</span>
-<span class=kd>function</span> <span class=nx>debounce</span><span class=p>(</span><span class=nx>fn</span><span class=p>,</span> <span class=nx>delay</span><span class=p>){</span>
-    <span class=kd>let</span> <span class=nx>timer</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>(){</span>
-        <span class=nx>clearTimeout</span><span class=p>(</span><span class=nx>timer</span><span class=p>);</span>
-        <span class=nx>timer</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=nx>fn</span><span class=p>,</span> <span class=nx>delay</span><span class=p>);</span>
-    <span class=p>}</span>
-<span class=p>}</span>
+第 …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/debounceandthrottle/' />
+<meta property = 'og:image' content = 'https://goyth.cn/images/stuck.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
 
-</code></pre></td></tr></table></div></div><p>由于<code>setTimeout</code>的回调函数内的<code>this</code>是指向<code>window</code>，如果不传参数则<code>argument</code>对象为空，所以我们得修复<code>this</code>的指向，并将<code>argument</code>对象也传给回调函数</p><h3 id=第二版>第二版</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=err>／</span><span class=o>**</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>fn</span> <span class=nx>回调函数</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>delay</span> <span class=nx>延迟时间</span>
-<span class=o>*</span><span class=err>／</span>
-<span class=kd>function</span> <span class=nx>debounce</span><span class=p>(</span><span class=nx>fn</span><span class=p>,</span> <span class=nx>delay</span><span class=p>){</span>
-    <span class=kd>let</span> <span class=nx>timer</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>(){</span>
-        <span class=kd>let</span> <span class=nx>context</span> <span class=o>=</span> <span class=k>this</span><span class=p>,</span>
-            <span class=nx>arg</span> <span class=o>=</span> <span class=nx>arguments</span><span class=p>;</span>
-        <span class=nx>clearTimeout</span><span class=p>(</span><span class=nx>timer</span><span class=p>);</span>
-        <span class=nx>timer</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=kd>function</span><span class=p>(){</span>
-            <span class=nx>fn</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>arg</span><span class=p>);</span>
-        <span class=p>},</span> <span class=nx>delay</span><span class=p>);</span>
-    <span class=p>}</span>
-<span class=p>}</span>
+  <link rel='canonical' href='https://goyth.cn/post/debounceandthrottle/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
 
-</code></pre></td></tr></table></div></div><p>现在我们新增一个立即执行的需求，就是第一次触发后就立即执行，然后再等待n秒后再执行，n秒内如果有触发则重新计时。我们新增一个参数immediate，true表示立即执行，false表示非立即执行</p><h3 id=第三版>第三版</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=err>／</span><span class=o>**</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>fn</span> <span class=nx>回调函数</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>delay</span> <span class=nx>延迟时间</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>immediate</span> <span class=nx>是否立即执行</span>
-<span class=o>*</span><span class=err>／</span>
-<span class=kd>function</span> <span class=nx>debounce</span><span class=p>(</span><span class=nx>fn</span><span class=p>,</span> <span class=nx>delay</span><span class=p>,</span> <span class=nx>immediate</span><span class=p>){</span>
-    <span class=kd>let</span> <span class=nx>timer</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>(){</span>
-        <span class=kd>let</span> <span class=nx>context</span> <span class=o>=</span> <span class=k>this</span><span class=p>,</span>
-            <span class=nx>arg</span> <span class=o>=</span> <span class=nx>arguments</span><span class=p>;</span>
-        <span class=k>if</span><span class=p>(</span><span class=nx>timer</span><span class=p>){</span>
-            <span class=nx>clearTimeout</span><span class=p>(</span><span class=nx>timer</span><span class=p>);</span>
-        <span class=p>}</span>
-        <span class=k>if</span><span class=p>(</span><span class=nx>immediate</span><span class=p>){</span>
-            <span class=k>if</span><span class=p>(</span><span class=o>!</span><span class=nx>timer</span><span class=p>){</span>
-                <span class=nx>fn</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>arg</span><span class=p>);</span>
-            <span class=p>}</span>
-            <span class=nx>timer</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=kd>function</span><span class=p>(){</span>
-                <span class=nx>timer</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-            <span class=p>},</span> <span class=nx>delay</span><span class=p>);</span>
-        <span class=p>}</span><span class=k>else</span><span class=p>{</span>
-            <span class=nx>timer</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=kd>function</span><span class=p>(){</span>
-                <span class=nx>fn</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>arg</span><span class=p>);</span>
-            <span class=p>},</span> <span class=nx>delay</span><span class=p>);</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-<span class=p>}</span>
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
 
-</code></pre></td></tr></table></div></div><h3 id=underscore-实现版本>underscore 实现版本：</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=nx>_</span><span class=p>.</span><span class=nx>debounce</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>func</span><span class=p>,</span> <span class=nx>wait</span><span class=p>,</span> <span class=nx>immediate</span><span class=p>)</span> <span class=p>{</span>
-    <span class=kd>var</span> <span class=nx>timeout</span><span class=p>,</span> <span class=nx>args</span><span class=p>,</span> <span class=nx>context</span><span class=p>,</span> <span class=nx>timestamp</span><span class=p>,</span> <span class=nx>result</span><span class=p>;</span>
-    <span class=kd>var</span> <span class=nx>later</span> <span class=o>=</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
-        <span class=kd>var</span> <span class=nx>last</span> <span class=o>=</span> <span class=nx>_</span><span class=p>.</span><span class=nx>now</span><span class=p>()</span> <span class=o>-</span> <span class=nx>timestamp</span><span class=p>;</span>
-        <span class=k>if</span> <span class=p>(</span><span class=nx>last</span> <span class=o>&lt;</span> <span class=nx>wait</span> <span class=o>&amp;&amp;</span> <span class=nx>last</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
-            <span class=nx>timeout</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=nx>later</span><span class=p>,</span> <span class=nx>wait</span> <span class=o>-</span> <span class=nx>last</span><span class=p>);</span>
-        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=nx>timeout</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-            <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>immediate</span><span class=p>)</span> <span class=p>{</span>
-                <span class=nx>result</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>args</span><span class=p>);</span>
-                <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>timeout</span><span class=p>)</span> <span class=nx>context</span> <span class=o>=</span> <span class=nx>args</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-            <span class=p>}</span>
-        <span class=p>}</span>
-    <span class=p>};</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
-        <span class=nx>context</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
-        <span class=nx>args</span> <span class=o>=</span> <span class=nx>arguments</span><span class=p>;</span>
-        <span class=nx>timestamp</span> <span class=o>=</span> <span class=nx>_</span><span class=p>.</span><span class=nx>now</span><span class=p>();</span>
-        <span class=kd>var</span> <span class=nx>callNow</span> <span class=o>=</span> <span class=nx>immediate</span> <span class=o>&amp;&amp;</span> <span class=o>!</span><span class=nx>timeout</span><span class=p>;</span>
-        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>timeout</span><span class=p>)</span> <span class=nx>timeout</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=nx>later</span><span class=p>,</span> <span class=nx>wait</span><span class=p>);</span>
-        <span class=k>if</span> <span class=p>(</span><span class=nx>callNow</span><span class=p>)</span> <span class=p>{</span>
-            <span class=nx>result</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>args</span><span class=p>);</span>
-            <span class=nx>context</span> <span class=o>=</span> <span class=nx>args</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-        <span class=p>}</span>
-        <span class=k>return</span> <span class=nx>result</span><span class=p>;</span>
-    <span class=p>};</span>
-<span class=p>};</span>
-</code></pre></td></tr></table></div></div><h2 id=函数节流throttle>函数节流（throttle）</h2><p>函数节流是指每隔n秒钟就执行一次事件，不管你在n秒内触发了多少次事件，都是每隔n秒才执行一次。</p><p>可以用定时器和时间戳两种方式实现</p><h3 id=时间戳版本>时间戳版本</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=err>／</span><span class=o>**</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>fn</span> <span class=nx>回调函数</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>wait</span> <span class=nx>间隔时间</span>
-<span class=o>*</span><span class=err>／</span>
-<span class=kd>function</span> <span class=nx>throttle</span><span class=p>(</span><span class=nx>fn</span><span class=p>,</span> <span class=nx>wait</span><span class=p>){</span>
-    <span class=kd>let</span> <span class=nx>pre</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>(){</span>
-        <span class=kd>let</span> <span class=nx>now</span> <span class=o>=</span> <span class=o>+</span><span class=k>new</span> <span class=nx>Data</span><span class=p>();</span>
-        <span class=kd>let</span> <span class=nx>remain</span> <span class=o>=</span> <span class=nx>now</span> <span class=o>-</span> <span class=nx>pre</span><span class=p>;</span>
-        <span class=k>if</span><span class=p>(</span><span class=nx>remain</span> <span class=o>&gt;=</span> <span class=nx>wait</span> <span class=o>||</span> <span class=nx>remain</span> <span class=o>&lt;=</span> <span class=mi>0</span> <span class=p>){</span>
-            <span class=nx>fn</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>arguments</span><span class=p>);</span>
-            <span class=nx>pre</span> <span class=o>=</span> <span class=nx>now</span><span class=p>;</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-<span class=p>}</span>
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
 
-</code></pre></td></tr></table></div></div><p>时间戳版本，第一次会立即触发并执行回调函数，但是最后一次触发如果是在最后一个n秒内发生的，则最后一次触发并不会执行回调函数</p><h3 id=定时器版本>定时器版本</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=err>／</span><span class=o>**</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>fn</span> <span class=nx>回调函数</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>wait</span> <span class=nx>间隔时间</span>
-<span class=o>*</span><span class=err>／</span>
-<span class=kd>function</span> <span class=nx>throttle</span><span class=p>(</span><span class=nx>fn</span><span class=p>,</span> <span class=nx>wait</span><span class=p>){</span>
-    <span class=kd>let</span> <span class=nx>timer</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>(){</span>
-        <span class=kd>let</span> <span class=nx>context</span> <span class=o>=</span> <span class=k>this</span><span class=p>,</span>
-            <span class=nx>arg</span> <span class=o>=</span> <span class=nx>arguments</span><span class=p>;</span>
-        <span class=k>if</span><span class=p>(</span><span class=o>!</span><span class=nx>timer</span><span class=p>){</span>
-            <span class=nx>timer</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=kd>function</span><span class=p>(){</span>
-                <span class=nx>fn</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>arg</span><span class=p>);</span>
-                <span class=nx>timer</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-            <span class=p>},</span> <span class=nx>wait</span><span class=p>);</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-<span class=p>}</span>
 
-</code></pre></td></tr></table></div></div><p>定时器版本第一次触发后会在n秒后再执行回调函数，最后一次触发如果是在最后一个n秒内发生，则最后一次触发也会执行回调函数</p><p>我们可以结合两个版本的优点实现一个首次会立即执行，最后一次也会执行的版本</p><h3 id=时间戳定时器混合版本>时间戳定时器混合版本</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=err>／</span><span class=o>**</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>fn</span> <span class=nx>回调函数</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>wait</span> <span class=nx>间隔时间</span>
-<span class=o>*</span><span class=err>／</span>
-<span class=kd>function</span> <span class=nx>throttle</span><span class=p>(</span><span class=nx>fn</span><span class=p>,</span> <span class=nx>wait</span><span class=p>){</span>
-    <span class=kd>let</span> <span class=nx>pre</span> <span class=o>=</span> <span class=mi>0</span><span class=err>，</span>
-        <span class=nx>timer</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>(){</span>
-        <span class=kd>let</span> <span class=nx>context</span> <span class=o>=</span> <span class=k>this</span><span class=p>,</span>
-            <span class=nx>arg</span> <span class=o>=</span> <span class=nx>arguments</span><span class=p>,</span>
-            <span class=nx>now</span> <span class=o>=</span> <span class=o>+</span><span class=k>new</span> <span class=nx>Data</span><span class=p>(),</span>
-            <span class=nx>remaining</span> <span class=o>=</span> <span class=nx>wait</span> <span class=o>-</span> <span class=p>(</span><span class=nx>now</span> <span class=o>-</span> <span class=nx>pre</span><span class=p>);</span>
-        <span class=k>if</span><span class=p>((</span><span class=nx>remaining</span> <span class=o>&lt;</span> <span class=mi>0</span> <span class=o>||</span> <span class=nx>remaining</span> <span class=o>&gt;=</span> <span class=nx>wait</span><span class=p>)){</span>
-            <span class=k>if</span><span class=p>(</span><span class=o>!</span><span class=nx>timer</span><span class=p>){</span>
-                <span class=nx>fn</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=k>this</span><span class=p>,</span> <span class=nx>arguments</span><span class=p>);</span>
-                <span class=nx>pre</span> <span class=o>=</span> <span class=nx>now</span><span class=p>;</span>
-            <span class=p>}</span>
-            <span class=nx>timer</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=kd>function</span><span class=p>(){</span>
-                <span class=nx>pre</span> <span class=o>=</span> <span class=nx>now</span><span class=p>;</span>
-                <span class=nx>fn</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>arg</span><span class=p>);</span>
-            <span class=p>},</span> <span class=nx>wait</span><span class=p>);</span>
-        <span class=p>}</span><span class=k>else</span><span class=p>{</span>
-            <span class=nx>clearTimeout</span><span class=p>(</span><span class=nx>timer</span><span class=p>);</span>
-            <span class=nx>timer</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=kd>function</span><span class=p>(){</span>
-                <span class=nx>pre</span> <span class=o>=</span> <span class=nx>now</span><span class=p>;</span>
-                <span class=nx>fn</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>arg</span><span class=p>);</span>
-            <span class=p>},</span> <span class=nx>remaining</span><span class=p>);</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-<span class=p>}</span>
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>10. May 2018</p>
+      <h1 class = 'post_title'>JavaScript 之函数防抖与节流</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h2 id="函数防抖debounce">函数防抖（debounce)</h2>
+<p>函数防抖是指在函数调用动作触发n秒后才开始执行，n秒内若再次触发，则重新开始计时，再次等待n秒后才开始执行。如果n秒内不断触发，那就不断重新开始计时，一直等到有一个n秒内没有触发，才开始执行此函数。</p>
+<p>根据描述，我们可以用<code>setTimeout</code>来实现一个简单版的防抖函数</p>
+<h3 id="第一版">第一版</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">／</span><span class="o">**</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">fn</span> <span class="nx">回调函数</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">delay</span> <span class="nx">延迟时间</span>
+<span class="o">*</span><span class="err">／</span>
+<span class="kd">function</span> <span class="nx">debounce</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">delay</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+        <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">delay</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-</code></pre></td></tr></table></div></div><h3 id=underscore实现版本>underscore实现版本</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=err>／</span><span class=o>**</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>func</span> <span class=nx>回调函数</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>wait</span> <span class=nx>间隔时间</span>
-<span class=o>*</span> <span class=err>@</span> <span class=nx>options</span> <span class=nx>options</span><span class=p>.</span><span class=nx>leading</span> <span class=o>=</span> <span class=kc>true</span> <span class=nx>表示首次立即执行</span> <span class=nx>options</span><span class=p>.</span><span class=nx>leading</span> <span class=o>=</span> <span class=kc>false</span> <span class=nx>表示首次不立即执行</span> <span class=err>；</span>
-<span class=o>*</span> <span class=err>@</span>     <span class=nx>options</span><span class=p>.</span><span class=nx>trailing</span> <span class=o>=</span> <span class=kc>true</span> <span class=nx>表示最后一次执行</span> <span class=nx>options</span><span class=p>.</span><span class=nx>trailing</span> <span class=o>=</span> <span class=kc>false</span> <span class=nx>表示最后一次不执行</span>
-<span class=o>*</span><span class=err>／</span>
-<span class=nx>_</span><span class=p>.</span><span class=nx>throttle</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>func</span><span class=p>,</span> <span class=nx>wait</span><span class=p>,</span> <span class=nx>options</span><span class=p>)</span> <span class=p>{</span>
-    <span class=kd>var</span> <span class=nx>context</span><span class=p>,</span> <span class=nx>args</span><span class=p>,</span> <span class=nx>result</span><span class=p>;</span>
-    <span class=kd>var</span> <span class=nx>timeout</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-    <span class=kd>var</span> <span class=nx>previous</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-    <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>options</span><span class=p>)</span> <span class=nx>options</span> <span class=o>=</span> <span class=p>{};</span>
-    <span class=kd>var</span> <span class=nx>later</span> <span class=o>=</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
-        <span class=nx>previous</span> <span class=o>=</span> <span class=nx>options</span><span class=p>.</span><span class=nx>leading</span> <span class=o>===</span> <span class=kc>false</span> <span class=o>?</span> <span class=mi>0</span> <span class=o>:</span> <span class=nx>_</span><span class=p>.</span><span class=nx>now</span><span class=p>();</span>
-        <span class=nx>timeout</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-        <span class=nx>result</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>args</span><span class=p>);</span>
-        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>timeout</span><span class=p>)</span> <span class=nx>context</span> <span class=o>=</span> <span class=nx>args</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-    <span class=p>};</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
-        <span class=kd>var</span> <span class=nx>now</span> <span class=o>=</span> <span class=nx>_</span><span class=p>.</span><span class=nx>now</span><span class=p>();</span>
-        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>previous</span> <span class=o>&amp;&amp;</span> <span class=nx>options</span><span class=p>.</span><span class=nx>leading</span> <span class=o>===</span> <span class=kc>false</span><span class=p>)</span> <span class=nx>previous</span> <span class=o>=</span> <span class=nx>now</span><span class=p>;</span>
-        <span class=kd>var</span> <span class=nx>remaining</span> <span class=o>=</span> <span class=nx>wait</span> <span class=o>-</span> <span class=p>(</span><span class=nx>now</span> <span class=o>-</span> <span class=nx>previous</span><span class=p>);</span>
-        <span class=nx>context</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
-        <span class=nx>args</span> <span class=o>=</span> <span class=nx>arguments</span><span class=p>;</span>
-        <span class=k>if</span> <span class=p>(</span><span class=nx>remaining</span> <span class=o>&lt;=</span> <span class=mi>0</span> <span class=o>||</span> <span class=nx>remaining</span> <span class=o>&gt;</span> <span class=nx>wait</span><span class=p>)</span> <span class=p>{</span>
-            <span class=k>if</span> <span class=p>(</span><span class=nx>timeout</span><span class=p>)</span> <span class=p>{</span>
-                <span class=nx>clearTimeout</span><span class=p>(</span><span class=nx>timeout</span><span class=p>);</span>
-                <span class=nx>timeout</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-            <span class=p>}</span>
-            <span class=nx>previous</span> <span class=o>=</span> <span class=nx>now</span><span class=p>;</span>
-            <span class=nx>result</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=nx>context</span><span class=p>,</span> <span class=nx>args</span><span class=p>);</span>
-            <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>timeout</span><span class=p>)</span> <span class=nx>context</span> <span class=o>=</span> <span class=nx>args</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
-        <span class=p>}</span> <span class=k>else</span> <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>timeout</span> <span class=o>&amp;&amp;</span> <span class=nx>options</span><span class=p>.</span><span class=nx>trailing</span> <span class=o>!==</span> <span class=kc>false</span><span class=p>)</span> <span class=p>{</span>
-            <span class=nx>timeout</span> <span class=o>=</span> <span class=nx>setTimeout</span><span class=p>(</span><span class=nx>later</span><span class=p>,</span> <span class=nx>remaining</span><span class=p>);</span>
-        <span class=p>}</span>
-        <span class=k>return</span> <span class=nx>result</span><span class=p>;</span>
-    <span class=p>};</span>
-<span class=p>};</span>
-</code></pre></td></tr></table></div></div><p>underscore 的版本有一个很好的地方就是当事件频繁触发时不用一直设置定时器和清除定时器。但是这个版本有两个问题，第一个就是当设置<code>options.leading = false</code> 和 <code>options.trailing = false</code> 首次调用时 <code>remaining = wait</code> if 和 else if 分支都不会进去，这是一个bug；第二个问题就是当设置<code>options.leading = true</code> 和 <code>options.trailing = true</code> 首次调用时 <code>previous = 0</code> now 等于一个很大的正数，<code>remaining = wait - (now - 0) &lt; 0</code> 数一个很大的负数，<code>timeout = null; !timeout = true</code> 进入 else if 分支的时候，执行<code>timeout = setTimeout(later, remaining);</code>的时候，给定时器设延迟执行，这应该</p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
+</code></pre></td></tr></table>
+</div>
+</div><!-- raw HTML omitted -->
+<p>由于<code>setTimeout</code>的回调函数内的<code>this</code>是指向<code>window</code>，如果不传参数则<code>argument</code>对象为空，所以我们得修复<code>this</code>的指向，并将<code>argument</code>对象也传给回调函数</p>
+<h3 id="第二版">第二版</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">／</span><span class="o">**</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">fn</span> <span class="nx">回调函数</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">delay</span> <span class="nx">延迟时间</span>
+<span class="o">*</span><span class="err">／</span>
+<span class="kd">function</span> <span class="nx">debounce</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">delay</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">let</span> <span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">arg</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+        <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+        <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arg</span><span class="p">);</span>
+        <span class="p">},</span> <span class="nx">delay</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>现在我们新增一个立即执行的需求，就是第一次触发后就立即执行，然后再等待n秒后再执行，n秒内如果有触发则重新计时。我们新增一个参数immediate，true表示立即执行，false表示非立即执行</p>
+<h3 id="第三版">第三版</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">／</span><span class="o">**</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">fn</span> <span class="nx">回调函数</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">delay</span> <span class="nx">延迟时间</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">immediate</span> <span class="nx">是否立即执行</span>
+<span class="o">*</span><span class="err">／</span>
+<span class="kd">function</span> <span class="nx">debounce</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">delay</span><span class="p">,</span> <span class="nx">immediate</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">let</span> <span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">arg</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">timer</span><span class="p">){</span>
+            <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">immediate</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">){</span>
+                <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arg</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">},</span> <span class="nx">delay</span><span class="p">);</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arg</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">delay</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="underscore-实现版本">underscore 实现版本：</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">_</span><span class="p">.</span><span class="nx">debounce</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">wait</span><span class="p">,</span> <span class="nx">immediate</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">timeout</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">timestamp</span><span class="p">,</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">later</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">last</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="nx">timestamp</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">last</span> <span class="o">&lt;</span> <span class="nx">wait</span> <span class="o">&amp;&amp;</span> <span class="nx">last</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">timeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">later</span><span class="p">,</span> <span class="nx">wait</span> <span class="o">-</span> <span class="nx">last</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">immediate</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timeout</span><span class="p">)</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+        <span class="nx">timestamp</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">callNow</span> <span class="o">=</span> <span class="nx">immediate</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">timeout</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timeout</span><span class="p">)</span> <span class="nx">timeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">later</span><span class="p">,</span> <span class="nx">wait</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">callNow</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">context</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">};</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="函数节流throttle">函数节流（throttle）</h2>
+<p>函数节流是指每隔n秒钟就执行一次事件，不管你在n秒内触发了多少次事件，都是每隔n秒才执行一次。</p>
+<p>可以用定时器和时间戳两种方式实现</p>
+<h3 id="时间戳版本">时间戳版本</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">／</span><span class="o">**</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">fn</span> <span class="nx">回调函数</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">wait</span> <span class="nx">间隔时间</span>
+<span class="o">*</span><span class="err">／</span>
+<span class="kd">function</span> <span class="nx">throttle</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">wait</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">pre</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">let</span> <span class="nx">now</span> <span class="o">=</span> <span class="o">+</span><span class="k">new</span> <span class="nx">Data</span><span class="p">();</span>
+        <span class="kd">let</span> <span class="nx">remain</span> <span class="o">=</span> <span class="nx">now</span> <span class="o">-</span> <span class="nx">pre</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">remain</span> <span class="o">&gt;=</span> <span class="nx">wait</span> <span class="o">||</span> <span class="nx">remain</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">){</span>
+            <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="nx">pre</span> <span class="o">=</span> <span class="nx">now</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>时间戳版本，第一次会立即触发并执行回调函数，但是最后一次触发如果是在最后一个n秒内发生的，则最后一次触发并不会执行回调函数</p>
+<h3 id="定时器版本">定时器版本</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">／</span><span class="o">**</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">fn</span> <span class="nx">回调函数</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">wait</span> <span class="nx">间隔时间</span>
+<span class="o">*</span><span class="err">／</span>
+<span class="kd">function</span> <span class="nx">throttle</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">wait</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">let</span> <span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">arg</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">){</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arg</span><span class="p">);</span>
+                <span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">},</span> <span class="nx">wait</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>定时器版本第一次触发后会在n秒后再执行回调函数，最后一次触发如果是在最后一个n秒内发生，则最后一次触发也会执行回调函数</p>
+<p>我们可以结合两个版本的优点实现一个首次会立即执行，最后一次也会执行的版本</p>
+<h3 id="时间戳定时器混合版本">时间戳定时器混合版本</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">／</span><span class="o">**</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">fn</span> <span class="nx">回调函数</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">wait</span> <span class="nx">间隔时间</span>
+<span class="o">*</span><span class="err">／</span>
+<span class="kd">function</span> <span class="nx">throttle</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">wait</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">pre</span> <span class="o">=</span> <span class="mi">0</span><span class="err">，</span>
+        <span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">let</span> <span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">arg</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span>
+            <span class="nx">now</span> <span class="o">=</span> <span class="o">+</span><span class="k">new</span> <span class="nx">Data</span><span class="p">(),</span>
+            <span class="nx">remaining</span> <span class="o">=</span> <span class="nx">wait</span> <span class="o">-</span> <span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="nx">pre</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">((</span><span class="nx">remaining</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">remaining</span> <span class="o">&gt;=</span> <span class="nx">wait</span><span class="p">)){</span>
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">){</span>
+                <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+                <span class="nx">pre</span> <span class="o">=</span> <span class="nx">now</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">pre</span> <span class="o">=</span> <span class="nx">now</span><span class="p">;</span>
+                <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arg</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">wait</span><span class="p">);</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">pre</span> <span class="o">=</span> <span class="nx">now</span><span class="p">;</span>
+                <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arg</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">remaining</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="underscore实现版本">underscore实现版本</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">／</span><span class="o">**</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">func</span> <span class="nx">回调函数</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">wait</span> <span class="nx">间隔时间</span>
+<span class="o">*</span> <span class="err">@</span> <span class="nx">options</span> <span class="nx">options</span><span class="p">.</span><span class="nx">leading</span> <span class="o">=</span> <span class="kc">true</span> <span class="nx">表示首次立即执行</span> <span class="nx">options</span><span class="p">.</span><span class="nx">leading</span> <span class="o">=</span> <span class="kc">false</span> <span class="nx">表示首次不立即执行</span> <span class="err">；</span>
+<span class="o">*</span> <span class="err">@</span>     <span class="nx">options</span><span class="p">.</span><span class="nx">trailing</span> <span class="o">=</span> <span class="kc">true</span> <span class="nx">表示最后一次执行</span> <span class="nx">options</span><span class="p">.</span><span class="nx">trailing</span> <span class="o">=</span> <span class="kc">false</span> <span class="nx">表示最后一次不执行</span>
+<span class="o">*</span><span class="err">／</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">throttle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">wait</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">previous</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">)</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="kd">var</span> <span class="nx">later</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">previous</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">leading</span> <span class="o">===</span> <span class="kc">false</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+        <span class="nx">timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timeout</span><span class="p">)</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">};</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">now</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">previous</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">leading</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="nx">previous</span> <span class="o">=</span> <span class="nx">now</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">remaining</span> <span class="o">=</span> <span class="nx">wait</span> <span class="o">-</span> <span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="nx">previous</span><span class="p">);</span>
+        <span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">remaining</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">remaining</span> <span class="o">&gt;</span> <span class="nx">wait</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">timeout</span><span class="p">);</span>
+                <span class="nx">timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">previous</span> <span class="o">=</span> <span class="nx">now</span><span class="p">;</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timeout</span><span class="p">)</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timeout</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">trailing</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">timeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">later</span><span class="p">,</span> <span class="nx">remaining</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">};</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>underscore 的版本有一个很好的地方就是当事件频繁触发时不用一直设置定时器和清除定时器。但是这个版本有两个问题，第一个就是当设置<code>options.leading = false</code> 和 <code>options.trailing = false</code> 首次调用时 <code>remaining = wait</code> if 和 else if 分支都不会进去，这是一个bug；第二个问题就是当设置<code>options.leading = true</code> 和 <code>options.trailing = true</code> 首次调用时 <code>previous = 0</code> now 等于一个很大的正数，<code>remaining = wait - (now - 0) &lt; 0</code> 数一个很大的负数，<code>timeout = null; !timeout = true</code> 进入 else if 分支的时候，执行<code>timeout = setTimeout(later, remaining);</code>的时候，给定时器设延迟执行，这应该</p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

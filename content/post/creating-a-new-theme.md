@@ -2,7 +2,7 @@
 author: Michael Henderson
 date: 2020-02-28
 title: Creating a New Theme
-image: https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/gohugo-default-sample-hero-image.jpg
+image: "https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/gohugo-default-sample-hero-image.jpg"
 ---
 
 ## Introduction

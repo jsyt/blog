@@ -5,6 +5,7 @@ author = "Luke"
 copyright = "Copyright © 2019, Weru and the Hugo Authors; all rights reserved."
 canonifyurls = true
 paginate = 5
+isCJKLanguage= true
 # Enable syntax highlighting
 # comment or delete lines 11 ~ 14
 pygmentsCodefences = true
@@ -31,6 +32,7 @@ pygmentsOptions = "linenos=table"
 
 # ids used below are not valid. Replace with valid ones
 [params]
+  logo = "stuck.jpg"
   # ga_analytics = "" # google analytics ID e.g UA-116386578-1
 
   # ga_verify = "" # google verification code e.g 5jb-rxeBfITeJQKOuUss3ud6FPGTxXkCho-ZN5qlrZg

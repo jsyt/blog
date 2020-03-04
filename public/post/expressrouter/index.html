@@ -1,344 +1,463 @@
-<!doctype html><html lang=en><head><title>Express路由与中间件原理（路由篇） | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="Express路由与中间件原理（路由篇）"><meta property="og:description" content="导入 express 后会得到一个 express 函数，执行这个函数后返回一个 app 函数，app 上有一个 listen 函数，执行这个 listen 函数就会启一个 http 服务，通过 app.get、app.post、app.all等函数来注册监听函数，如果 http server 监听 …"><meta property="og:url" content="https://goyth.cn/post/expressrouter/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/expressrouter/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
-<a href=https://goyth.cn/categories class=nav_item>Category</a>
-<a href=https://goyth.cn/tags class=nav_item>Tag</a>
-<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
-<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">20. July 2019</p><h1 class=post_title>Express路由与中间件原理（路由篇）</h1><div class=post_body><div class=post_inner><h2 id=express-路由与中间件介绍>Express 路由与中间件介绍</h2><h3 id=express-路由>Express 路由</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>let</span> <span class=nx>express</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;express&#39;</span><span class=p>)</span>
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Express路由与中间件原理（路由篇） | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'Express路由与中间件原理（路由篇）' />
+<meta property = 'og:description' content = '导入 express 后会得到一个 express 函数，执行这个函数后返回一个 app 函数，app 上有一个 listen 函数，执行这个 listen 函数就会启一个 http 服务，通过 app.get、app.post、app.all等函数来注册监听函数，如果 http server 监听 …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/expressrouter/' />
+<meta property = 'og:image' content = 'https://goyth.cn/images/stuck.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
 
-<span class=kd>let</span> <span class=nx>app</span> <span class=o>=</span> <span class=nx>express</span><span class=p>();</span>
+  <link rel='canonical' href='https://goyth.cn/post/expressrouter/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>get</span><span class=p>(</span><span class=s1>&#39;/&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=s1>&#39;get home&#39;</span><span class=p>)</span>
-<span class=p>})</span>
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>post</span><span class=p>(</span><span class=s1>&#39;/&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=s2>&#34;post hemo&#34;</span><span class=p>)</span>
-<span class=p>})</span>
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>all</span><span class=p>(</span><span class=s1>&#39;/all&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=s2>&#34;all&#34;</span><span class=p>)</span>
-<span class=p>})</span>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>all</span><span class=p>(</span><span class=s1>&#39;*&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=s2>&#34;all *&#34;</span><span class=p>)</span>
-<span class=p>})</span>
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>20. July 2019</p>
+      <h1 class = 'post_title'>Express路由与中间件原理（路由篇）</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h2 id="express-路由与中间件介绍">Express 路由与中间件介绍</h2>
+<h3 id="express-路由">Express 路由</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">)</span>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>listen</span><span class=p>(</span><span class=mi>3000</span><span class=p>,</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s2>&#34;sever run port 3000&#34;</span><span class=p>)</span>
-<span class=p>})</span>
-</code></pre></td></tr></table></div></div><p>导入 <code>express</code> 后会得到一个 <code>express</code> 函数，执行这个函数后返回一个 <code>app</code> <code>函数，app</code> 上有一个 <code>listen</code> 函数，执行这个 <code>listen</code> 函数就会启一个 <code>http</code> 服务，通过 <code>app.get</code>、<code>app.post</code>、<code>app.all</code>等函数来注册监听函数，如果 <code>http server</code> 监听到有请求到来，就会调用在 <code>app</code> 上注册的相应的回调函数。</p><p>在 express 内部有一个 routes 数组， <code>app.get</code>、<code>app.post</code>、<code>app.all</code>等函数会产生一个 <code>layer</code> 对象，并将 <code>layer</code> 对象存放在 <code>routes</code> 数组中，这个 <code>layer</code> 对象中包含了 <code>method</code>、<code>path</code>、<code>callback</code>，当请求到来时就会去遍历 <code>routes</code> 数组，如果该请求的 <code>method</code>、<code>path</code>与 <code>routes</code>数组中 <code>layer</code> 对象的<code>method</code>、<code>path</code>一致，则执行该 <code>layer</code> 中的 <code>callback</code> 方法</p><h3 id=第一版>第一版</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span><span class=lnt>44
-</span><span class=lnt>45
-</span><span class=lnt>46
-</span><span class=lnt>47
-</span><span class=lnt>48
-</span><span class=lnt>49
-</span><span class=lnt>50
-</span><span class=lnt>51
-</span><span class=lnt>52
-</span><span class=lnt>53
-</span><span class=lnt>54
-</span><span class=lnt>55
-</span><span class=lnt>56
-</span><span class=lnt>57
-</span><span class=lnt>58
-</span><span class=lnt>59
-</span><span class=lnt>60
-</span><span class=lnt>61
-</span><span class=lnt>62
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=c1>// express.js
-</span><span class=c1></span><span class=kd>let</span> <span class=nx>http</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;http&#39;</span><span class=p>)</span>
-<span class=kd>let</span> <span class=nx>url</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;url&#39;</span><span class=p>)</span>
+<span class="kd">let</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
 
-<span class=kd>function</span> <span class=nx>application</span><span class=p>()</span> <span class=p>{</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s1">&#39;get home&#39;</span><span class="p">)</span>
+<span class="p">})</span>
 
-  <span class=kd>let</span> <span class=nx>app</span> <span class=o>=</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=c1>// 获取请求方法
-</span><span class=c1></span>    <span class=kd>let</span> <span class=nx>method</span> <span class=o>=</span> <span class=nx>req</span><span class=p>.</span><span class=nx>method</span><span class=p>.</span><span class=nx>toLowerCase</span><span class=p>();</span>
-    <span class=c1>// 获取请求路径
-</span><span class=c1></span>    <span class=kd>let</span> <span class=p>{</span>
-      <span class=nx>pathname</span>
-    <span class=p>}</span> <span class=o>=</span> <span class=nx>url</span><span class=p>.</span><span class=nx>parse</span><span class=p>(</span><span class=nx>req</span><span class=p>.</span><span class=nx>url</span><span class=p>)</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s2">&#34;post hemo&#34;</span><span class="p">)</span>
+<span class="p">})</span>
 
-    <span class=k>for</span> <span class=p>(</span><span class=kd>let</span> <span class=nx>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;</span> <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>length</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-      <span class=kr>const</span> <span class=nx>layer</span> <span class=o>=</span> <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>[</span><span class=nx>i</span><span class=p>];</span>
-      <span class=k>if</span> <span class=p>((</span><span class=nx>layer</span><span class=p>.</span><span class=nx>method</span> <span class=o>===</span> <span class=nx>method</span> <span class=o>||</span> <span class=s2>&#34;all&#34;</span> <span class=o>===</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>method</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=nx>layer</span><span class=p>.</span><span class=nx>path</span> <span class=o>===</span> <span class=nx>pathname</span> <span class=o>||</span> <span class=p>(</span><span class=s2>&#34;*&#34;</span> <span class=o>===</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>path</span><span class=p>)))</span> <span class=p>{</span>
-        <span class=k>return</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>callback</span><span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span>
-      <span class=p>}</span>
-    <span class=p>}</span>
-    <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=sb>`cannot </span><span class=si>${</span><span class=nx>method</span><span class=si>}</span><span class=sb>  </span><span class=si>${</span><span class=nx>pathname</span><span class=si>}</span><span class=sb>`</span><span class=p>)</span>
-  <span class=p>}</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;/all&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s2">&#34;all&#34;</span><span class="p">)</span>
+<span class="p">})</span>
 
-  <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span> <span class=o>=</span> <span class=p>[]</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s2">&#34;all *&#34;</span><span class="p">)</span>
+<span class="p">})</span>
 
-  <span class=nx>app</span><span class=p>.</span><span class=nx>get</span> <span class=o>=</span> <span class=p>(</span><span class=nx>path</span><span class=p>,</span> <span class=nx>callback</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=kd>let</span> <span class=nx>layer</span> <span class=o>=</span> <span class=p>{</span>
-      <span class=nx>method</span><span class=o>:</span> <span class=s1>&#39;get&#39;</span><span class=p>,</span>
-      <span class=nx>path</span><span class=p>,</span>
-      <span class=nx>callback</span>
-    <span class=p>}</span>
-    <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>layer</span><span class=p>)</span>
-  <span class=p>}</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;sever run port 3000&#34;</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>导入 <code>express</code> 后会得到一个 <code>express</code> 函数，执行这个函数后返回一个 <code>app</code> <code>函数，app</code> 上有一个 <code>listen</code> 函数，执行这个 <code>listen</code> 函数就会启一个 <code>http</code> 服务，通过 <code>app.get</code>、<code>app.post</code>、<code>app.all</code>等函数来注册监听函数，如果 <code>http server</code> 监听到有请求到来，就会调用在 <code>app</code> 上注册的相应的回调函数。</p>
+<p>在 express 内部有一个 routes 数组， <code>app.get</code>、<code>app.post</code>、<code>app.all</code>等函数会产生一个 <code>layer</code> 对象，并将 <code>layer</code> 对象存放在 <code>routes</code> 数组中，这个 <code>layer</code> 对象中包含了 <code>method</code>、<code>path</code>、<code>callback</code>，当请求到来时就会去遍历 <code>routes</code> 数组，如果该请求的 <code>method</code>、<code>path</code>与 <code>routes</code>数组中 <code>layer</code> 对象的<code>method</code>、<code>path</code>一致，则执行该 <code>layer</code> 中的 <code>callback</code> 方法</p>
+<h3 id="第一版">第一版</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// express.js
+</span><span class="c1"></span><span class="kd">let</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span>
 
-  <span class=nx>app</span><span class=p>.</span><span class=nx>post</span> <span class=o>=</span> <span class=p>(</span><span class=nx>path</span><span class=p>,</span> <span class=nx>callback</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=kd>let</span> <span class=nx>layer</span> <span class=o>=</span> <span class=p>{</span>
-      <span class=nx>method</span><span class=o>:</span> <span class=s1>&#39;post&#39;</span><span class=p>,</span>
-      <span class=nx>path</span><span class=p>,</span>
-      <span class=nx>callback</span>
-    <span class=p>}</span>
-    <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>layer</span><span class=p>)</span>
-  <span class=p>}</span>
+<span class="kd">function</span> <span class="nx">application</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class=nx>app</span><span class=p>.</span><span class=nx>all</span> <span class=o>=</span> <span class=p>(</span><span class=nx>path</span><span class=p>,</span> <span class=nx>callback</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=kd>let</span> <span class=nx>layer</span> <span class=o>=</span> <span class=p>{</span>
-      <span class=nx>method</span><span class=o>:</span> <span class=s1>&#39;all&#39;</span><span class=p>,</span>
-      <span class=nx>path</span><span class=p>,</span>
-      <span class=nx>callback</span>
-    <span class=p>}</span>
-    <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>layer</span><span class=p>)</span>
-  <span class=p>}</span>
+  <span class="kd">let</span> <span class="nx">app</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// 获取请求方法
+</span><span class="c1"></span>    <span class="kd">let</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    <span class="c1">// 获取请求路径
+</span><span class="c1"></span>    <span class="kd">let</span> <span class="p">{</span>
+      <span class="nx">pathname</span>
+    <span class="p">}</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span>
 
-  <span class=nx>app</span><span class=p>.</span><span class=nx>listen</span> <span class=o>=</span> <span class=p>(...</span><span class=nx>args</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=kd>let</span> <span class=nx>server</span> <span class=o>=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>createServer</span><span class=p>(</span><span class=nx>app</span><span class=p>)</span>
-    <span class=nx>server</span><span class=p>.</span><span class=nx>listen</span><span class=p>(...</span><span class=nx>args</span><span class=p>)</span>
-  <span class=p>}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kr">const</span> <span class="nx">layer</span> <span class="o">=</span> <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+      <span class="k">if</span> <span class="p">((</span><span class="nx">layer</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="nx">method</span> <span class="o">||</span> <span class="s2">&#34;all&#34;</span> <span class="o">===</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">method</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">layer</span><span class="p">.</span><span class="nx">path</span> <span class="o">===</span> <span class="nx">pathname</span> <span class="o">||</span> <span class="p">(</span><span class="s2">&#34;*&#34;</span> <span class="o">===</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">path</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">callback</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="sb">`cannot </span><span class="si">${</span><span class="nx">method</span><span class="si">}</span><span class="sb">  </span><span class="si">${</span><span class="nx">pathname</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+  <span class="p">}</span>
 
-  <span class=k>return</span> <span class=nx>app</span><span class=p>;</span>
-<span class=p>}</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span> <span class="o">=</span> <span class="p">[]</span>
 
-<span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=nx>application</span><span class=p>;</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">layer</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;get&#39;</span><span class="p">,</span>
+      <span class="nx">path</span><span class="p">,</span>
+      <span class="nx">callback</span>
+    <span class="p">}</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">layer</span><span class="p">)</span>
+  <span class="p">}</span>
 
-</code></pre></td></tr></table></div></div><h3 id=支持匹配路径参数>支持匹配路径参数</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>let</span> <span class=nx>express</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;express&#39;</span><span class=p>)</span>
-<span class=c1>// let express = require(&#39;./express&#39;)
-</span><span class=c1></span>
-<span class=kd>let</span> <span class=nx>app</span> <span class=o>=</span> <span class=nx>express</span><span class=p>();</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">post</span> <span class="o">=</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">layer</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+      <span class="nx">path</span><span class="p">,</span>
+      <span class="nx">callback</span>
+    <span class="p">}</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">layer</span><span class="p">)</span>
+  <span class="p">}</span>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>get</span><span class=p>(</span><span class=s1>&#39;/user/:id/:name&#39;</span><span class=p>,</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>req</span><span class=p>.</span><span class=nx>params</span><span class=p>.</span><span class=nx>id</span><span class=p>)</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>req</span><span class=p>.</span><span class=nx>params</span><span class=p>.</span><span class=nx>name</span><span class=p>)</span>
-  <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=s1>&#39;ok&#39;</span><span class=p>)</span>
-<span class=p>})</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">all</span> <span class="o">=</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">layer</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span>
+      <span class="nx">path</span><span class="p">,</span>
+      <span class="nx">callback</span>
+    <span class="p">}</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">layer</span><span class="p">)</span>
+  <span class="p">}</span>
 
-<span class=nx>app</span><span class=p>.</span><span class=nx>listen</span><span class=p>(</span><span class=mi>3000</span><span class=p>,</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=p>{</span>
-  <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=s2>&#34;sever run port 3000&#34;</span><span class=p>)</span>
-<span class=p>})</span>
-</code></pre></td></tr></table></div></div><p>如果路径中<code>/</code>后面以<code>:</code>开头，则表示为一个路径参数
+  <span class="nx">app</span><span class="p">.</span><span class="nx">listen</span> <span class="o">=</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+    <span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">app</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">application</span><span class="p">;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="支持匹配路径参数">支持匹配路径参数</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">)</span>
+<span class="c1">// let express = require(&#39;./express&#39;)
+</span><span class="c1"></span>
+<span class="kd">let</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/user/:id/:name&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;sever run port 3000&#34;</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果路径中<code>/</code>后面以<code>:</code>开头，则表示为一个路径参数
 以<code>/user/:id/:name</code>为例：
-如果请求路径为<code>/user/123/luke</code>，那么 express 会取出<code>[id, name]</code>和<code>[123, luke]</code>组成一个<code>{id: 123, name: luke}</code>的对象，并将这个对象挂载在 <code>req.params</code>上</p><p>这里可以使用<a href=https://www.npmjs.com/package/path-to-regexp>path-to-regexp</a>
-具体的做法是先通过正则表达式将<code>/user/:id/:name</code>中的 id 和 name 取出放在一个数组中，然后将 <code>/user/:id/:name</code> 替换成 <code>/user/:([^\/]+)/:([^\/]+)</code>，让 <code>path = new RegEpx('/user/:([^\/]+)/:([^\/]+)')</code>，然后在匹配请求时，通过该正则表达式来进行匹配，并将组成的对象挂载在 <code>req.params</code> 上。</p><h3 id=第二版>第二版</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span><span class=lnt>44
-</span><span class=lnt>45
-</span><span class=lnt>46
-</span><span class=lnt>47
-</span><span class=lnt>48
-</span><span class=lnt>49
-</span><span class=lnt>50
-</span><span class=lnt>51
-</span><span class=lnt>52
-</span><span class=lnt>53
-</span><span class=lnt>54
-</span><span class=lnt>55
-</span><span class=lnt>56
-</span><span class=lnt>57
-</span><span class=lnt>58
-</span><span class=lnt>59
-</span><span class=lnt>60
-</span><span class=lnt>61
-</span><span class=lnt>62
-</span><span class=lnt>63
-</span><span class=lnt>64
-</span><span class=lnt>65
-</span><span class=lnt>66
-</span><span class=lnt>67
-</span><span class=lnt>68
-</span><span class=lnt>69
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=c1>// express.js
-</span><span class=c1></span><span class=kd>let</span> <span class=nx>http</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;http&#39;</span><span class=p>)</span>
-<span class=kd>let</span> <span class=nx>url</span> <span class=o>=</span> <span class=nx>require</span><span class=p>(</span><span class=s1>&#39;url&#39;</span><span class=p>)</span>
+如果请求路径为<code>/user/123/luke</code>，那么 express 会取出<code>[id, name]</code>和<code>[123, luke]</code>组成一个<code>{id: 123, name: luke}</code>的对象，并将这个对象挂载在 <code>req.params</code>上</p>
+<p>这里可以使用<a href="https://www.npmjs.com/package/path-to-regexp">path-to-regexp</a>
+具体的做法是先通过正则表达式将<code>/user/:id/:name</code>中的 id 和 name 取出放在一个数组中，然后将 <code>/user/:id/:name</code> 替换成 <code>/user/:([^\/]+)/:([^\/]+)</code>，让 <code>path = new RegEpx('/user/:([^\/]+)/:([^\/]+)')</code>，然后在匹配请求时，通过该正则表达式来进行匹配，并将组成的对象挂载在 <code>req.params</code> 上。</p>
+<h3 id="第二版">第二版</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// express.js
+</span><span class="c1"></span><span class="kd">let</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span>
 
-<span class=kd>function</span> <span class=nx>application</span><span class=p>()</span> <span class=p>{</span>
+<span class="kd">function</span> <span class="nx">application</span><span class="p">()</span> <span class="p">{</span>
 
-  <span class=kd>let</span> <span class=nx>app</span> <span class=o>=</span> <span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=c1>// 获取请求方法
-</span><span class=c1></span>    <span class=kd>let</span> <span class=nx>method</span> <span class=o>=</span> <span class=nx>req</span><span class=p>.</span><span class=nx>method</span><span class=p>.</span><span class=nx>toLowerCase</span><span class=p>();</span>
-    <span class=c1>// 获取请求路径
-</span><span class=c1></span>    <span class=kd>let</span> <span class=p>{</span> <span class=nx>pathname</span> <span class=p>}</span> <span class=o>=</span> <span class=nx>url</span><span class=p>.</span><span class=nx>parse</span><span class=p>(</span><span class=nx>req</span><span class=p>.</span><span class=nx>url</span><span class=p>)</span>
+  <span class="kd">let</span> <span class="nx">app</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// 获取请求方法
+</span><span class="c1"></span>    <span class="kd">let</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    <span class="c1">// 获取请求路径
+</span><span class="c1"></span>    <span class="kd">let</span> <span class="p">{</span> <span class="nx">pathname</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span>
 
-    <span class=k>for</span> <span class=p>(</span><span class=kd>let</span> <span class=nx>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;</span> <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>length</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
-      <span class=kr>const</span> <span class=nx>layer</span> <span class=o>=</span> <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>[</span><span class=nx>i</span><span class=p>];</span>
-      <span class=kd>let</span> <span class=nx>layerPath</span> <span class=o>=</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>path</span>
-      <span class=kd>let</span> <span class=nx>layerMethod</span> <span class=o>=</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>method</span>
-      <span class=k>if</span> <span class=p>(</span><span class=nx>layerPath</span><span class=p>.</span><span class=nx>params</span><span class=p>)</span> <span class=p>{</span>
-        <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>layerPath</span><span class=p>.</span><span class=nx>params</span><span class=p>)</span>
-        <span class=k>if</span> <span class=p>((</span><span class=nx>layerMethod</span> <span class=o>===</span> <span class=nx>method</span> <span class=o>||</span> <span class=s2>&#34;all&#34;</span> <span class=o>===</span> <span class=nx>layerMethod</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=nx>layerPath</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nx>pathname</span><span class=p>))</span> <span class=p>{</span>
-          <span class=c1>// 过滤掉第一项
-</span><span class=c1></span>          <span class=kd>let</span> <span class=p>[,</span> <span class=p>...</span><span class=nx>args</span><span class=p>]</span> <span class=o>=</span> <span class=nx>pathname</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>layer</span><span class=p>.</span><span class=nx>path</span><span class=p>)</span>
-          <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>args</span><span class=p>)</span>
-          <span class=nx>req</span><span class=p>.</span><span class=nx>params</span> <span class=o>=</span> <span class=nx>layerPath</span><span class=p>.</span><span class=nx>params</span><span class=p>.</span><span class=nx>reduce</span><span class=p>((</span><span class=nx>memo</span><span class=p>,</span> <span class=nx>current</span><span class=p>,</span> <span class=nx>index</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>(</span><span class=nx>memo</span><span class=p>[</span><span class=nx>current</span><span class=p>]</span> <span class=o>=</span> <span class=nx>args</span><span class=p>[</span><span class=nx>index</span><span class=p>],</span> <span class=nx>memo</span><span class=p>),</span> <span class=p>{});</span>
-          <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>req</span><span class=p>.</span><span class=nx>params</span><span class=p>)</span>
-          <span class=k>return</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>callback</span><span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>);</span>
-        <span class=p>}</span>
-      <span class=p>}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kr">const</span> <span class="nx">layer</span> <span class="o">=</span> <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+      <span class="kd">let</span> <span class="nx">layerPath</span> <span class="o">=</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">path</span>
+      <span class="kd">let</span> <span class="nx">layerMethod</span> <span class="o">=</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">method</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">layerPath</span><span class="p">.</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">layerPath</span><span class="p">.</span><span class="nx">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">layerMethod</span> <span class="o">===</span> <span class="nx">method</span> <span class="o">||</span> <span class="s2">&#34;all&#34;</span> <span class="o">===</span> <span class="nx">layerMethod</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">layerPath</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">pathname</span><span class="p">))</span> <span class="p">{</span>
+          <span class="c1">// 过滤掉第一项
+</span><span class="c1"></span>          <span class="kd">let</span> <span class="p">[,</span> <span class="p">...</span><span class="nx">args</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pathname</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">layer</span><span class="p">.</span><span class="nx">path</span><span class="p">)</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
+          <span class="nx">req</span><span class="p">.</span><span class="nx">params</span> <span class="o">=</span> <span class="nx">layerPath</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">memo</span><span class="p">,</span> <span class="nx">current</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">memo</span><span class="p">[</span><span class="nx">current</span><span class="p">]</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="nx">index</span><span class="p">],</span> <span class="nx">memo</span><span class="p">),</span> <span class="p">{});</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">)</span>
+          <span class="k">return</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">callback</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
 
-      <span class=k>if</span> <span class=p>((</span><span class=nx>layerMethod</span> <span class=o>===</span> <span class=nx>method</span> <span class=o>||</span> <span class=s2>&#34;all&#34;</span> <span class=o>===</span> <span class=nx>layerMethod</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=nx>layerPath</span> <span class=o>===</span> <span class=nx>pathname</span> <span class=o>||</span> <span class=p>(</span><span class=s2>&#34;*&#34;</span> <span class=o>===</span> <span class=nx>layerPath</span><span class=p>)))</span> <span class=p>{</span>
-        <span class=k>return</span> <span class=nx>layer</span><span class=p>.</span><span class=nx>callback</span><span class=p>(</span><span class=nx>req</span><span class=p>,</span> <span class=nx>res</span><span class=p>)</span>
-      <span class=p>}</span>
-    <span class=p>}</span>
-    <span class=nx>res</span><span class=p>.</span><span class=nx>end</span><span class=p>(</span><span class=sb>`cannot </span><span class=si>${</span><span class=nx>method</span><span class=si>}</span><span class=sb>  </span><span class=si>${</span><span class=nx>pathname</span><span class=si>}</span><span class=sb>`</span><span class=p>)</span>
-  <span class=p>}</span>
+      <span class="k">if</span> <span class="p">((</span><span class="nx">layerMethod</span> <span class="o">===</span> <span class="nx">method</span> <span class="o">||</span> <span class="s2">&#34;all&#34;</span> <span class="o">===</span> <span class="nx">layerMethod</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">layerPath</span> <span class="o">===</span> <span class="nx">pathname</span> <span class="o">||</span> <span class="p">(</span><span class="s2">&#34;*&#34;</span> <span class="o">===</span> <span class="nx">layerPath</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">layer</span><span class="p">.</span><span class="nx">callback</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="sb">`cannot </span><span class="si">${</span><span class="nx">method</span><span class="si">}</span><span class="sb">  </span><span class="si">${</span><span class="nx">pathname</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+  <span class="p">}</span>
 
-  <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span> <span class=o>=</span> <span class=p>[];</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span> <span class="o">=</span> <span class="p">[];</span>
 
-  <span class=p>[</span><span class=s1>&#39;get&#39;</span><span class=p>,</span> <span class=s1>&#39;post&#39;</span><span class=p>,</span> <span class=s1>&#39;all&#39;</span><span class=p>].</span><span class=nx>forEach</span><span class=p>(</span><span class=nx>method</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=nx>app</span><span class=p>[</span><span class=nx>method</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=nx>path</span><span class=p>,</span> <span class=nx>callback</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-      <span class=k>if</span> <span class=p>(</span><span class=nx>path</span><span class=p>.</span><span class=nx>includes</span><span class=p>(</span><span class=s1>&#39;:&#39;</span><span class=p>))</span> <span class=p>{</span>
-        <span class=kd>let</span> <span class=nx>params</span> <span class=o>=</span> <span class=p>[]</span>
-        <span class=c1>// /user/:id/:name -&gt; /user/:([^\/]+)/:([^\/]+)
-</span><span class=c1></span>        <span class=nx>path</span> <span class=o>=</span> <span class=nx>path</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=sr>/:([^\/]+)/g</span><span class=p>,</span> <span class=p>(...</span><span class=nx>args</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-          <span class=nx>params</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>args</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
-          <span class=k>return</span> <span class=s1>&#39;([^\/]+)&#39;</span>
-        <span class=p>})</span>
-        <span class=nx>path</span> <span class=o>=</span> <span class=k>new</span> <span class=nb>RegExp</span><span class=p>(</span><span class=nx>path</span><span class=p>);</span>
-        <span class=nx>path</span><span class=p>.</span><span class=nx>params</span> <span class=o>=</span> <span class=nx>params</span>
-      <span class=p>}</span>
+  <span class="p">[</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">].</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">method</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">app</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">// /user/:id/:name -&gt; /user/:([^\/]+)/:([^\/]+)
+</span><span class="c1"></span>        <span class="nx">path</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/:([^\/]+)/g</span><span class="p">,</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+          <span class="nx">params</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+          <span class="k">return</span> <span class="s1">&#39;([^\/]+)&#39;</span>
+        <span class="p">})</span>
+        <span class="nx">path</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
+        <span class="nx">path</span><span class="p">.</span><span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span>
+      <span class="p">}</span>
 
-      <span class=kd>let</span> <span class=nx>layer</span> <span class=o>=</span> <span class=p>{</span>
-        <span class=nx>method</span><span class=p>,</span>
-        <span class=nx>path</span><span class=p>,</span>
-        <span class=nx>callback</span>
-      <span class=p>}</span>
-      <span class=nx>app</span><span class=p>.</span><span class=nx>routes</span><span class=p>.</span><span class=nx>push</span><span class=p>(</span><span class=nx>layer</span><span class=p>)</span>
-    <span class=p>}</span>
-  <span class=p>});</span>
+      <span class="kd">let</span> <span class="nx">layer</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">method</span><span class="p">,</span>
+        <span class="nx">path</span><span class="p">,</span>
+        <span class="nx">callback</span>
+      <span class="p">}</span>
+      <span class="nx">app</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">layer</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
 
-  <span class=nx>app</span><span class=p>.</span><span class=nx>listen</span> <span class=o>=</span> <span class=p>(...</span><span class=nx>args</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=kd>let</span> <span class=nx>server</span> <span class=o>=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>createServer</span><span class=p>(</span><span class=nx>app</span><span class=p>)</span>
-    <span class=nx>server</span><span class=p>.</span><span class=nx>listen</span><span class=p>(...</span><span class=nx>args</span><span class=p>)</span>
-  <span class=p>}</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">listen</span> <span class="o">=</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+    <span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span>
+  <span class="p">}</span>
 
-  <span class=k>return</span> <span class=nx>app</span><span class=p>;</span>
-<span class=p>}</span>
+  <span class="k">return</span> <span class="nx">app</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class=nx>module</span><span class=p>.</span><span class=nx>exports</span> <span class=o>=</span> <span class=nx>application</span><span class=p>;</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">application</span><span class="p">;</span>
 
-</code></pre></td></tr></table></div></div><h2 id=总结>总结</h2><p>这一版实现了 <code>epress</code> 路由的功能，但是跟 <code>express</code> 的源码区别还是很大的，这里只是提供了一种简化的思路。并且没有涉及<code>express</code> 的中间件，下一篇<a href=http://www.goyth.com/2019/07/20/expressMiddleware/>《Express路由与中间件原理（中间件篇）》</a>会添加 中间件的实现，并对这一版做出改进。</p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>这一版实现了 <code>epress</code> 路由的功能，但是跟 <code>express</code> 的源码区别还是很大的，这里只是提供了一种简化的思路。并且没有涉及<code>express</code> 的中间件，下一篇<a href="http://www.goyth.com/2019/07/20/expressMiddleware/">《Express路由与中间件原理（中间件篇）》</a>会添加 中间件的实现，并对这一版做出改进。</p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

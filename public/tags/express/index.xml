@@ -1,1 +1,33 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Express on luke's blog</title><link>https://goyth.cn/tags/express/</link><description>Recent content in Express on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><lastBuildDate>Sat, 20 Jul 2019 21:53:54 +0800</lastBuildDate><atom:link href="https://goyth.cn/tags/express/index.xml" rel="self" type="application/rss+xml"/><item><title>Express路由与中间件原理（中间件篇）</title><link>https://goyth.cn/post/expressmiddleware/</link><pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/expressmiddleware/</guid><description>&lt;code>Express&lt;/code> 路由原理见 &lt;a href="http://www.goyth.com/2019/07/20/expressRouter/">Express路由与中间件原理（路由篇）&lt;/a> &lt;code>Express&lt;/code> 中间件通常用来一些公用的逻辑，并可以将处理的结果挂载在 &lt;code>req&lt;/code>、&lt;code>res&lt;/code> 上，以供后面的中间件函数，或路由函数使用。因此通常情况下中间件函数会放在路由的前面。在 &lt;code>Express&lt;/code> 中，注册一个中间件与注册一个路由一样，也是放在 &lt;code>app.routes&lt;/code> 中，只是中间件的 &lt;code>method&lt;/code> 为 middle。</description></item><item><title>Express路由与中间件原理（路由篇）</title><link>https://goyth.cn/post/expressrouter/</link><pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/expressrouter/</guid><description>导入 &lt;code>express&lt;/code> 后会得到一个 &lt;code>express&lt;/code> 函数，执行这个函数后返回一个 &lt;code>app&lt;/code> &lt;code>函数，app&lt;/code> 上有一个 &lt;code>listen&lt;/code> 函数，执行这个 &lt;code>listen&lt;/code> 函数就会启一个 &lt;code>http&lt;/code> 服务，通过 &lt;code>app.get&lt;/code>、&lt;code>app.post&lt;/code>、&lt;code>app.all&lt;/code>等函数来注册监听函数，如果 &lt;code>http server&lt;/code> 监听到有请求到来，就会调用在 &lt;code>app&lt;/code> 上注册的相应的回调函数。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Express on luke&#39;s blog</title>
+    <link>https://goyth.cn/tags/express/</link>
+    <description>Recent content in Express on luke&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
+    <lastBuildDate>Sat, 20 Jul 2019 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/tags/express/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Express路由与中间件原理（中间件篇）</title>
+      <link>https://goyth.cn/post/expressmiddleware/</link>
+      <pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/expressmiddleware/</guid>
+      <description>&lt;code&gt;Express&lt;/code&gt; 路由原理见 &lt;a href=&#34;http://www.goyth.com/2019/07/20/expressRouter/&#34;&gt;Express路由与中间件原理（路由篇）&lt;/a&gt; &lt;code&gt;Express&lt;/code&gt; 中间件通常用来一些公用的逻辑，并可以将处理的结果挂载在 &lt;code&gt;req&lt;/code&gt;、&lt;code&gt;res&lt;/code&gt; 上，以供后面的中间件函数，或路由函数使用。因此通常情况下中间件函数会放在路由的前面。在 &lt;code&gt;Express&lt;/code&gt; 中，注册一个中间件与注册一个路由一样，也是放在 &lt;code&gt;app.routes&lt;/code&gt; 中，只是中间件的 &lt;code&gt;method&lt;/code&gt; 为 middle。</description>
+    </item>
+    
+    <item>
+      <title>Express路由与中间件原理（路由篇）</title>
+      <link>https://goyth.cn/post/expressrouter/</link>
+      <pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/expressrouter/</guid>
+      <description>导入 &lt;code&gt;express&lt;/code&gt; 后会得到一个 &lt;code&gt;express&lt;/code&gt; 函数，执行这个函数后返回一个 &lt;code&gt;app&lt;/code&gt; &lt;code&gt;函数，app&lt;/code&gt; 上有一个 &lt;code&gt;listen&lt;/code&gt; 函数，执行这个 &lt;code&gt;listen&lt;/code&gt; 函数就会启一个 &lt;code&gt;http&lt;/code&gt; 服务，通过 &lt;code&gt;app.get&lt;/code&gt;、&lt;code&gt;app.post&lt;/code&gt;、&lt;code&gt;app.all&lt;/code&gt;等函数来注册监听函数，如果 &lt;code&gt;http server&lt;/code&gt; 监听到有请求到来，就会调用在 &lt;code&gt;app&lt;/code&gt; 上注册的相应的回调函数。</description>
+    </item>
+    
+  </channel>
+</rss>

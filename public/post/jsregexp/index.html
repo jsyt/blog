@@ -1,344 +1,785 @@
-<!doctype html><html lang=en><head><title>Java script 正则表达式 | luke's blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=SKYPE_TOOLBAR content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"><meta name=keywords content="luke's blog"><meta property="og:locale" content="en_US"><meta property="og:type" content="article"><meta property="og:title" content="JavaScript 正则表达式"><meta property="og:description" content="正则表达式 一种几乎可以在所有的程序设计语言里和所有的计算机平台上使用的文字处理工具。它可以用来查找特定的信息（搜索），也可以用来查找并编辑特定的信息（替换）。 核心是 匹配，匹配位置或者匹配字符
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Java script 正则表达式 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'JavaScript 正则表达式' />
+<meta property = 'og:description' content = '正则表达式 一种几乎可以在所有的程序设计语言里和所有的计算机平台上使用的文字处理工具。它可以用来查找特定的信息（搜索），也可以用来查找并编辑特定的信息（替换）。 核心是 匹配，匹配位置或者匹配字符
 先简单的介绍一下语法 基本元字符   .： 匹配除了换行符之外的任何单个字符
-  \ ： 在非特殊字符 …"><meta property="og:url" content="https://goyth.cn/post/jsregexp/"><meta property="og:image" content="images/%!s()"><link rel=apple-touch-icon sizes=180x180 href=https://goyth.cn/images/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=https://goyth.cn/images/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=https://goyth.cn/images/icons/favicon-16x16.png><link rel=manifest href=https://goyth.cn/images/icons/site.webmanifest><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><link rel=canonical href=https://goyth.cn/post/jsregexp/><link rel=stylesheet href=https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css integrity="sha512-1Yu+BtEHVNe07atUayOzmZpW+IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU+hVyBPAknji059f0tGWIfPwmvsw=="></head><body><div class=nav-drop><div class=nav-body><a href=https://goyth.cn/ class=nav_item>Home</a>
-<a href=https://goyth.cn/categories class=nav_item>Category</a>
-<a href=https://goyth.cn/tags class=nav_item>Tag</a>
-<a href=https://goyth.cn/about/ class=nav_item>About</a><div class=nav-close></div><div class=color_mode><label for=mode>Toggle Dark Mode</label>
-<input type=checkbox class=color_choice id=mode></div></div></div><header class=nav><nav class=nav-menu><a href=https://goyth.cn/ class="nav-brand nav_item">luke's blog</a><div class=nav_bar-wrap><div class=nav_bar></div></div></nav></header><main><div class="wrap mt post"><div><p class="post_date pale">01. April 2018</p><h1 class=post_title>JavaScript 正则表达式</h1><div class=post_body><div class=post_inner><h3 id=正则表达式>正则表达式</h3><p>一种几乎可以在所有的程序设计语言里和所有的计算机平台上使用的文字处理工具。它可以用来查找特定的信息（搜索），也可以用来查找并编辑特定的信息（替换）。
-核心是 匹配，匹配位置或者匹配字符</p><h3 id=先简单的介绍一下语法>先简单的介绍一下语法</h3><h4 id=基本元字符>基本元字符</h4><ol><li><p><code>.</code>： 匹配除了换行符之外的任何单个字符</p></li><li><p><code>\</code> ： 在非特殊字符之前的反斜杠表示下一个字符是特殊的，不能从字面上解释。例如，没有前<code>\</code>的<code>'b'</code>通常匹配小写<code>'b'</code>，无论它们出现在哪里。如果加了<code>'\'</code>,这个字符变成了一个特殊意义的字符，反斜杠也可以将其后的特殊字符，转义为字面量。例如，模式 <code>/a*/</code> 代表会匹配 0 a。相反，模式 <code>/a\*/</code> 将 ' <code>*</code> ' 的特殊性移除，从而可以匹配像 <code>"a*"</code> 这样的字符串。</p></li><li><p><code>|</code> ： 逻辑或操作符</p></li><li><p><code>[ ]</code> ：定义一个字符集合，匹配字符集合中的一个字符，在字符集合里面像 <code>.</code> ，<code>\</code>这些字符都表示其本身</p></li><li><p><code>[^ ]</code> ：对上面一个集合取非</p></li><li><p><code>-</code> ：定义一个区间，例如<code>[A-Z]</code>，其首尾字符在 ASCII 字符集里面</p></li></ol><h4 id=数量元字符>数量元字符</h4><ol><li><code>{m,n}</code> ：匹配前面一个字符至少 m 次至多 n 次重复，还有<code>{m}</code>表示匹配 m 次，<code>{m,}</code>表示至少 m 次</li><li><code>+</code> ： 匹配前面一个表达式一次或者多次，相当于 <code>{1,}</code>，记忆方式追加(+)，起码得有一次</li><li><code>*</code> ： 匹配前面一个表达式零次或者多次，相当于 <code>{0,}</code>，记忆方式乘法(*)，可以一次都没有</li><li><code>?</code> ： 单独使用匹配前面一个表达式零次或者一次，相当于 <code>{0,1}</code>，记忆方式，有吗？，有(1)或者没有(1)，如果跟在任何量词<code>*</code>, <code>+</code>, <code>?</code>, <code>{}</code> 后面的时候将会使量词变为非贪婪模式（尽量匹配少的字符），默认是使用贪婪模式。比如对 &ldquo;123abc&rdquo; 应用 <code>/\d+/</code> 将会返回 &ldquo;123&rdquo;，如果使用 <code>/\d+?/</code>,那么就只会匹配到 &ldquo;1&rdquo;。</li></ol><h4 id=位置元字符>位置元字符</h4><ol><li><code>^</code> ： 单独使用匹配表达式的开始</li><li><code>\$</code> ： 匹配表达式的结束</li><li><code>\b</code> ：匹配单词边界</li><li><code>\B</code> ：匹配非单词边界</li><li><code>(?=p)</code> ：匹配 p 前面的位置</li><li><code>(?!p)</code> ：匹配不是 p 前面的位置</li></ol><h4 id=标志字符>标志字符</h4><ol><li><code>g</code> : 全局搜索 记忆方式global</li><li><code>i</code> ：不区分大小写 记忆方式 ignore</li><li><code>m</code> ：多行搜索</li></ol><h3 id=在-js-中的使用>在 js 中的使用</h3><h4 id=支持正则的-string-对象的方法>支持正则的 String 对象的方法</h4><ul><li><code>search</code>
-search 接受一个正则作为参数，如果参入的参数不是正则会隐式的使用 new RegExp(obj)将其转换成一个正则，返回匹配到子串的起始位置，匹配不到返回-1</li><li><code>match</code>
-match 接受参数和上面的方法一致。返回值是依赖传入的正则是否包含 g ，如果没有 g 标识，那么 match 方法对 string 做一次匹配，如果没有找到任何匹配的文本时，match 会返回 null ，否则，会返回一个数组，数组第 0 个元素包含匹配到的文本，其余元素放的是正则捕获的文本，数组还包含两个对象，index 表示匹配文本在字符串中的位置，input 表示被解析的原始字符串。如果有 g 标识，则返回一个数组，包含每一次的匹配结果</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>str</span> <span class=o>=</span> <span class=s1>&#39;For more information, see Chapter 3.4.5.1&#39;</span><span class=p>;</span>
- <span class=kd>var</span> <span class=nx>re</span> <span class=o>=</span> <span class=sr>/see (chapter \d+(\.\d)*)/i</span><span class=p>;</span>
- <span class=kd>var</span> <span class=nx>found</span> <span class=o>=</span> <span class=nx>str</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>re</span><span class=p>);</span>
- <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>found</span><span class=p>);</span>
- <span class=c1>// (3) [&#34;see Chapter 3.4.5.1&#34;, &#34;Chapter 3.4.5.1&#34;, &#34;.1&#34;, index: 22, input: &#34;For more information, see Chapter 3.4.5.1&#34;]
-</span><span class=c1></span> <span class=c1>// 0:&#34;see Chapter 3.4.5.1&#34;
-</span><span class=c1></span> <span class=c1>// 1:&#34;Chapter 3.4.5.1&#34;
-</span><span class=c1></span> <span class=c1>// 2:&#34;.1&#34;
-</span><span class=c1></span> <span class=c1>// index:22
-</span><span class=c1></span> <span class=c1>// input:&#34;For more information, see Chapter 3.4.5.1&#34;
-</span><span class=c1></span> <span class=c1>// length:3
-</span><span class=c1></span> <span class=c1>// __proto__:Array(0)
-</span><span class=c1></span>
- <span class=c1>// &#39;see Chapter 3.4.5.1&#39; 是整个匹配。
-</span><span class=c1></span> <span class=c1>// &#39;Chapter 3.4.5.1&#39; 被&#39;(chapter \d+(\.\d)*)&#39;捕获。
-</span><span class=c1></span> <span class=c1>// &#39;.1&#39; 是被&#39;(\.\d)&#39;捕获的最后一个值。
-</span><span class=c1></span> <span class=c1>// &#39;index&#39; 属性(22) 是整个匹配从零开始的索引。
-</span><span class=c1></span> <span class=c1>// &#39;input&#39; 属性是被解析的原始字符串。
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript> <span class=kd>var</span> <span class=nx>str</span> <span class=o>=</span> <span class=s1>&#39;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&#39;</span><span class=p>;</span>
- <span class=kd>var</span> <span class=nx>regexp</span> <span class=o>=</span> <span class=sr>/[A-E]/gi</span><span class=p>;</span>
- <span class=kd>var</span> <span class=nx>matches_array</span> <span class=o>=</span> <span class=nx>str</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>regexp</span><span class=p>);</span>
+  \ ： 在非特殊字符 …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/jsregexp/' />
+<meta property = 'og:image' content = 'https://goyth.cn/images/stuck.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
 
- <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>matches_array</span><span class=p>);</span>
- <span class=c1>// [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;]
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><ul><li><code>replace</code>
-replace 接受两个参数，第一个是要被替换的文本，可以是正则也可以是字符串，如果是字符串的时候不会被转换成正则，而是作为检索的直接量文本。第二个是替换成的文本，可以是字符串或者函数，字符串可以使用一些特殊的变量来替代前面捕获到的子串</li></ul><table><thead><tr><th align=center>变量名</th><th align=left>代表的值</th></tr></thead><tbody><tr><td align=center>$$</td><td align=left>插入一个 &ldquo;$&rdquo;。</td></tr><tr><td align=center>$&</td><td align=left>插入匹配的子串。</td></tr><tr><td align=center>$` |插入当前匹配的子串左边的内容。|</td><td></td></tr><tr><td align=center>$&rsquo;</td><td align=left>插入当前匹配的子串右边的内容。</td></tr><tr><td align=center>$n</td><td align=left>假如第一个参数是 RegExp对象，并且 n 是个小于100的非负整数，那么插入第 n 个括号匹配的字符串。</td></tr></tbody></table><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>re</span> <span class=o>=</span> <span class=sr>/(\w+)\s(\w+)/</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>str</span> <span class=o>=</span> <span class=s2>&#34;John Smith&#34;</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>newstr</span> <span class=o>=</span> <span class=nx>str</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=nx>re</span><span class=p>,</span> <span class=s2>&#34;$2, $1&#34;</span><span class=p>);</span>
-<span class=c1>// Smith, John
-</span><span class=c1></span><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>newstr</span><span class=p>);</span>
-</code></pre></td></tr></table></div></div><p>如果是函数的话，函数入参如下，返回替换成的文本</p><table><thead><tr><th>变量名</th><th>代表的值</th></tr></thead><tbody><tr><td>match</td><td>匹配的子串。（对应于上述的<code>$&</code>。）</td></tr><tr><td>p1,p2,&mldr;</td><td>假如replace()方法的第一个参数是一个RegExp 对象，则代表第n个括号匹配的字符串。（对应于上述的<code>$1</code>，<code>$2</code>等。）</td></tr><tr><td>offset</td><td>匹配到的子字符串在原字符串中的偏移量。（比如，如果原字符串是“abcd”，匹配到的子字符串是“bc”，那么这个参数将是1）</td></tr><tr><td>string</td><td>被匹配的原字符串。</td></tr></tbody></table><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>function</span> <span class=nx>replacer</span><span class=p>(</span><span class=nx>match</span><span class=p>,</span> <span class=nx>p1</span><span class=p>,</span> <span class=nx>p2</span><span class=p>,</span> <span class=nx>p3</span><span class=p>,</span> <span class=nx>offset</span><span class=p>,</span> <span class=nx>string</span><span class=p>)</span> <span class=p>{</span>
-  <span class=c1>// p1 is nondigits, p2 digits, and p3 non-alphanumerics
-</span><span class=c1></span>  <span class=k>return</span> <span class=p>[</span><span class=nx>p1</span><span class=p>,</span> <span class=nx>p2</span><span class=p>,</span> <span class=nx>p3</span><span class=p>].</span><span class=nx>join</span><span class=p>(</span><span class=s1>&#39; - &#39;</span><span class=p>);</span>
-<span class=p>}</span>
-<span class=kd>var</span> <span class=nx>newString</span> <span class=o>=</span> <span class=s1>&#39;abc12345#$*%&#39;</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=sr>/([^\d]*)(\d*)([^\w]*)/</span><span class=p>,</span> <span class=nx>replacer</span><span class=p>);</span>
-<span class=c1>// newString   abc - 12345 - #$*%
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><ol><li><code>split</code>
-接受两个参数，返回一个数组。第一个是用来分割字符串的字符或者正则，如果是空字符串则会将元字符串中的每个字符以数组形式返回，第二个参数可选作为限制分割多少个字符，也是返回的数组的长度限制。有一个地方需要注意，用捕获括号的时候会将匹配结果也包含在返回的数组中</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span><span class=lnt>9
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript> <span class=kd>var</span> <span class=nx>myString</span> <span class=o>=</span> <span class=s2>&#34;Hello 1 word. Sentence number 2.&#34;</span><span class=p>;</span>
- <span class=kd>var</span> <span class=nx>splits</span> <span class=o>=</span> <span class=nx>myString</span><span class=p>.</span><span class=nx>split</span><span class=p>(</span><span class=sr>/\d/</span><span class=p>);</span>
+  <link rel='canonical' href='https://goyth.cn/post/jsregexp/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
 
- <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>splits</span><span class=p>);</span>
- <span class=c1>// [ &#34;Hello &#34;, &#34; word. Sentence number &#34;, &#34;.&#34; ]
-</span><span class=c1></span>
- <span class=nx>splits</span> <span class=o>=</span> <span class=nx>myString</span><span class=p>.</span><span class=nx>split</span><span class=p>(</span><span class=sr>/(\d)/</span><span class=p>);</span>
- <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>splits</span><span class=p>);</span>
- <span class=c1>// [ &#34;Hello &#34;, &#34;1&#34;, &#34; word. Sentence number &#34;, &#34;2&#34;, &#34;.&#34; ]
-</span></code></pre></td></tr></table></div></div><h4 id=正则对象的方法>正则对象的方法</h4><ol><li><code>test</code>
-接受一个字符串参数，如果正则表达式与指定的字符串匹配返回 true 否则返回 false</li><li><code>exec</code>
-同样接受一个字符串为参数，返回一个数组，其中存放匹配的结果。如果未找到匹配，则返回值为 <code>null</code>。匹配时，返回值跟 <code>match</code> 方法没有 g 标识时是一样的。数组第 0 个表示与正则相匹配的文本，后面 n 个是对应的 n 个捕获的文本，最后两个是对象 <code>index</code> 和 <code>input</code>同时它会在正则实例的 <code>lastIndex</code> 属性指定的字符处开始检索字符串 string。当 <code>exec()</code> 找到了与表达式相匹配的文本时，在匹配后，它将把正则实例的 <code>lastIndex</code> 属性设置为匹配文本的最后一个字符的下一个位置。有没有 g 标识对单词执行 exec 方法是没有影响的，只是有 g 标识的时候可以反复调用 <code>exec()</code> 方法来遍历字符串中的所有匹配文本。当 <code>exec()</code> 再也找不到匹配的文本时，它将返回 <code>null</code>，并把 <code>lastIndex</code> 属性重置为 0。</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;2017.06.27&#34;</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>regex2</span> <span class=o>=</span> <span class=sr>/\b(\d+)\b/g</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>exec</span><span class=p>(</span><span class=nx>string</span><span class=p>)</span> <span class=p>);</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>lastIndex</span><span class=p>);</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>exec</span><span class=p>(</span><span class=nx>string</span><span class=p>)</span> <span class=p>);</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>lastIndex</span><span class=p>);</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>exec</span><span class=p>(</span><span class=nx>string</span><span class=p>)</span> <span class=p>);</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>lastIndex</span><span class=p>);</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>exec</span><span class=p>(</span><span class=nx>string</span><span class=p>)</span> <span class=p>);</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>lastIndex</span><span class=p>);</span>
-<span class=c1>// =&gt; [&#34;2017&#34;, &#34;2017&#34;, index: 0, input: &#34;2017.06.27&#34;]
-</span><span class=c1>// =&gt; 4
-</span><span class=c1>// =&gt; [&#34;06&#34;, &#34;06&#34;, index: 5, input: &#34;2017.06.27&#34;]
-</span><span class=c1>// =&gt; 7
-</span><span class=c1>// =&gt; [&#34;27&#34;, &#34;27&#34;, index: 8, input: &#34;2017.06.27&#34;]
-</span><span class=c1>// =&gt; 10
-</span><span class=c1>// =&gt; null
-</span><span class=c1>// =&gt; 0
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><pre><code>其中正则实例lastIndex属性，表示下一次匹配开始的位置。
-</code></pre><p>比如第一次匹配了“2017”，开始下标是0，共4个字符，因此这次匹配结束的位置是3，下一次开始匹配的位置是4。</p><p>从上述代码看出，在使用exec时，经常需要配合使用while循环：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;2017.06.27&#34;</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>regex2</span> <span class=o>=</span> <span class=sr>/\b(\d+)\b/g</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>result</span><span class=p>;</span>
-<span class=k>while</span> <span class=p>(</span> <span class=nx>result</span> <span class=o>=</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>exec</span><span class=p>(</span><span class=nx>string</span><span class=p>)</span> <span class=p>)</span> <span class=p>{</span>
-    <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>result</span><span class=p>,</span> <span class=nx>regex2</span><span class=p>.</span><span class=nx>lastIndex</span> <span class=p>);</span>
-<span class=p>}</span>
-<span class=c1>// =&gt; [&#34;2017&#34;, &#34;2017&#34;, index: 0, input: &#34;2017.06.27&#34;] 4
-</span><span class=c1>// =&gt; [&#34;06&#34;, &#34;06&#34;, index: 5, input: &#34;2017.06.27&#34;] 7
-</span><span class=c1>// =&gt; [&#34;27&#34;, &#34;27&#34;, index: 8, input: &#34;2017.06.27&#34;] 10
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><h4 id=正则的匹配>正则的匹配</h4><h5 id=字符匹配>字符匹配</h5><p>精确匹配就不说了，比如<code>/hello/</code>，也只能匹配字符串中的<code>"hello"</code>这个子串。
-正则表达式之所以强大，是因为其能实现模糊匹配。</p><h5 id=匹配多种数量>匹配多种数量</h5><p>用<code>{m,n}</code>来匹配多种数量，其他几种形式<code>(+*?)</code>都可以等价成这种。比如</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/ab{2,5}c/g</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;abc abbc abbbc abbbbc abbbbbc abbbbbbc&#34;</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>string</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>regex</span><span class=p>)</span> <span class=p>);</span> <span class=c1>// [&#34;abbc&#34;, &#34;abbbc&#34;, &#34;abbbbc&#34;, &#34;abbbbbc&#34;]
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><h5 id=贪婪和非贪婪>贪婪和非贪婪</h5><p>默认贪婪</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/\d{2,5}/g</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;123 1234 12345 123456&#34;</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>string</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>regex</span><span class=p>)</span> <span class=p>);</span> <span class=c1>// [&#34;123&#34;, &#34;1234&#34;, &#34;12345&#34;, &#34;12345&#34;]
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><p>两次后面加一个 ？ 就可以表示非贪婪，非贪婪时</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/\d{2,5}?/g</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;123 1234 12345 123456&#34;</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>string</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>regex</span><span class=p>)</span> <span class=p>);</span> <span class=c1>// [&#34;12&#34;, &#34;12&#34;, &#34;34&#34;, &#34;12&#34;, &#34;34&#34;, &#34;12&#34;, &#34;34&#34;, &#34;56&#34;]
-</span></code></pre></td></tr></table></div></div><h5 id=匹配多种情况>匹配多种情况</h5><p>用字符组<code>[]</code>来匹配多种情况，其他几种形式<code>(\d\D\s\S\w\W)</code>都可以等价成这种。比如</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/a[123]b/g</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;a0b a1b a2b a3b a4b&#34;</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>string</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>regex</span><span class=p>)</span> <span class=p>);</span> <span class=c1>// [&#34;a1b&#34;, &#34;a2b&#34;, &#34;a3b&#34;]
-</span></code></pre></td></tr></table></div></div><p>如果字符组里面字符特别多的话可以用<code>-</code>来表示范围，比如<code>[123456abcdefGHIJKLM]</code>，可以写成<code>[1-6a-fG-M]</code>，用[<code>^0-9]</code>表示非除了数字以外的字符
-多种情况还可以是多种分支，用管道符来连接<code>|</code>，比如</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/good|goodbye/g</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;goodbye&#34;</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>string</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>regex</span><span class=p>)</span> <span class=p>);</span> <span class=c1>// [&#34;good&#34;]
-</span></code></pre></td></tr></table></div></div><p>这个例子可以看出分支结构也是惰性的，匹配到了就不再往后尝试了。</p><h6 id=例子>例子</h6><p>掌握这两种方式就可以解决比较简单的正则问题了。</p><ol><li>最多保留2位小数的数字
-<code>/^([1-9]\d*|0)(\.\d{1,2})?$/</code></li><li>电话号码
-<code>/(\+86)?1\d{10}/</code></li><li>身份证
-<code>/^(\d{15}|\d{17}([xX]|\d))$/</code></li></ol><h4 id=位置匹配>位置匹配</h4><h5 id=什么是位置>什么是位置</h5><p>位置是相邻字符之间的，比如，有一个字符串 <code>hello</code> ，这个字符串一共有6个位置 <code>*h*e*l*l*o*</code> ， <code>*</code>代表位置</p><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/RegExp-regwz.png alt title=位置></p><p>上面说到了 6 种位置元字符</p><ol><li><code>^</code>，<code>$</code> 匹配字符的开头和结尾，比如<code>/^hello$/</code> 匹配一个字符串，要符合这样的条件，字符串开头的位置，紧接着是 <code>h</code> 然后是 <code>e</code>,<code>l</code>,<code>l</code>,<code>o</code> 最后是字符串结尾的位置位置还可以被替换成字符串，比如<code>'hello'.replace(/^|$/g, '#')</code> 结果是 <code>#hello#</code></li><li><code>/b</code>，<code>/B</code> 匹配单词边界和非单词边界，单词边界具体指 <code>\w([a-zA-Z0-9_])</code> 和 <code>\W</code> 之间的位置，包括 <code>\w</code> 和 <code>^</code> 以及 <code>$</code> 之间的位置，比如<code>'hello word [js]_reg.exp-01'.replace(/\b/g, '#')</code> 结果是<code> #hello# #word# [#js#]#_reg#.#exp#-#01#</code></li><li><code>(?=p)</code>，<code>(?!p)</code> 匹配 <code>p</code> 前面的位置和不是 <code>p</code> 前面位置，比如<code>'hello'.replace(/(?=l)/g, '#')</code> 结果是 <code>he#l#lo'hello'.replace(/(?!l)/g, '#')</code> 结果是 <code>#h#ell#o#</code></li></ol><h5 id=位置的特性>位置的特性</h5><p>字符与字符之间的位置可以是多个。在理解上可以将位置理解成空字符串 <code>''</code>，比如<code>hello</code> 可以是一般的 <code>'' + 'h' + 'e' + 'l' + 'l' + 'o' + ''</code>，也可以是 <code>'' + '' + '' + '' + 'h' + 'e' + 'l' + 'l' + 'o' + ''</code>，所以<code>/^h\Be\Bl\Bl\Bo$/.test('hello')</code> 结果是 <code>true</code>，<code>/^^^h\B\B\Be\Bl\Bl\Bo$$$/.test('hello')</code> 结果也是 <code>true</code></p><h5 id=例子-1>例子</h5><p>-. 千分位，将 <code>123123123</code> 转换成 <code>123,123,123</code>数字是从后往前数，也就是以一个或者多个3位数字结尾的位置换成 <code>','</code> 就好了，写成正则就是<code>123123213.replace(/(?=(\d{3})+$)/g, ',')</code> 但是这样的话会在最前面也加一个 <code>','</code> 这明显是不对的。所以还得继续改一下正则要求匹配到的位置不是开头，可以用 <code>/(?!^)(?=(\d{3})+$)/g</code> 来表示。换种思路来想，能不能是以数字开头然后加上上面的条件呢，得出这个正则 <code>/\d(?=(\d{3})+$)/g</code>，但是这个正则匹配的结果是 <code>12,12,123</code>，发现这个正则匹配的不是位置而是字符，将数字换成了 <code>','</code> 可以得出结论，如果要求一个正则是匹配位置的话，那么所有的条件必须都是位置。</p><h4 id=分组>分组</h4><p>分组主要是括号的使用</p><h5 id=分组和分支结构>分组和分支结构</h5><p>在分支结构中，括号是用来表示一个整体的，(p1|p2)，比如要匹配下面的字符串</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=nx>I</span> <span class=nx>love</span> <span class=nx>JavaScript</span>
-<span class=nx>I</span> <span class=nx>love</span> <span class=nx>Regular</span> <span class=nx>Expression</span>
-</code></pre></td></tr></table></div></div><p>可以用正则<code>/^I love (JavaScript|Regular Expression)$/</code> 而不是 <code>/^I love JavaScript|Regular Expression$/</code>表示一个整体还比如 <code>/(abc)+/</code> 一个或者多个 <code>abc</code> 字符串上面这些使用 <code>()</code> 包起来的地方就叫做分组</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=s1>&#39;I love JavaScript&#39;</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=sr>/^I love (JavaScript|Regular Expression)$/</span><span class=p>)</span>
-<span class=c1>// [&#34;I love JavaScript&#34;, &#34;JavaScript&#34;, index: 0, input: &#34;I love JavaScript&#34;]
-</span></code></pre></td></tr></table></div></div><p>输出的数组第二个元素，&ldquo;JavaScript&rdquo; 就是分组匹配到的内容</p><h4 id=引用分组>引用分组</h4><h5 id=提取数据>提取数据</h5><p>比如我们要用正则来匹配一个日期格式，yyyy-mm-dd，可以写出简单的正则<code>/\d{4}-\d{2}-\d{2}/</code>，这个正则还可以改成分组形式的<code>/(\d{4})-(\d{2})-(\d{2})/</code>这样我们可以分别提取出一个日期的年月日，用 <code>String</code> 的 <code>match</code> 方法或者用正则的 <code>exec</code> 方法都可以</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/(\d{4})-(\d{2})-(\d{2})/</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;2017-08-09&#34;</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>string</span><span class=p>.</span><span class=nx>match</span><span class=p>(</span><span class=nx>regex</span><span class=p>)</span> <span class=p>);</span>
-<span class=c1>// =&gt; [&#34;2017-08-09&#34;, &#34;2017&#34;, &#34;08&#34;, &#34;09&#34;, index: 0, input: &#34;2017-08-09&#34;]
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><p>也可以用正则对象构造函数的全局属性 $1 - $9 来获取</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/(\d{4})-(\d{2})-(\d{2})/</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;2017-08-09&#34;</span><span class=p>;</span>
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
 
-<span class=nx>regex</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nx>string</span><span class=p>);</span> <span class=c1>// 正则操作即可，例如
-</span><span class=c1>//regex.exec(string);
-</span><span class=c1>//string.match(regex);
-</span><span class=c1></span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nb>RegExp</span><span class=p>.</span><span class=nx>$1</span><span class=p>);</span> <span class=c1>// &#34;2017&#34;
-</span><span class=c1></span><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nb>RegExp</span><span class=p>.</span><span class=nx>$2</span><span class=p>);</span> <span class=c1>// &#34;08&#34;
-</span><span class=c1></span><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nb>RegExp</span><span class=p>.</span><span class=nx>$3</span><span class=p>);</span> <span class=c1>// &#34;09&#34;
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><h5 id=替换>替换</h5><p>如果想要把 yyyy-mm-dd 替换成格式 mm/dd/yyyy 应该怎么做。
-String 的 replace 方法在第二个参数里面可以用 $1 - $9 来指代相应的分组</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/(\d{4})-(\d{2})-(\d{2})/</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;2017-08-09&#34;</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>result</span> <span class=o>=</span> <span class=nx>string</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=nx>regex</span><span class=p>,</span> <span class=s2>&#34;$2/$3/$1&#34;</span><span class=p>);</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>result</span><span class=p>);</span> <span class=c1>// &#34;08/09/2017&#34;
-</span><span class=c1></span><span class=nx>等价</span>
-<span class=kd>var</span> <span class=nx>result</span> <span class=o>=</span> <span class=nx>string</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=nx>regex</span><span class=p>,</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
-    <span class=k>return</span> <span class=nb>RegExp</span><span class=p>.</span><span class=nx>$2</span> <span class=o>+</span> <span class=s2>&#34;/&#34;</span> <span class=o>+</span> <span class=nb>RegExp</span><span class=p>.</span><span class=nx>$3</span> <span class=o>+</span> <span class=s2>&#34;/&#34;</span> <span class=o>+</span> <span class=nb>RegExp</span><span class=p>.</span><span class=nx>$1</span><span class=p>;</span>
-<span class=p>});</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>result</span><span class=p>);</span> <span class=c1>// &#34;08/09/2017&#34;
-</span><span class=c1></span><span class=nx>等价</span>
-<span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/(\d{4})-(\d{2})-(\d{2})/</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;2017-08-09&#34;</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>result</span> <span class=o>=</span> <span class=nx>string</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=nx>regex</span><span class=p>,</span> <span class=kd>function</span><span class=p>(</span><span class=nx>match</span><span class=p>,</span> <span class=nx>year</span><span class=p>,</span> <span class=nx>month</span><span class=p>,</span> <span class=nx>day</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>return</span> <span class=nx>month</span> <span class=o>+</span> <span class=s2>&#34;/&#34;</span> <span class=o>+</span> <span class=nx>day</span> <span class=o>+</span> <span class=s2>&#34;/&#34;</span> <span class=o>+</span> <span class=nx>year</span><span class=p>;</span>
-<span class=p>});</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>result</span><span class=p>);</span> <span class=c1>// &#34;08/09/2017&#34;
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><h5 id=反向引用>反向引用</h5><p>之前匹配日期的正则在使用的时候发现还有另外两种写法，一共三种</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=mi>2017</span><span class=o>-</span><span class=mi>08</span><span class=o>-</span><span class=mi>09</span>
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
 
-<span class=mi>2017</span><span class=o>/</span><span class=mi>08</span><span class=o>/</span><span class=mi>09</span>
 
-<span class=mf>2017.08.09</span>
-</code></pre></td></tr></table></div></div><p>要匹配这三种应该怎么写正则，第一反应肯定是把上面那个正则改一下<code>/(\d{4})[-/.](\d{2})[-/.](\d{2})/</code>，把 <code>-</code> 改成 <code>[-/.]</code> 这三种都可以看上去没问题，我们多想想就会发现，这个正则把 <code>2017-08.09</code> 这种字符串也匹配到了，这个肯定是不符合预期的。这个时候我们就需要用到反向引用了，反向引用可以在匹配阶段捕获到分组的内容 <code>/(\d{4})([-/.])(\d{2})\2(\d{2})/</code></p><p><em><strong>那么出现括号嵌套怎么办，比如</strong></em></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>var</span> <span class=nx>regex</span> <span class=o>=</span> <span class=sr>/^((\d)(\d(\d)))\1\2\3\4$/</span><span class=p>;</span>
-<span class=kd>var</span> <span class=nx>string</span> <span class=o>=</span> <span class=s2>&#34;1231231233&#34;</span><span class=p>;</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nx>regex</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nx>string</span><span class=p>)</span> <span class=p>);</span> <span class=c1>// true
-</span><span class=c1></span><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nb>RegExp</span><span class=p>.</span><span class=nx>$1</span> <span class=p>);</span> <span class=c1>// 123
-</span><span class=c1></span><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nb>RegExp</span><span class=p>.</span><span class=nx>$2</span> <span class=p>);</span> <span class=c1>// 1
-</span><span class=c1></span><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nb>RegExp</span><span class=p>.</span><span class=nx>$3</span> <span class=p>);</span> <span class=c1>// 23
-</span><span class=c1></span><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span> <span class=nb>RegExp</span><span class=p>.</span><span class=nx>$4</span> <span class=p>);</span> <span class=c1>// 3
-</span><span class=c1></span>
-</code></pre></td></tr></table></div></div><p>嵌套的括号以左括号为准</p><h5 id=引用了不存在的分组呢>引用了不存在的分组呢</h5><p>如果在正则里面引用了前面不存在的分组，这个时候正则会匹配字符本身，比如<code>\1</code>就匹配<code>\1</code></p><h4 id=非捕获分组>非捕获分组</h4><p>我们有时候只是想用括号原本的功能而不想捕获他们。这个时候可以用(?:p)表示一个非捕获分组</p><h6 id=例子-2>例子</h6><ol><li>驼峰改短横</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>function</span> <span class=nx>dash</span><span class=p>(</span><span class=nx>str</span><span class=p>)</span> <span class=p>{</span>
-<span class=k>return</span> <span class=nx>str</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=sr>/([A-Z])/g</span><span class=p>,</span> <span class=s1>&#39;-$1&#39;</span><span class=p>).</span><span class=nx>toLowerCase</span><span class=p>();</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><ol start=2><li>获取链接的 search 值链接：<code>https://www.baidu.com?name=jawil&age=23</code></li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>function</span> <span class=nx>getParamName</span><span class=p>(</span><span class=nx>attr</span><span class=p>)</span> <span class=p>{</span>
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>01. April 2018</p>
+      <h1 class = 'post_title'>JavaScript 正则表达式</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h3 id="正则表达式">正则表达式</h3>
+<p>一种几乎可以在所有的程序设计语言里和所有的计算机平台上使用的文字处理工具。它可以用来查找特定的信息（搜索），也可以用来查找并编辑特定的信息（替换）。
+核心是 匹配，匹配位置或者匹配字符</p>
+<h3 id="先简单的介绍一下语法">先简单的介绍一下语法</h3>
+<h4 id="基本元字符">基本元字符</h4>
+<ol>
+<li>
+<p><code>.</code>： 匹配除了换行符之外的任何单个字符</p>
+</li>
+<li>
+<p><code>\</code> ： 在非特殊字符之前的反斜杠表示下一个字符是特殊的，不能从字面上解释。例如，没有前<code>\</code>的<code>'b'</code>通常匹配小写<code>'b'</code>，无论它们出现在哪里。如果加了<code>'\'</code>,这个字符变成了一个特殊意义的字符，反斜杠也可以将其后的特殊字符，转义为字面量。例如，模式 <code>/a*/</code> 代表会匹配 0   a。相反，模式 <code>/a\*/</code> 将 ' <code>*</code> ' 的特殊性移除，从而可以匹配像 <code>&quot;a*&quot;</code> 这样的字符串。</p>
+</li>
+<li>
+<p><code>|</code> ： 逻辑或操作符</p>
+</li>
+<li>
+<p><code>[ ]</code> ：定义一个字符集合，匹配字符集合中的一个字符，在字符集合里面像 <code>.</code> ，<code>\</code>这些字符都表示其本身</p>
+</li>
+<li>
+<p><code>[^ ]</code> ：对上面一个集合取非</p>
+</li>
+<li>
+<p><code>-</code> ：定义一个区间，例如<code>[A-Z]</code>，其首尾字符在 ASCII 字符集里面</p>
+</li>
+</ol>
+<!-- raw HTML omitted -->
+<h4 id="数量元字符">数量元字符</h4>
+<ol>
+<li><code>{m,n}</code> ：匹配前面一个字符至少 m 次至多 n 次重复，还有<code>{m}</code>表示匹配 m 次，<code>{m,}</code>表示至少 m 次</li>
+<li><code>+</code> ： 匹配前面一个表达式一次或者多次，相当于 <code>{1,}</code>，记忆方式追加(+)，起码得有一次</li>
+<li><code>*</code> ： 匹配前面一个表达式零次或者多次，相当于 <code>{0,}</code>，记忆方式乘法(*)，可以一次都没有</li>
+<li><code>?</code> ： 单独使用匹配前面一个表达式零次或者一次，相当于 <code>{0,1}</code>，记忆方式，有吗？，有(1)或者没有(1)，如果跟在任何量词<code>*</code>, <code>+</code>, <code>?</code>, <code>{}</code> 后面的时候将会使量词变为非贪婪模式（尽量匹配少的字符），默认是使用贪婪模式。比如对 &ldquo;123abc&rdquo; 应用 <code>/\d+/</code> 将会返回 &ldquo;123&rdquo;，如果使用 <code>/\d+?/</code>,那么就只会匹配到 &ldquo;1&rdquo;。</li>
+</ol>
+<h4 id="位置元字符">位置元字符</h4>
+<ol>
+<li><code>^</code> ： 单独使用匹配表达式的开始</li>
+<li><code>\$</code> ： 匹配表达式的结束</li>
+<li><code>\b</code> ：匹配单词边界</li>
+<li><code>\B</code> ：匹配非单词边界</li>
+<li><code>(?=p)</code> ：匹配 p 前面的位置</li>
+<li><code>(?!p)</code> ：匹配不是 p 前面的位置</li>
+</ol>
+<h4 id="标志字符">标志字符</h4>
+<ol>
+<li><code>g</code> : 全局搜索 记忆方式global</li>
+<li><code>i</code> ：不区分大小写 记忆方式 ignore</li>
+<li><code>m</code> ：多行搜索</li>
+</ol>
+<h3 id="在-js-中的使用">在 js 中的使用</h3>
+<h4 id="支持正则的-string-对象的方法">支持正则的 String 对象的方法</h4>
+<ul>
+<li><code>search</code>
+search 接受一个正则作为参数，如果参入的参数不是正则会隐式的使用 new RegExp(obj)将其转换成一个正则，返回匹配到子串的起始位置，匹配不到返回-1</li>
+<li><code>match</code>
+match 接受参数和上面的方法一致。返回值是依赖传入的正则是否包含 g ，如果没有 g 标识，那么 match 方法对 string 做一次匹配，如果没有找到任何匹配的文本时，match 会返回 null ，否则，会返回一个数组，数组第 0 个元素包含匹配到的文本，其余元素放的是正则捕获的文本，数组还包含两个对象，index 表示匹配文本在字符串中的位置，input 表示被解析的原始字符串。如果有 g 标识，则返回一个数组，包含每一次的匹配结果</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;For more information, see Chapter 3.4.5.1&#39;</span><span class="p">;</span>
+ <span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="sr">/see (chapter \d+(\.\d)*)/i</span><span class="p">;</span>
+ <span class="kd">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">re</span><span class="p">);</span>
+ <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">found</span><span class="p">);</span>
+ <span class="c1">// (3) [&#34;see Chapter 3.4.5.1&#34;, &#34;Chapter 3.4.5.1&#34;, &#34;.1&#34;, index: 22, input: &#34;For more information, see Chapter 3.4.5.1&#34;]
+</span><span class="c1"></span> <span class="c1">// 0:&#34;see Chapter 3.4.5.1&#34;
+</span><span class="c1"></span> <span class="c1">// 1:&#34;Chapter 3.4.5.1&#34;
+</span><span class="c1"></span> <span class="c1">// 2:&#34;.1&#34;
+</span><span class="c1"></span> <span class="c1">// index:22
+</span><span class="c1"></span> <span class="c1">// input:&#34;For more information, see Chapter 3.4.5.1&#34;
+</span><span class="c1"></span> <span class="c1">// length:3
+</span><span class="c1"></span> <span class="c1">// __proto__:Array(0)
+</span><span class="c1"></span>
+ <span class="c1">// &#39;see Chapter 3.4.5.1&#39; 是整个匹配。
+</span><span class="c1"></span> <span class="c1">// &#39;Chapter 3.4.5.1&#39; 被&#39;(chapter \d+(\.\d)*)&#39;捕获。
+</span><span class="c1"></span> <span class="c1">// &#39;.1&#39; 是被&#39;(\.\d)&#39;捕获的最后一个值。
+</span><span class="c1"></span> <span class="c1">// &#39;index&#39; 属性(22) 是整个匹配从零开始的索引。
+</span><span class="c1"></span> <span class="c1">// &#39;input&#39; 属性是被解析的原始字符串。
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"> <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&#39;</span><span class="p">;</span>
+ <span class="kd">var</span> <span class="nx">regexp</span> <span class="o">=</span> <span class="sr">/[A-E]/gi</span><span class="p">;</span>
+ <span class="kd">var</span> <span class="nx">matches_array</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regexp</span><span class="p">);</span>
 
-<span class=kd>let</span> <span class=nx>match</span> <span class=o>=</span> <span class=nb>RegExp</span><span class=p>(</span><span class=sb>`[?&amp;]</span><span class=si>${</span><span class=nx>attr</span><span class=si>}</span><span class=sb>=([^&amp;]*)`</span><span class=p>)</span> <span class=c1>//分组运算符是为了把结果存到exec函数返回的结果里
-</span><span class=c1></span> <span class=p>.</span><span class=nx>exec</span><span class=p>(</span><span class=nb>window</span><span class=p>.</span><span class=nx>location</span><span class=p>.</span><span class=nx>search</span><span class=p>)</span>
-<span class=c1>//[&#34;?name=jawil&#34;, &#34;jawil&#34;, index: 0, input: &#34;?name=jawil&amp;age=23&#34;]
-</span><span class=c1></span><span class=k>return</span> <span class=nx>match</span> <span class=o>&amp;&amp;</span> <span class=nb>decodeURIComponent</span><span class=p>(</span><span class=nx>match</span><span class=p>[</span><span class=mi>1</span><span class=p>].</span><span class=nx>replace</span><span class=p>(</span><span class=sr>/\+/g</span><span class=p>,</span> <span class=s1>&#39; &#39;</span><span class=p>))</span> <span class=c1>// url中+号表示空格,要替换掉
-</span><span class=c1></span><span class=p>}</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>getParamName</span><span class=p>(</span><span class=s1>&#39;name&#39;</span><span class=p>))</span>  <span class=c1>// &#34;jawil&#34;
-</span></code></pre></td></tr></table></div></div><ol start=3><li>去掉字符串前后的空格</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>function</span> <span class=nx>trim</span><span class=p>(</span><span class=nx>str</span><span class=p>)</span> <span class=p>{</span>
- <span class=k>return</span> <span class=nx>str</span><span class=p>.</span><span class=nx>replace</span><span class=p>(</span><span class=sr>/(^\s*)|(\s*$)/g</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>)</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><ol start=4><li>判断一个数是否是质数</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-javascript data-lang=javascript><span class=kd>function</span> <span class=nx>isPrime</span><span class=p>(</span><span class=nx>num</span><span class=p>)</span> <span class=p>{</span>
-<span class=k>return</span> <span class=o>!</span><span class=sr>/^1?$|^(11+?)\1+$/</span><span class=p>.</span><span class=nx>test</span><span class=p>(</span><span class=nb>Array</span><span class=p>(</span><span class=nx>num</span><span class=o>+</span><span class=mi>1</span><span class=p>).</span><span class=nx>join</span><span class=p>(</span><span class=s1>&#39;1&#39;</span><span class=p>))</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>这里首先是把一个数字变成1组成的字符串，比如11就是 &lsquo;1111111111&rsquo; 11个1 然后正则分两部分，第一部分是匹配空字符串或者1,第二部分是先匹配两个或者多个1，非贪婪模式，那么先会匹配两个1，然后将匹配的两个1分组，后面就是匹配一个或者多个&rsquo;2个1&rsquo;，就相当于整除2，如果匹配成功就证明不是质数，如果不成功就会匹配3个1，然后匹配多个3个1，相当于整除3，这样一直下去会一直整除到自己本身。如果还是不行就证明这个数字是质数。</p><h4 id=回溯>回溯</h4><h5 id=正则是怎么匹配的>正则是怎么匹配的</h5><p>有这么一个字符串 <code>'abbbc'</code> 和这么一个正则 <code>/ab{1,3}bbc/ /ab{1,3}bbc/.test('abbbc')</code> 我们一眼可以看出来是 true，但是 JavaScript 是怎么匹配的呢
-<img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/RegExp-huisu.webp alt=回溯></p><h5 id=回溯-1>回溯</h5><p>例如我们上面的例子，回溯的思想是，从问题的某一种状态（初始状态）出发，搜索从这种状态出发所能达到的所有“状态”，当一条路走到“尽头”的时候（不能再前进），再后退一步或若干步，从另一种可能“状态”出发，继续搜索，直到所有的“路径”（状态）都试探过。这种不断“前进”、不断“回溯”寻找解的方法，就称作“回溯法”
-贪婪和非贪婪的匹配都会产生回溯，不同的是贪婪的是先尽量多的匹配，如果不行就吐出一个然后继续匹配，再不行就再吐出一个，非贪婪的是先尽量少的匹配。如果不行就再多匹配一个，再不行就再来一个分支结构也会产生回溯，比如<code>/^(test|te)sts$/.test('tests') </code>前面括号里面的匹配过程是先匹配到 test 然后继续往后匹配匹配到字符 <code>s</code> 的时候还是成功的，匹配到 <code>st</code> 的时候发现不能匹配， 所以会回到前面的分支结构的其他分支继续匹配，如果不行的话再换其他分支。</p><h5 id=读正则>读正则</h5><p>读懂其他人写的正则也是一个很重要的方面。</p><h5 id=结构和操作符>结构和操作符</h5><p>结构：<code>字符字面量、字符组、量词、锚字符、分组、选择分支、反向引用</code>。</p><p>操作符：</p><ol><li>转义符 <code>\</code></li><li>括号和方括号 <code>(...)</code>、<code>(?:...)</code>、<code>(?=...)</code>、<code>(?!...)</code>、<code>[...]</code></li><li>量词限定符 <code>{m}</code>、<code>{m,n}</code>、<code>{m,}</code>、<code>?</code>、<code>*</code>、<code>+</code></li><li>位置和序列 <code>^</code> 、<code>$</code>、 <code>\</code>元字符、 一般字符</li><li>管道符（竖杠） <code>|</code></li></ol><p>操作符的优先级是从上到下，由高到低的，所以在分析正则的时候可以根据优先级来拆分正则，比如
-<code>/ab?(c|de*)+|fg/</code></p><ol><li>因为括号是一个整体，所以<code>/ab?()+|fg/</code>,括号里面具体是什么可以放到后面再分析</li><li>根据量词和管道符的优先级，所以<code>a</code>, <code>b?</code>, ()+和管道符后面的<code>f</code>,<code> g</code></li><li>同理分析括号里面的<code>c|de* => c</code>和<code>d</code>, <code>e*</code></li><li>综上，这个正则描述的是</li></ol><p><img src=https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/RegExp-reglc.webp alt></p><p>以这种模式来分析，再复杂的正则都可以看懂。有一个可视化的<a href=https://jex.im/regulex/>正则分析网站</a></p><p><em>转载自<a href=https://juejin.im/post/59b5e50f51882519777c4815>网易考拉前端团队</a></em></p></div><div class="post_extra mb-2"><div class=copy></div></div><div></div></div></div></div><a href=https://goyth.cn/ class=post_nav><span class=post_next>The Latest</span>T</a></main><footer class="footer wrap pale"><p>&copy;&nbsp;<span class=year></span>&nbsp;luke's blog</p><p>Designed by <a href=https://www.linkedin.com/in/dan-weru-profile/ target=_blank title="Linkedin Profile" rel=nonopener>Weru</a></p></footer><script src=https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js></script></body></html>
+ <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">matches_array</span><span class="p">);</span>
+ <span class="c1">// [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;]
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>replace</code>
+replace 接受两个参数，第一个是要被替换的文本，可以是正则也可以是字符串，如果是字符串的时候不会被转换成正则，而是作为检索的直接量文本。第二个是替换成的文本，可以是字符串或者函数，字符串可以使用一些特殊的变量来替代前面捕获到的子串</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">变量名</th>
+<th align="left">代表的值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">$$</td>
+<td align="left">插入一个 &ldquo;$&rdquo;。</td>
+</tr>
+<tr>
+<td align="center">$&amp;</td>
+<td align="left">插入匹配的子串。</td>
+</tr>
+<tr>
+<td align="center">$` |插入当前匹配的子串左边的内容。|</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">$&rsquo;</td>
+<td align="left">插入当前匹配的子串右边的内容。</td>
+</tr>
+<tr>
+<td align="center">$n</td>
+<td align="left">假如第一个参数是 RegExp对象，并且 n 是个小于100的非负整数，那么插入第 n 个括号匹配的字符串。</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="sr">/(\w+)\s(\w+)/</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s2">&#34;John Smith&#34;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">newstr</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="s2">&#34;$2, $1&#34;</span><span class="p">);</span>
+<span class="c1">// Smith, John
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">newstr</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果是函数的话，函数入参如下，返回替换成的文本</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>代表的值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>match</td>
+<td>匹配的子串。（对应于上述的<code>$&amp;</code>。）</td>
+</tr>
+<tr>
+<td>p1,p2,&hellip;</td>
+<td>假如replace()方法的第一个参数是一个RegExp 对象，则代表第n个括号匹配的字符串。（对应于上述的<code>$1</code>，<code>$2</code>等。）</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>匹配到的子字符串在原字符串中的偏移量。（比如，如果原字符串是“abcd”，匹配到的子字符串是“bc”，那么这个参数将是1）</td>
+</tr>
+<tr>
+<td>string</td>
+<td>被匹配的原字符串。</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">replacer</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">,</span> <span class="nx">offset</span><span class="p">,</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// p1 is nondigits, p2 digits, and p3 non-alphanumerics
+</span><span class="c1"></span>  <span class="k">return</span> <span class="p">[</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39; - &#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">newString</span> <span class="o">=</span> <span class="s1">&#39;abc12345#$*%&#39;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/([^\d]*)(\d*)([^\w]*)/</span><span class="p">,</span> <span class="nx">replacer</span><span class="p">);</span>
+<span class="c1">// newString   abc - 12345 - #$*%
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><ol>
+<li><code>split</code>
+接受两个参数，返回一个数组。第一个是用来分割字符串的字符或者正则，如果是空字符串则会将元字符串中的每个字符以数组形式返回，第二个参数可选作为限制分割多少个字符，也是返回的数组的长度限制。有一个地方需要注意，用捕获括号的时候会将匹配结果也包含在返回的数组中</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"> <span class="kd">var</span> <span class="nx">myString</span> <span class="o">=</span> <span class="s2">&#34;Hello 1 word. Sentence number 2.&#34;</span><span class="p">;</span>
+ <span class="kd">var</span> <span class="nx">splits</span> <span class="o">=</span> <span class="nx">myString</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\d/</span><span class="p">);</span>
+
+ <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">splits</span><span class="p">);</span>
+ <span class="c1">// [ &#34;Hello &#34;, &#34; word. Sentence number &#34;, &#34;.&#34; ]
+</span><span class="c1"></span>
+ <span class="nx">splits</span> <span class="o">=</span> <span class="nx">myString</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/(\d)/</span><span class="p">);</span>
+ <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">splits</span><span class="p">);</span>
+ <span class="c1">// [ &#34;Hello &#34;, &#34;1&#34;, &#34; word. Sentence number &#34;, &#34;2&#34;, &#34;.&#34; ]
+</span></code></pre></td></tr></table>
+</div>
+</div><h4 id="正则对象的方法">正则对象的方法</h4>
+<ol>
+<li><code>test</code>
+接受一个字符串参数，如果正则表达式与指定的字符串匹配返回 true 否则返回 false</li>
+<li><code>exec</code>
+同样接受一个字符串为参数，返回一个数组，其中存放匹配的结果。如果未找到匹配，则返回值为 <code>null</code>。匹配时，返回值跟 <code>match</code> 方法没有 g 标识时是一样的。数组第 0 个表示与正则相匹配的文本，后面 n 个是对应的 n 个捕获的文本，最后两个是对象 <code>index</code> 和 <code>input</code>同时它会在正则实例的 <code>lastIndex</code> 属性指定的字符处开始检索字符串 string。当 <code>exec()</code> 找到了与表达式相匹配的文本时，在匹配后，它将把正则实例的 <code>lastIndex</code> 属性设置为匹配文本的最后一个字符的下一个位置。有没有 g 标识对单词执行 exec 方法是没有影响的，只是有 g 标识的时候可以反复调用 <code>exec()</code> 方法来遍历字符串中的所有匹配文本。当 <code>exec()</code> 再也找不到匹配的文本时，它将返回 <code>null</code>，并把 <code>lastIndex</code> 属性重置为 0。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;2017.06.27&#34;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">regex2</span> <span class="o">=</span> <span class="sr">/\b(\d+)\b/g</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">lastIndex</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">lastIndex</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">lastIndex</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">lastIndex</span><span class="p">);</span>
+<span class="c1">// =&gt; [&#34;2017&#34;, &#34;2017&#34;, index: 0, input: &#34;2017.06.27&#34;]
+</span><span class="c1">// =&gt; 4
+</span><span class="c1">// =&gt; [&#34;06&#34;, &#34;06&#34;, index: 5, input: &#34;2017.06.27&#34;]
+</span><span class="c1">// =&gt; 7
+</span><span class="c1">// =&gt; [&#34;27&#34;, &#34;27&#34;, index: 8, input: &#34;2017.06.27&#34;]
+</span><span class="c1">// =&gt; 10
+</span><span class="c1">// =&gt; null
+</span><span class="c1">// =&gt; 0
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>其中正则实例lastIndex属性，表示下一次匹配开始的位置。
+</code></pre>
+<p>比如第一次匹配了“2017”，开始下标是0，共4个字符，因此这次匹配结束的位置是3，下一次开始匹配的位置是4。</p>
+<p>从上述代码看出，在使用exec时，经常需要配合使用while循环：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;2017.06.27&#34;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">regex2</span> <span class="o">=</span> <span class="sr">/\b(\d+)\b/g</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">regex2</span><span class="p">.</span><span class="nx">lastIndex</span> <span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// =&gt; [&#34;2017&#34;, &#34;2017&#34;, index: 0, input: &#34;2017.06.27&#34;] 4
+</span><span class="c1">// =&gt; [&#34;06&#34;, &#34;06&#34;, index: 5, input: &#34;2017.06.27&#34;] 7
+</span><span class="c1">// =&gt; [&#34;27&#34;, &#34;27&#34;, index: 8, input: &#34;2017.06.27&#34;] 10
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="正则的匹配">正则的匹配</h4>
+<h5 id="字符匹配">字符匹配</h5>
+<p>精确匹配就不说了，比如<code>/hello/</code>，也只能匹配字符串中的<code>&quot;hello&quot;</code>这个子串。
+正则表达式之所以强大，是因为其能实现模糊匹配。</p>
+<h5 id="匹配多种数量">匹配多种数量</h5>
+<p>用<code>{m,n}</code>来匹配多种数量，其他几种形式<code>(+*?)</code>都可以等价成这种。比如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/ab{2,5}c/g</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;abc abbc abbbc abbbbc abbbbbc abbbbbbc&#34;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">string</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regex</span><span class="p">)</span> <span class="p">);</span> <span class="c1">// [&#34;abbc&#34;, &#34;abbbc&#34;, &#34;abbbbc&#34;, &#34;abbbbbc&#34;]
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="贪婪和非贪婪">贪婪和非贪婪</h5>
+<p>默认贪婪</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/\d{2,5}/g</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;123 1234 12345 123456&#34;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">string</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regex</span><span class="p">)</span> <span class="p">);</span> <span class="c1">// [&#34;123&#34;, &#34;1234&#34;, &#34;12345&#34;, &#34;12345&#34;]
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><p>两次后面加一个 ？ 就可以表示非贪婪，非贪婪时</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/\d{2,5}?/g</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;123 1234 12345 123456&#34;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">string</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regex</span><span class="p">)</span> <span class="p">);</span> <span class="c1">// [&#34;12&#34;, &#34;12&#34;, &#34;34&#34;, &#34;12&#34;, &#34;34&#34;, &#34;12&#34;, &#34;34&#34;, &#34;56&#34;]
+</span></code></pre></td></tr></table>
+</div>
+</div><h5 id="匹配多种情况">匹配多种情况</h5>
+<p>用字符组<code>[]</code>来匹配多种情况，其他几种形式<code>(\d\D\s\S\w\W)</code>都可以等价成这种。比如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/a[123]b/g</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;a0b a1b a2b a3b a4b&#34;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">string</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regex</span><span class="p">)</span> <span class="p">);</span> <span class="c1">// [&#34;a1b&#34;, &#34;a2b&#34;, &#34;a3b&#34;]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>如果字符组里面字符特别多的话可以用<code>-</code>来表示范围，比如<code>[123456abcdefGHIJKLM]</code>，可以写成<code>[1-6a-fG-M]</code>，用[<code>^0-9]</code>表示非除了数字以外的字符
+多种情况还可以是多种分支，用管道符来连接<code>|</code>，比如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/good|goodbye/g</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;goodbye&#34;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">string</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regex</span><span class="p">)</span> <span class="p">);</span> <span class="c1">// [&#34;good&#34;]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>这个例子可以看出分支结构也是惰性的，匹配到了就不再往后尝试了。</p>
+<h6 id="例子">例子</h6>
+<p>掌握这两种方式就可以解决比较简单的正则问题了。</p>
+<ol>
+<li>最多保留2位小数的数字
+<code>/^([1-9]\d*|0)(\.\d{1,2})?$/</code></li>
+<li>电话号码
+<code>/(\+86)?1\d{10}/</code></li>
+<li>身份证
+<code>/^(\d{15}|\d{17}([xX]|\d))$/</code></li>
+</ol>
+<h4 id="位置匹配">位置匹配</h4>
+<h5 id="什么是位置">什么是位置</h5>
+<p>位置是相邻字符之间的，比如，有一个字符串 <code>hello</code> ，这个字符串一共有6个位置 <code>*h*e*l*l*o*</code> ， <code>*</code>代表位置</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/RegExp-regwz.png" alt="" title="位置"></p>
+<p>上面说到了 6 种位置元字符</p>
+<ol>
+<li><code>^</code>，<code>$</code> 匹配字符的开头和结尾，比如<code>/^hello$/</code> 匹配一个字符串，要符合这样的条件，字符串开头的位置，紧接着是 <code>h</code> 然后是 <code>e</code>,<code>l</code>,<code>l</code>,<code>o</code> 最后是字符串结尾的位置位置还可以被替换成字符串，比如<code>'hello'.replace(/^|$/g, '#')</code> 结果是 <code>#hello#</code></li>
+<li><code>/b</code>，<code>/B</code> 匹配单词边界和非单词边界，单词边界具体指 <code>\w([a-zA-Z0-9_])</code> 和 <code>\W</code> 之间的位置，包括 <code>\w</code> 和 <code>^</code> 以及 <code>$</code> 之间的位置，比如<code>'hello word [js]_reg.exp-01'.replace(/\b/g, '#')</code> 结果是<code> #hello# #word# [#js#]#_reg#.#exp#-#01#</code></li>
+<li><code>(?=p)</code>，<code>(?!p)</code> 匹配 <code>p</code> 前面的位置和不是 <code>p</code> 前面位置，比如<code>'hello'.replace(/(?=l)/g, '#')</code> 结果是 <code>he#l#lo'hello'.replace(/(?!l)/g, '#')</code> 结果是 <code>#h#ell#o#</code></li>
+</ol>
+<h5 id="位置的特性">位置的特性</h5>
+<p>字符与字符之间的位置可以是多个。在理解上可以将位置理解成空字符串 <code>''</code>，比如<code>hello</code> 可以是一般的 <code>'' + 'h' + 'e' + 'l' + 'l' + 'o' + ''</code>，也可以是 <code>'' + '' + '' + '' + 'h' + 'e' + 'l' + 'l' + 'o' + ''</code>，所以<code>/^h\Be\Bl\Bl\Bo$/.test('hello')</code> 结果是 <code>true</code>，<code>/^^^h\B\B\Be\Bl\Bl\Bo$$$/.test('hello')</code> 结果也是 <code>true</code></p>
+<h5 id="例子-1">例子</h5>
+<p>-. 千分位，将 <code>123123123</code> 转换成 <code>123,123,123</code>数字是从后往前数，也就是以一个或者多个3位数字结尾的位置换成 <code>','</code> 就好了，写成正则就是<code>123123213.replace(/(?=(\d{3})+$)/g, ',')</code> 但是这样的话会在最前面也加一个 <code>','</code> 这明显是不对的。所以还得继续改一下正则要求匹配到的位置不是开头，可以用 <code>/(?!^)(?=(\d{3})+$)/g</code> 来表示。换种思路来想，能不能是以数字开头然后加上上面的条件呢，得出这个正则 <code>/\d(?=(\d{3})+$)/g</code>，但是这个正则匹配的结果是 <code>12,12,123</code>，发现这个正则匹配的不是位置而是字符，将数字换成了 <code>','</code>  可以得出结论，如果要求一个正则是匹配位置的话，那么所有的条件必须都是位置。</p>
+<h4 id="分组">分组</h4>
+<p>分组主要是括号的使用</p>
+<h5 id="分组和分支结构">分组和分支结构</h5>
+<p>在分支结构中，括号是用来表示一个整体的，(p1|p2)，比如要匹配下面的字符串</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">I</span> <span class="nx">love</span> <span class="nx">JavaScript</span>
+<span class="nx">I</span> <span class="nx">love</span> <span class="nx">Regular</span> <span class="nx">Expression</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以用正则<code>/^I love (JavaScript|Regular Expression)$/</code> 而不是 <code>/^I love JavaScript|Regular Expression$/</code>表示一个整体还比如 <code>/(abc)+/</code> 一个或者多个 <code>abc</code> 字符串上面这些使用 <code>()</code> 包起来的地方就叫做分组</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="s1">&#39;I love JavaScript&#39;</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/^I love (JavaScript|Regular Expression)$/</span><span class="p">)</span>
+<span class="c1">// [&#34;I love JavaScript&#34;, &#34;JavaScript&#34;, index: 0, input: &#34;I love JavaScript&#34;]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>输出的数组第二个元素，&ldquo;JavaScript&rdquo; 就是分组匹配到的内容</p>
+<h4 id="引用分组">引用分组</h4>
+<h5 id="提取数据">提取数据</h5>
+<p>比如我们要用正则来匹配一个日期格式，yyyy-mm-dd，可以写出简单的正则<code>/\d{4}-\d{2}-\d{2}/</code>，这个正则还可以改成分组形式的<code>/(\d{4})-(\d{2})-(\d{2})/</code>这样我们可以分别提取出一个日期的年月日，用 <code>String</code> 的 <code>match</code> 方法或者用正则的 <code>exec</code> 方法都可以</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/(\d{4})-(\d{2})-(\d{2})/</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;2017-08-09&#34;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">string</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regex</span><span class="p">)</span> <span class="p">);</span>
+<span class="c1">// =&gt; [&#34;2017-08-09&#34;, &#34;2017&#34;, &#34;08&#34;, &#34;09&#34;, index: 0, input: &#34;2017-08-09&#34;]
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><p>也可以用正则对象构造函数的全局属性 $1 - $9 来获取</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/(\d{4})-(\d{2})-(\d{2})/</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;2017-08-09&#34;</span><span class="p">;</span>
+
+<span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">string</span><span class="p">);</span> <span class="c1">// 正则操作即可，例如
+</span><span class="c1">//regex.exec(string);
+</span><span class="c1">//string.match(regex);
+</span><span class="c1"></span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">RegExp</span><span class="p">.</span><span class="nx">$1</span><span class="p">);</span> <span class="c1">// &#34;2017&#34;
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">RegExp</span><span class="p">.</span><span class="nx">$2</span><span class="p">);</span> <span class="c1">// &#34;08&#34;
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">RegExp</span><span class="p">.</span><span class="nx">$3</span><span class="p">);</span> <span class="c1">// &#34;09&#34;
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="替换">替换</h5>
+<p>如果想要把 yyyy-mm-dd 替换成格式 mm/dd/yyyy 应该怎么做。
+String 的 replace 方法在第二个参数里面可以用 $1 - $9 来指代相应的分组</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/(\d{4})-(\d{2})-(\d{2})/</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;2017-08-09&#34;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">string</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">regex</span><span class="p">,</span> <span class="s2">&#34;$2/$3/$1&#34;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span> <span class="c1">// &#34;08/09/2017&#34;
+</span><span class="c1"></span><span class="nx">等价</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">string</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">regex</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$2</span> <span class="o">+</span> <span class="s2">&#34;/&#34;</span> <span class="o">+</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$3</span> <span class="o">+</span> <span class="s2">&#34;/&#34;</span> <span class="o">+</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$1</span><span class="p">;</span>
+<span class="p">});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span> <span class="c1">// &#34;08/09/2017&#34;
+</span><span class="c1"></span><span class="nx">等价</span>
+<span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/(\d{4})-(\d{2})-(\d{2})/</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;2017-08-09&#34;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">string</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">regex</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">day</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">month</span> <span class="o">+</span> <span class="s2">&#34;/&#34;</span> <span class="o">+</span> <span class="nx">day</span> <span class="o">+</span> <span class="s2">&#34;/&#34;</span> <span class="o">+</span> <span class="nx">year</span><span class="p">;</span>
+<span class="p">});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span> <span class="c1">// &#34;08/09/2017&#34;
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="反向引用">反向引用</h5>
+<p>之前匹配日期的正则在使用的时候发现还有另外两种写法，一共三种</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="mi">2017</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">09</span>
+
+<span class="mi">2017</span><span class="o">/</span><span class="mi">08</span><span class="o">/</span><span class="mi">09</span>
+
+<span class="mf">2017.08.09</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>要匹配这三种应该怎么写正则，第一反应肯定是把上面那个正则改一下<code>/(\d{4})[-/.](\d{2})[-/.](\d{2})/</code>，把 <code>-</code> 改成 <code>[-/.]</code> 这三种都可以看上去没问题，我们多想想就会发现，这个正则把 <code>2017-08.09</code> 这种字符串也匹配到了，这个肯定是不符合预期的。这个时候我们就需要用到反向引用了，反向引用可以在匹配阶段捕获到分组的内容 <code>/(\d{4})([-/.])(\d{2})\2(\d{2})/</code></p>
+<p><em><strong>那么出现括号嵌套怎么办，比如</strong></em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/^((\d)(\d(\d)))\1\2\3\4$/</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s2">&#34;1231231233&#34;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">);</span> <span class="c1">// true
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$1</span> <span class="p">);</span> <span class="c1">// 123
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$2</span> <span class="p">);</span> <span class="c1">// 1
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$3</span> <span class="p">);</span> <span class="c1">// 23
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$4</span> <span class="p">);</span> <span class="c1">// 3
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><p>嵌套的括号以左括号为准</p>
+<h5 id="引用了不存在的分组呢">引用了不存在的分组呢</h5>
+<p>如果在正则里面引用了前面不存在的分组，这个时候正则会匹配字符本身，比如<code>\1</code>就匹配<code>\1</code></p>
+<h4 id="非捕获分组">非捕获分组</h4>
+<p>我们有时候只是想用括号原本的功能而不想捕获他们。这个时候可以用(?:p)表示一个非捕获分组</p>
+<h6 id="例子-2">例子</h6>
+<ol>
+<li>驼峰改短横</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">dash</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/([A-Z])/g</span><span class="p">,</span> <span class="s1">&#39;-$1&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>获取链接的 search 值链接：<code>https://www.baidu.com?name=jawil&amp;age=23</code></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getParamName</span><span class="p">(</span><span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
+
+<span class="kd">let</span> <span class="nx">match</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="p">(</span><span class="sb">`[?&amp;]</span><span class="si">${</span><span class="nx">attr</span><span class="si">}</span><span class="sb">=([^&amp;]*)`</span><span class="p">)</span> <span class="c1">//分组运算符是为了把结果存到exec函数返回的结果里
+</span><span class="c1"></span> <span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">search</span><span class="p">)</span>
+<span class="c1">//[&#34;?name=jawil&#34;, &#34;jawil&#34;, index: 0, input: &#34;?name=jawil&amp;age=23&#34;]
+</span><span class="c1"></span><span class="k">return</span> <span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nb">decodeURIComponent</span><span class="p">(</span><span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\+/g</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">))</span> <span class="c1">// url中+号表示空格,要替换掉
+</span><span class="c1"></span><span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getParamName</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span>  <span class="c1">// &#34;jawil&#34;
+</span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>去掉字符串前后的空格</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">trim</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+ <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(^\s*)|(\s*$)/g</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>判断一个数是否是质数</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">isPrime</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">return</span> <span class="o">!</span><span class="sr">/^1?$|^(11+?)\1+$/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nb">Array</span><span class="p">(</span><span class="nx">num</span><span class="o">+</span><span class="mi">1</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里首先是把一个数字变成1组成的字符串，比如11就是 &lsquo;1111111111&rsquo; 11个1  然后正则分两部分，第一部分是匹配空字符串或者1,第二部分是先匹配两个或者多个1，非贪婪模式，那么先会匹配两个1，然后将匹配的两个1分组，后面就是匹配一个或者多个&rsquo;2个1&rsquo;，就相当于整除2，如果匹配成功就证明不是质数，如果不成功就会匹配3个1，然后匹配多个3个1，相当于整除3，这样一直下去会一直整除到自己本身。如果还是不行就证明这个数字是质数。</p>
+<h4 id="回溯">回溯</h4>
+<h5 id="正则是怎么匹配的">正则是怎么匹配的</h5>
+<p>有这么一个字符串 <code>'abbbc'</code> 和这么一个正则 <code>/ab{1,3}bbc/ /ab{1,3}bbc/.test('abbbc')</code> 我们一眼可以看出来是 true，但是 JavaScript 是怎么匹配的呢
+<img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/RegExp-huisu.webp" alt="回溯"></p>
+<h5 id="回溯-1">回溯</h5>
+<p>例如我们上面的例子，回溯的思想是，从问题的某一种状态（初始状态）出发，搜索从这种状态出发所能达到的所有“状态”，当一条路走到“尽头”的时候（不能再前进），再后退一步或若干步，从另一种可能“状态”出发，继续搜索，直到所有的“路径”（状态）都试探过。这种不断“前进”、不断“回溯”寻找解的方法，就称作“回溯法”
+贪婪和非贪婪的匹配都会产生回溯，不同的是贪婪的是先尽量多的匹配，如果不行就吐出一个然后继续匹配，再不行就再吐出一个，非贪婪的是先尽量少的匹配。如果不行就再多匹配一个，再不行就再来一个分支结构也会产生回溯，比如<code>/^(test|te)sts$/.test('tests') </code>前面括号里面的匹配过程是先匹配到 test 然后继续往后匹配匹配到字符 <code>s</code> 的时候还是成功的，匹配到 <code>st</code> 的时候发现不能匹配， 所以会回到前面的分支结构的其他分支继续匹配，如果不行的话再换其他分支。</p>
+<h5 id="读正则">读正则</h5>
+<p>读懂其他人写的正则也是一个很重要的方面。</p>
+<h5 id="结构和操作符">结构和操作符</h5>
+<p>结构：<code>字符字面量、字符组、量词、锚字符、分组、选择分支、反向引用</code>。</p>
+<p>操作符：</p>
+<ol>
+<li>转义符 <code>\</code></li>
+<li>括号和方括号 <code>(...)</code>、<code>(?:...)</code>、<code>(?=...)</code>、<code>(?!...)</code>、<code>[...]</code></li>
+<li>量词限定符 <code>{m}</code>、<code>{m,n}</code>、<code>{m,}</code>、<code>?</code>、<code>*</code>、<code>+</code></li>
+<li>位置和序列 <code>^</code> 、<code>$</code>、 <code>\</code>元字符、 一般字符</li>
+<li>管道符（竖杠） <code>|</code></li>
+</ol>
+<p>操作符的优先级是从上到下，由高到低的，所以在分析正则的时候可以根据优先级来拆分正则，比如
+<code>/ab?(c|de*)+|fg/</code></p>
+<ol>
+<li>因为括号是一个整体，所以<code>/ab?()+|fg/</code>,括号里面具体是什么可以放到后面再分析</li>
+<li>根据量词和管道符的优先级，所以<code>a</code>, <code>b?</code>, ()+和管道符后面的<code>f</code>,<code> g</code></li>
+<li>同理分析括号里面的<code>c|de* =&gt; c</code>和<code>d</code>, <code>e*</code></li>
+<li>综上，这个正则描述的是</li>
+</ol>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/RegExp-reglc.webp" alt=""></p>
+<p>以这种模式来分析，再复杂的正则都可以看懂。有一个可视化的<a href="https://jex.im/regulex/">正则分析网站</a></p>
+<p><em>转载自<a href="https://juejin.im/post/59b5e50f51882519777c4815">网易考拉前端团队</a></em></p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

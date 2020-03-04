@@ -1,2 +1,34 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Database on luke's blog</title><link>https://goyth.cn/tags/database/</link><description>Recent content in Database on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><lastBuildDate>Sat, 13 Oct 2018 21:53:54 +0800</lastBuildDate><atom:link href="https://goyth.cn/tags/database/index.xml" rel="self" type="application/rss+xml"/><item><title>MongoDB 知识点梳理(二)</title><link>https://goyth.cn/post/mongodb2/</link><pubDate>Sat, 13 Oct 2018 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/mongodb2/</guid><description>MongoDB通过配置项启动数据库 启动服务器 1 mongod --config mongo.conf 启动客户端 1 mongo --port 50000 参数 含义 &amp;ndash;dbpath 指定数据库文件的目录 &amp;ndash;port 端口 默认是27017 28017 &amp;ndash;fork 以后台守护的方式进行启动 &amp;ndash;logpath 指定日志文件输出路径 &amp;ndash;config 指定一个配置文件 &amp;ndash;auth 以安全方式启动数据库，默认不验证 mongo.conf 1 2 3 dbpath=/Users/demon/coding/mongo/data logpath=/Users/demon/coding/mongo/log port=50000 导入导出数据 这命令是保存成了文件格式
-mongoimport 导出数据 mongoexport 导入数据 参数 含义 -h [ &amp;ndash;host ] 连接的数据库 &amp;ndash;port 端口号 -u 用户名 -p 密码 -d 导出的数据库 -d 导出的数据库 -c 指定导出的集合 -o 导出的文件存储路径 -q 进行过滤 准备数据</description></item><item><title>MongoDB 知识点梳理（一）</title><link>https://goyth.cn/post/mongodb/</link><pubDate>Fri, 12 Oct 2018 21:53:54 +0800</pubDate><guid>https://goyth.cn/post/mongodb/</guid><description>MongoDB是一个基于分布式文件存储的开源数据库系统。在高负载的情况下，添加更多的节点，可以保证服务器性能。 MongoDB 旨在为WEB应用提供可扩展的高性能数据存储解决方案。 MongoDB 将数据存储为一个文档，数据结构由键值(key=&amp;gt;value)对组成。MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Database on luke&#39;s blog</title>
+    <link>https://goyth.cn/tags/database/</link>
+    <description>Recent content in Database on luke&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
+    <lastBuildDate>Sat, 13 Oct 2018 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>MongoDB 知识点梳理(二)</title>
+      <link>https://goyth.cn/post/mongodb2/</link>
+      <pubDate>Sat, 13 Oct 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/mongodb2/</guid>
+      <description>MongoDB通过配置项启动数据库 启动服务器 1  mongod --config mongo.conf   启动客户端 1  mongo --port 50000      参数 含义     &amp;ndash;dbpath 指定数据库文件的目录   &amp;ndash;port 端口 默认是27017 28017   &amp;ndash;fork 以后台守护的方式进行启动   &amp;ndash;logpath 指定日志文件输出路径   &amp;ndash;config 指定一个配置文件   &amp;ndash;auth 以安全方式启动数据库，默认不验证    mongo.conf 1 2 3  dbpath=/Users/demon/coding/mongo/data logpath=/Users/demon/coding/mongo/log port=50000   导入导出数据 这命令是保存成了文件格式
+ mongoimport 导出数据 mongoexport 导入数据     参数 含义      -h [ &amp;ndash;host ]	连接的数据库    &amp;ndash;port 端口号    -u 用户名    -p 密码    -d 导出的数据库    -d 导出的数据库    -c 指定导出的集合    -o 导出的文件存储路径    -q 进行过滤     准备数据</description>
+    </item>
+    
+    <item>
+      <title>MongoDB 知识点梳理（一）</title>
+      <link>https://goyth.cn/post/mongodb/</link>
+      <pubDate>Fri, 12 Oct 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/mongodb/</guid>
+      <description>MongoDB是一个基于分布式文件存储的开源数据库系统。在高负载的情况下，添加更多的节点，可以保证服务器性能。 MongoDB 旨在为WEB应用提供可扩展的高性能数据存储解决方案。 MongoDB 将数据存储为一个文档，数据结构由键值(key=&amp;gt;value)对组成。MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。</description>
+    </item>
+    
+  </channel>
+</rss>

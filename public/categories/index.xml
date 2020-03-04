@@ -1,1 +1,78 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on luke's blog</title><link>https://goyth.cn/categories/</link><description>Recent content in Categories on luke's blog</description><generator>Hugo -- gohugo.io</generator><copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright><lastBuildDate>Wed, 26 Feb 2020 21:53:54 +0800</lastBuildDate><atom:link href="https://goyth.cn/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>Algorithm</title><link>https://goyth.cn/categories/algorithm/</link><pubDate>Wed, 26 Feb 2020 21:53:54 +0800</pubDate><guid>https://goyth.cn/categories/algorithm/</guid><description/></item><item><title>Development</title><link>https://goyth.cn/categories/development/</link><pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate><guid>https://goyth.cn/categories/development/</guid><description/></item><item><title>golang</title><link>https://goyth.cn/categories/golang/</link><pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate><guid>https://goyth.cn/categories/golang/</guid><description/></item><item><title>Nodejs</title><link>https://goyth.cn/categories/nodejs/</link><pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate><guid>https://goyth.cn/categories/nodejs/</guid><description/></item><item><title>JavaScript</title><link>https://goyth.cn/categories/javascript/</link><pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate><guid>https://goyth.cn/categories/javascript/</guid><description/></item><item><title>Database</title><link>https://goyth.cn/categories/database/</link><pubDate>Sat, 13 Oct 2018 21:53:54 +0800</pubDate><guid>https://goyth.cn/categories/database/</guid><description/></item><item><title>Network</title><link>https://goyth.cn/categories/network/</link><pubDate>Wed, 11 Jul 2018 21:53:54 +0800</pubDate><guid>https://goyth.cn/categories/network/</guid><description/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on luke&#39;s blog</title>
+    <link>https://goyth.cn/categories/</link>
+    <description>Recent content in Categories on luke&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
+    <lastBuildDate>Wed, 26 Feb 2020 21:53:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://goyth.cn/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Algorithm</title>
+      <link>https://goyth.cn/categories/algorithm/</link>
+      <pubDate>Wed, 26 Feb 2020 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/categories/algorithm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Development</title>
+      <link>https://goyth.cn/categories/development/</link>
+      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://goyth.cn/categories/development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>golang</title>
+      <link>https://goyth.cn/categories/golang/</link>
+      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://goyth.cn/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Nodejs</title>
+      <link>https://goyth.cn/categories/nodejs/</link>
+      <pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/categories/nodejs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>JavaScript</title>
+      <link>https://goyth.cn/categories/javascript/</link>
+      <pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/categories/javascript/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Database</title>
+      <link>https://goyth.cn/categories/database/</link>
+      <pubDate>Sat, 13 Oct 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/categories/database/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Network</title>
+      <link>https://goyth.cn/categories/network/</link>
+      <pubDate>Wed, 11 Jul 2018 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/categories/network/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
