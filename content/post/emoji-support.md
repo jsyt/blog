@@ -1,9 +1,10 @@
 +++
 author = "Hugo Authors"
 title = "Emoji Support"
-date = "2020-02-05"
+date = "2018-08-05"
 description = "Guide to emoji usage in Hugo"
-tags = ["emoji"]
+tags = ["golang","hugo"]
+categories = ["hugo"]
 image = "artist.jpg"
 +++
 

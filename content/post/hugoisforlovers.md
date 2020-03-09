@@ -1,17 +1,9 @@
 +++
 title = "Getting Started with Hugo"
 description = ""
-tags = [
-    "go",
-    "golang",
-    "hugo",
-    "development",
-]
-date = "2020-02-02"
-categories = [
-    "Development",
-    "golang",
-]
+date = "2018-04-02"
+tags = ["golang","hugo"]
+categories = ["hugo"]
 image = "stuck.jpg"
 +++
 

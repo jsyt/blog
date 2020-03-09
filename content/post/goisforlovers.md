@@ -1,18 +1,9 @@
 +++
 title = "(Hu)go Template Primer"
 description = ""
-tags = [
-"go",
-"golang",
-"templates",
-"themes",
-"development",
-]
-date = "2020-02-02"
-categories = [
-"Development",
-"golang",
-]
+date = "2019-02-01"
+tags = ["golang","hugo"]
+categories = ["hugo"]
 image = "artist.jpg"
 +++
 

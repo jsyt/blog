@@ -1,7 +1,9 @@
 ---
 author: Michael Henderson
-date: 2020-02-28
+date: 2019-02-11
 title: Creating a New Theme
+tags: ["golang","hugo"]
+categories : ["hugo"]
 image: "https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/gohugo-default-sample-hero-image.jpg"
 ---
 

@@ -4,5 +4,6 @@ date: {{ .Date }}
 tags: [""]
 categories: [""]
 description : ""
+image: ""
 ---
 

@@ -1,5 +1,5 @@
 ---
-date: 2020-02-10
+date: 2018-05-10
 title: Migrate to Hugo from Jekyll
 image: 'speakers.jpg'
 ---

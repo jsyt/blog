@@ -1,6 +1,6 @@
 ---
 title: 排序算法之冒泡排序
-date: 2018-02-08T10:53:54+08:00
+date: "2018-02-08T10:53:54+08:00"
 categories: ["Algorithm"]
 tags : ["Algorithm", "Sort"]
 toc: true
