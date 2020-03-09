@@ -2,75 +2,75 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on luke&#39;s blog</title>
-    <link>https://goyth.cn/categories/</link>
+    <link>https://ytop.net/categories/</link>
     <description>Recent content in Categories on luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
     <lastBuildDate>Mon, 09 Mar 2020 09:53:57 +0800</lastBuildDate>
     
-	<atom:link href="https://goyth.cn/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ytop.net/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Algorithm</title>
-      <link>https://goyth.cn/categories/algorithm/</link>
+      <link>https://ytop.net/categories/algorithm/</link>
       <pubDate>Mon, 09 Mar 2020 09:53:57 +0800</pubDate>
       
-      <guid>https://goyth.cn/categories/algorithm/</guid>
+      <guid>https://ytop.net/categories/algorithm/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Nodejs</title>
-      <link>https://goyth.cn/categories/nodejs/</link>
+      <link>https://ytop.net/categories/nodejs/</link>
       <pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/categories/nodejs/</guid>
+      <guid>https://ytop.net/categories/nodejs/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Golang</title>
-      <link>https://goyth.cn/categories/golang/</link>
+      <link>https://ytop.net/categories/golang/</link>
       <pubDate>Sat, 08 Jun 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/categories/golang/</guid>
+      <guid>https://ytop.net/categories/golang/</guid>
       <description></description>
     </item>
     
     <item>
       <title>JavaScript</title>
-      <link>https://goyth.cn/categories/javascript/</link>
+      <link>https://ytop.net/categories/javascript/</link>
       <pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/categories/javascript/</guid>
+      <guid>https://ytop.net/categories/javascript/</guid>
       <description></description>
     </item>
     
     <item>
       <title>hugo</title>
-      <link>https://goyth.cn/categories/hugo/</link>
+      <link>https://ytop.net/categories/hugo/</link>
       <pubDate>Mon, 11 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://goyth.cn/categories/hugo/</guid>
+      <guid>https://ytop.net/categories/hugo/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Database</title>
-      <link>https://goyth.cn/categories/database/</link>
+      <link>https://ytop.net/categories/database/</link>
       <pubDate>Sat, 13 Oct 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/categories/database/</guid>
+      <guid>https://ytop.net/categories/database/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Network</title>
-      <link>https://goyth.cn/categories/network/</link>
+      <link>https://ytop.net/categories/network/</link>
       <pubDate>Wed, 11 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/categories/network/</guid>
+      <guid>https://ytop.net/categories/network/</guid>
       <description></description>
     </item>
     

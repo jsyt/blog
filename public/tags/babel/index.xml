@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Babel on luke&#39;s blog</title>
-    <link>https://goyth.cn/tags/babel/</link>
+    <link>https://ytop.net/tags/babel/</link>
     <description>Recent content in Babel on luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
     <lastBuildDate>Sun, 06 Jan 2019 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="https://goyth.cn/tags/babel/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ytop.net/tags/babel/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>编写一个 Babel 插件</title>
-      <link>https://goyth.cn/post/babelplugin/</link>
+      <link>https://ytop.net/post/babelplugin/</link>
       <pubDate>Sun, 06 Jan 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/post/babelplugin/</guid>
+      <guid>https://ytop.net/post/babelplugin/</guid>
       <description>Babel转译流程 Babel 对源码进行转译时，主要有三个步骤  首先通过Babylon 将源码转化成 AST 然后再通过babel-traverse遍历 AST，找到需要更改的 AST 节点，对其进行修改 根据修改后的 AST，通过babel-generator将修改后的 AST重新生成源码 Babel插件主要是处理第二步。  Babylon Babylon 是 Babel 的解析器，主要负责将源码转化成 AST。
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16  import * as babylon from &amp;#34;babylon&amp;#34;; const code = `function square(n) { return n * n; }`; babylon.parse(code); // Node { // type: &amp;#34;File&amp;#34;, // start: 0, // end: 38, // loc: SourceLocation {.</description>
     </item>
     
     <item>
       <title>Babel 核心模块介绍</title>
-      <link>https://goyth.cn/post/babel/</link>
+      <link>https://ytop.net/post/babel/</link>
       <pubDate>Sat, 05 Jan 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/post/babel/</guid>
+      <guid>https://ytop.net/post/babel/</guid>
       <description>Babel 介绍 Babel 是一个通用的多用途 JavaScript 编译器。通过 Babel 你可以使用（并创建）下一代的 JavaScript，以及下一代的 JavaScript 工具。 Babel 把用最新标准编写的 JavaScript 代码向下编译成可以在今天随处可用的版本。 这一过程叫做“源码到源码”编译， 也被称为转换编译（transpiling，是一个自造合成词，即转换＋编译。以下也简称为转译）。
 例如，Babel 能够将新的 ES2015 箭头函数语法：
 1  const square = n =&amp;gt; n * n;   转译为：

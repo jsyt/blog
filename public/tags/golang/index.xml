@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>golang on luke&#39;s blog</title>
-    <link>https://goyth.cn/tags/golang/</link>
+    <link>https://ytop.net/tags/golang/</link>
     <description>Recent content in golang on luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
     <lastBuildDate>Sat, 08 Jun 2019 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="https://goyth.cn/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ytop.net/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>golang 学习笔记（一）——语法篇</title>
-      <link>https://goyth.cn/post/golanglearning01/</link>
+      <link>https://ytop.net/post/golanglearning01/</link>
       <pubDate>Sat, 08 Jun 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/post/golanglearning01/</guid>
+      <guid>https://ytop.net/post/golanglearning01/</guid>
       <description>golang 应⽤程序⼊⼝  必须是 main 包：package main 必须是 main ⽅法：func main() ⽂件名不⼀定是 main.go  退出返回值 与其他主要编程语⾔的差异
  Go 中 main 函数不⽀持任何返回值 通过 os.Exit 来返回状态  获取命令⾏参数 与其他主要编程语⾔的差异
  main 函数不⽀持传⼊参数 func main(arg []string) 在程序中直接通过 os.Args 获取命令⾏参数  变量量赋值 与其他主要编程语⾔言的差异
@@ -26,39 +26,39 @@
     
     <item>
       <title>Creating a New Theme</title>
-      <link>https://goyth.cn/post/creating-a-new-theme/</link>
+      <link>https://ytop.net/post/creating-a-new-theme/</link>
       <pubDate>Mon, 11 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://goyth.cn/post/creating-a-new-theme/</guid>
+      <guid>https://ytop.net/post/creating-a-new-theme/</guid>
       <description>Introduction This tutorial will show you how to create a simple theme in Hugo. I assume that you are familiar with HTML, the bash command line, and that you are comfortable using Markdown to format content. I&amp;rsquo;ll explain how Hugo uses templates and how you can organize your templates to create a theme. I won&amp;rsquo;t cover using CSS to style your theme.
 We&amp;rsquo;ll start with creating a new site with a very basic template.</description>
     </item>
     
     <item>
       <title>(Hu)go Template Primer</title>
-      <link>https://goyth.cn/post/goisforlovers/</link>
+      <link>https://ytop.net/post/goisforlovers/</link>
       <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://goyth.cn/post/goisforlovers/</guid>
+      <guid>https://ytop.net/post/goisforlovers/</guid>
       <description>Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
 This document is a brief primer on using Go templates.</description>
     </item>
     
     <item>
       <title>Emoji Support</title>
-      <link>https://goyth.cn/post/emoji-support/</link>
+      <link>https://ytop.net/post/emoji-support/</link>
       <pubDate>Sun, 05 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://goyth.cn/post/emoji-support/</guid>
+      <guid>https://ytop.net/post/emoji-support/</guid>
       <description>&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Getting Started with Hugo</title>
-      <link>https://goyth.cn/post/hugoisforlovers/</link>
+      <link>https://ytop.net/post/hugoisforlovers/</link>
       <pubDate>Mon, 02 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://goyth.cn/post/hugoisforlovers/</guid>
+      <guid>https://ytop.net/post/hugoisforlovers/</guid>
       <description>Step 1. Install Hugo Go to Hugo releases and download the appropriate version for your OS and architecture.
 Save it somewhere specific as we will be using it in the next step.
 More complete instructions are available at Install Hugo

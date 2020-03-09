@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>HTTP on luke&#39;s blog</title>
-    <link>https://goyth.cn/tags/http/</link>
+    <link>https://ytop.net/tags/http/</link>
     <description>Recent content in HTTP on luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
     <lastBuildDate>Wed, 11 Jul 2018 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="https://goyth.cn/tags/http/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ytop.net/tags/http/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>HTTP知识点整理</title>
-      <link>https://goyth.cn/post/http2/</link>
+      <link>https://ytop.net/post/http2/</link>
       <pubDate>Wed, 11 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://goyth.cn/post/http2/</guid>
+      <guid>https://ytop.net/post/http2/</guid>
       <description>HTTP/2是HTTP协议自1999年HTTP 1.1发布后的首个更新，主要基于SPDY协议。于2015年正式发布，HTTP/2解决了HTTP1.1线头阻塞、重复建立TCP连接等问题，充分利用TCP连接的高效传输，使得网络延迟大幅下降，网络传输速度大幅提升。
 HTTP/0.9 - 1991 第一版的HTTP文档是1991年提出来的 HTTP/0.9。这是有史以来最简单的协议；它仅有一个GET方法。如果客户端要访问服务器上的一些网页，它会作出如下的简单请求：
 1  GET /index.html   并且来自服务器的响应内容如下：
