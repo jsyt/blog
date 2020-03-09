@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>LeetCode on luke&#39;s blog</title>
+    <title>LeetCode on Luke&#39;s blog</title>
     <link>https://ytop.net/tags/leetcode/</link>
-    <description>Recent content in LeetCode on luke&#39;s blog</description>
+    <description>Recent content in LeetCode on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
+    <copyright>Copyright © 2019, Luke and the Hugo Authors; all rights reserved.</copyright>
     <lastBuildDate>Mon, 09 Mar 2020 09:53:57 +0800</lastBuildDate>
     
 	<atom:link href="https://ytop.net/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />

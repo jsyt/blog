@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>hugo on luke&#39;s blog</title>
+    <title>hugo on Luke&#39;s blog</title>
     <link>https://ytop.net/categories/hugo/</link>
-    <description>Recent content in hugo on luke&#39;s blog</description>
+    <description>Recent content in hugo on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
+    <copyright>Copyright © 2019, Luke and the Hugo Authors; all rights reserved.</copyright>
     <lastBuildDate>Mon, 11 Feb 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ytop.net/categories/hugo/index.xml" rel="self" type="application/rss+xml" />
