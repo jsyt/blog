@@ -69,8 +69,9 @@ var longestValidParentheses = function(s) {
 };
 ```
 
-**时间复杂度：** O(N<sup>2</sup>)
-**时间复杂度：** O(N)
+**时间复杂度：** O(N * N)
+
+**空间复杂度：** O(N)
 
 #### 解法二—— 动态规划
 
@@ -104,7 +105,9 @@ var longestValidParentheses = function(s) {
 ```
 
 **时间复杂度：** O(N)
-**时间复杂度：** O(N)
+
+**空间复杂度：** O(N)
+
 
 #### 解法三—— 利用栈
 
@@ -132,4 +135,5 @@ var longestValidParentheses = function(s) {
 ```
 
 **时间复杂度：** O(N)
-**时间复杂度：** O(N)
+
+**空间复杂度：** O(N)
