@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Leet code 994. 腐烂的橘子 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'LeetCode 994. 腐烂的橘子' />
+<meta property = 'og:description' content = '994. 腐烂的橘子 Difficulty: 简单
+在给定的网格中，每个单元格可以有以下三个值之一：
+ 值 0 代表空单元格； 值 1 代表新鲜橘子； 值 2 代表腐烂的橘子。  每分钟，任何与腐烂的橘子（在 4 个正方向上）相邻的新鲜橘子都会腐烂。
+返回直到单元格中没有新鲜橘子为止所必须经过的最小 …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/leetcode994/' />
+  
+  
+    
+  
+  <meta property = 'og:image' content = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/aaron-wu-_8rjlHwN4uk-unsplash.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://goyth.cn/post/leetcode994/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>05. March 2020</p>
+      <h1 class = 'post_title'>LeetCode 994. 腐烂的橘子</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          
+            
+          
+          <img src = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/aaron-wu-_8rjlHwN4uk-unsplash.jpg' alt = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/aaron-wu-_8rjlHwN4uk-unsplash.jpg' class = 'post_thumbnail'>
+        
+          <h3 id="994-腐烂的橘子httpsleetcode-cncomproblemsrotting-oranges"><a href="https://leetcode-cn.com/problems/rotting-oranges/">994. 腐烂的橘子</a></h3>
+<p>Difficulty: <strong>简单</strong></p>
+<p>在给定的网格中，每个单元格可以有以下三个值之一：</p>
+<ul>
+<li>值 <code>0</code> 代表空单元格；</li>
+<li>值 <code>1</code> 代表新鲜橘子；</li>
+<li>值 <code>2</code> 代表腐烂的橘子。</li>
+</ul>
+<p>每分钟，任何与腐烂的橘子（在 4 个正方向上）相邻的新鲜橘子都会腐烂。</p>
+<p>返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 <code>-1</code>。</p>
+<p><strong>示例 1：</strong></p>
+<p><strong><img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/02/16/oranges.png" alt=""></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入：[[2,1,1],[1,1,0],[0,1,1]]
+输出：4
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例 2：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入：[[2,1,1],[0,1,1],[1,0,1]]
+输出：-1
+解释：左下角的橘子（第 2 行， 第 0 列）永远不会腐烂，因为腐烂只会发生在 4 个正向上。
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例 3：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入：[[0,2]]
+输出：0
+解释：因为 0 分钟时已经没有新鲜橘子了，所以答案就是 0 。
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>提示：</strong></p>
+<ol>
+<li><code>1 &lt;= grid.length &lt;= 10</code></li>
+<li><code>1 &lt;= grid[0].length &lt;= 10</code></li>
+<li><code>grid[i][j]</code> 仅为 <code>0</code>、<code>1</code> 或 <code>2</code></li>
+</ol>
+<h4 id="solution">Solution</h4>
+<p>Language: <strong>JavaScript</strong></p>
+<h4 id="解题思路">解题思路</h4>
+<ol>
+<li>遍历 <code>grid</code> 统计出橘子的总数，以及找出坏橘子并将坏橘子的坐标放入 <code>queue</code> 中</li>
+<li>开始广度优先遍历，从队列头取出坏橘子，判断坏橘子上下左右四个方向是否有好橘子，如果有的话就将其变为坏橘子，并加入 <code>queue</code> 中</li>
+<li>每完成一次遍历，计数器 <code>count++</code></li>
+<li>在每一次遍历的过程中，都要先获取 <code>queue.length</code>，并累加其值，如果累加的值等于橘子的总数，则说明所有的橘子都变成了坏橘子，则直接返回计数器<code>count</code></li>
+<li>如果遍历完后，累加的坏橘子数量不等于橘子总数，则说明还存在不可能腐烂的好橘子，返回 <code>-1</code></li>
+</ol>
+<h4 id="代码">代码</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm"> * @param {number[][]} grid
+</span><span class="cm"> * @return {number}
+</span><span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">orangesRotting</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">grid</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">queue</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">rot</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">grid</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">grid</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">]);</span>
+                <span class="nx">total</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span><span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">grid</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">total</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">total</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">queue</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">rot</span> <span class="o">&lt;</span> <span class="nx">total</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">queue</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="nx">rot</span> <span class="o">+=</span> <span class="nx">size</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">rot</span> <span class="o">===</span> <span class="nx">total</span><span class="p">)</span> <span class="k">return</span> <span class="nx">count</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">size</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="p">[</span><span class="nx">ti</span><span class="p">,</span> <span class="nx">tj</span><span class="p">]</span> <span class="o">=</span> <span class="nx">queue</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">((</span><span class="nx">ti</span> <span class="o">&lt;</span> <span class="nx">grid</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">grid</span><span class="p">[</span><span class="nx">ti</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="nx">tj</span><span class="p">]</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">grid</span><span class="p">[</span><span class="nx">ti</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="nx">tj</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+                <span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">ti</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">tj</span><span class="p">])</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ti</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">grid</span><span class="p">[</span><span class="nx">ti</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="nx">tj</span><span class="p">]</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">grid</span><span class="p">[</span><span class="nx">ti</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="nx">tj</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+                <span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">ti</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">tj</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">((</span><span class="nx">tj</span> <span class="o">&lt;</span> <span class="nx">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">grid</span><span class="p">[</span><span class="nx">ti</span><span class="p">][</span><span class="nx">tj</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">grid</span><span class="p">[</span><span class="nx">ti</span><span class="p">][</span><span class="nx">tj</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+                <span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">ti</span><span class="p">,</span> <span class="nx">tj</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tj</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">grid</span><span class="p">[</span><span class="nx">ti</span><span class="p">][</span><span class="nx">tj</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">grid</span><span class="p">[</span><span class="nx">ti</span><span class="p">][</span><span class="nx">tj</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+                <span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">ti</span><span class="p">,</span> <span class="nx">tj</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span>  <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

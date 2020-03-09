@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Leet code 340. 至多包含 k 个不同字符的最长子串 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'LeetCode 340. 至多包含 K 个不同字符的最长子串' />
+<meta property = 'og:description' content = '340. 至多包含 K 个不同字符的最长子串 Difficulty: 困难
+给定一个字符串** _s_** ，找出 **至多 **包含 _k_ 个不同字符的最长子串 **_T_**。
+示例 1:
+1 2 3  输入: s = &#34;eceba&#34;, k = 2 输出: 3 解释: 则 T  …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/leetcode340/' />
+  
+  
+    
+  
+  <meta property = 'og:image' content = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/jay-_aKgzvKD5lo-unsplash.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://goyth.cn/post/leetcode340/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>06. March 2020</p>
+      <h1 class = 'post_title'>LeetCode 340. 至多包含 K 个不同字符的最长子串</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          
+            
+          
+          <img src = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/jay-_aKgzvKD5lo-unsplash.jpg' alt = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/jay-_aKgzvKD5lo-unsplash.jpg' class = 'post_thumbnail'>
+        
+          <h3 id="340-至多包含-k-个不同字符的最长子串httpsleetcode-cncomproblemslongest-substring-with-at-most-k-distinct-characters"><a href="https://leetcode-cn.com/problems/longest-substring-with-at-most-k-distinct-characters/">340. 至多包含 K 个不同字符的最长子串</a></h3>
+<p>Difficulty: <strong>困难</strong></p>
+<p>给定一个字符串** _s_** ，找出 **至多 **包含 _k_ 个不同字符的最长子串 **_T_**。</p>
+<p><strong>示例 1:</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入: s = &#34;eceba&#34;, k = 2
+输出: 3
+解释: 则 T 为 &#34;ece&#34;，所以长度为 3。
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例 2:</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入: s = &#34;aa&#34;, k = 1
+输出: 2
+解释: 则 T 为 &#34;aa&#34;，所以长度为 2。
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="solution">Solution</h4>
+<h5 id="解题思路">解题思路</h5>
+<ol>
+<li>采用双指针法，用两个指针(l, r)分别记录窗口的左右边界</li>
+<li>用 <code>map</code> 来存储字符状态，以字符为 <code>key</code>，字符出现的次数为 <code>value</code></li>
+<li>开始遍历字符串 <code>s</code>，并将字符存入 <code>map</code> 中，如果 <code>map</code> 的键值个数等于 <code>k</code>，则说明找到了一个符合要求的子串，子串的左右边界就是 <code>l</code> 和 <code>r</code></li>
+<li>然后将左边界的值移出窗口，并将左边界 <code>l++</code>，再移动右边界 <code>r++</code>，直到找到下一个符合要求的子串</li>
+<li>记录子串的长度，找出所有符合要求的最长子串，并返回该长度</li>
+</ol>
+<h5 id="代码">代码</h5>
+<p>Language: <strong>JavaScript</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">​</span><span class="cm">/**
+</span><span class="cm"> * @param {string} s
+</span><span class="cm"> * @param {number} k
+</span><span class="cm"> * @return {number}
+</span><span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">lengthOfLongestSubstringKDistinct</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nb">window</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">r</span> <span class="o">&lt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">c1</span> <span class="o">=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">r</span><span class="p">];</span>
+        <span class="nb">window</span><span class="p">[</span><span class="nx">c1</span><span class="p">]</span> <span class="o">?</span> <span class="nb">window</span><span class="p">[</span><span class="nx">c1</span><span class="p">]</span><span class="o">++</span> <span class="o">:</span> <span class="nb">window</span><span class="p">[</span><span class="nx">c1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="nx">r</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">c2</span> <span class="o">=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">l</span><span class="p">];</span>
+            <span class="nb">window</span><span class="p">[</span><span class="nx">c2</span><span class="p">]</span><span class="o">--</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">[</span><span class="nx">c2</span><span class="p">]</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">delete</span> <span class="nb">window</span><span class="p">[</span><span class="nx">c2</span><span class="p">];</span>
+            <span class="nx">l</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">ans</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">ans</span><span class="p">,</span> <span class="nx">r</span> <span class="o">-</span> <span class="nx">l</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">ans</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

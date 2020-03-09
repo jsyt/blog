@@ -12,13 +12,76 @@
     
     
     <item>
-      <title>Creating a New Theme</title>
-      <link>https://goyth.cn/post/creating-a-new-theme/</link>
-      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <title>LeetCode 76. 最小覆盖子串</title>
+      <link>https://goyth.cn/post/leetcode76/</link>
+      <pubDate>Mon, 09 Mar 2020 09:53:57 +0800</pubDate>
       
-      <guid>https://goyth.cn/post/creating-a-new-theme/</guid>
-      <description>Introduction This tutorial will show you how to create a simple theme in Hugo. I assume that you are familiar with HTML, the bash command line, and that you are comfortable using Markdown to format content. I&amp;rsquo;ll explain how Hugo uses templates and how you can organize your templates to create a theme. I won&amp;rsquo;t cover using CSS to style your theme.
-We&amp;rsquo;ll start with creating a new site with a very basic template.</description>
+      <guid>https://goyth.cn/post/leetcode76/</guid>
+      <description>76. 最小覆盖子串 Difficulty: 困难
+给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字母的最小子串。
+示例：
+1 2  输入: S = &amp;#34;ADOBECODEBANC&amp;#34;, T = &amp;#34;ABC&amp;#34; 输出: &amp;#34;BANC&amp;#34;   说明：
+ 如果 S 中不存这样的子串，则返回空字符串 &amp;quot;&amp;quot;。 如果 S 中存在这样的子串，我们保证它是唯一的答案。  解题思路  要送S字符串中找出包含 T 所有字母的最小子串，那么首先就得记录T中有哪些字符，然后再去遍历 S，从S中寻找包含 T 所有字母的子串 这里我们可以先用一个map，needs来记录T中的字符，以及字符的数量 然后维护一个窗口，用索引l和r来表示这个窗口的左右边界，刚开始窗口的大小为0，即l = 0、r = 0 然后开始遍历S，从窗口的右侧依次放入元素，也用一个map， windows来记录S中的字符及其字符的数量 如果windows[c1] === needs[c1]，则说明窗口中有一个字符的数量与T中相等，则将计数器count++ 如果count等于needs中的key的数量和，则说明窗口中有T中所有的字符串，此时窗口所包含的子串就是一个包含 T 所有字母的子串 由于答案是要寻找最小的字串，所以可以记录下符合要求的子串的起始位置以及其长度，起始位置就是l，长度为r - l 找到符合要求的子串后，就开始从窗口的左侧移除字符，直到该子串不符合要求，根据将要移除的字符c，判断windows[c] === needs[c]，如果相等则要将则将计数器count--，然后移除该字符windows[c]--，最后将左边界索引l++ 重复上面的逻辑找出所有可能的子串，比较每一个子串的长度，最后返回最小的子串  Solution Language: JavaScript
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24  ​/** * @param {string} s * @param {string} t * @return {string} */ var minWindow = function(s, t) { let windows = {}, needs = {}, l = 0, r = 0, count = 0, start = -1, minLen = Infinity; [.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 727. 最小窗口子序列</title>
+      <link>https://goyth.cn/post/leetcode727/</link>
+      <pubDate>Sun, 08 Mar 2020 17:33:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/leetcode727/</guid>
+      <description>727. 最小窗口子序列 Difficulty: 困难
+给定字符串 S and T，找出 S 中最短的（连续）子串 W ，使得 T 是 W 的 子序列 。
+如果 S 中没有窗口可以包含 T 中的所有字符，返回空字符串 &amp;quot;&amp;quot;。如果有不止一个最短长度的窗口，返回开始位置最靠左的那个。
+示例 1：
+1 2 3 4 5 6  输入： S = &amp;#34;abcdebdde&amp;#34;, T = &amp;#34;bde&amp;#34; 输出：&amp;#34;bcde&amp;#34; 解释： &amp;#34;bcde&amp;#34; 是答案，因为它在相同长度的字符串 &amp;#34;bdde&amp;#34; 出现之前。 &amp;#34;deb&amp;#34; 不是一个更短的答案，因为在窗口中必须按顺序出现 T 中的元素。   注：
+ 所有输入的字符串都只包含小写字母。All the strings in the input will only contain lowercase letters. S 长度的范围为 [1, 20000]。 T 长度的范围为 [1, 100]。  解题思路  同时遍历 S 和 T，如果 S[i] === T[j]，那么就 ++i 和 ++j，否则就只 ++i 如果 j === T.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 632. 最小区间</title>
+      <link>https://goyth.cn/post/leetcode632/</link>
+      <pubDate>Sat, 07 Mar 2020 10:21:01 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/leetcode632/</guid>
+      <description>632. 最小区间 Difficulty: 困难
+你有 k 个升序排列的整数数组。找到一个最小区间，使得 k 个列表中的每个列表至少有一个数包含在其中。
+我们定义如果 b-a &amp;lt; d-c 或者在 b-a == d-c 时 a &amp;lt; c，则区间 [a,b] 比 [c,d] 小。
+示例 1:
+1 2 3 4 5 6  输入:[[4,10,15,24,26], [0,9,12,20], [5,18,22,30]] 输出: [20,24] 解释: 列表 1：[4, 10, 15, 24, 26]，24 在区间 [20,24] 中。 列表 2：[0, 9, 12, 20]，20 在区间 [20,24] 中。 列表 3：[5, 18, 22, 30]，22 在区间 [20,24] 中。   注意:
+ 给定的列表可能包含重复元素，所以在这里升序表示 &amp;gt;= 。 1 &amp;lt;= k &amp;lt;= 3500 -105&amp;lt;= 元素的值 &amp;lt;= 105 对于使用Java的用户，请注意传入类型已修改为List&amp;lt;List&amp;gt;。重置代码模板后可以看到这项改动。  Solution Language: JavaScript</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 340. 至多包含 K 个不同字符的最长子串</title>
+      <link>https://goyth.cn/post/leetcode340/</link>
+      <pubDate>Fri, 06 Mar 2020 02:18:30 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/leetcode340/</guid>
+      <description>340. 至多包含 K 个不同字符的最长子串 Difficulty: 困难
+给定一个字符串** _s_** ，找出 **至多 **包含 _k_ 个不同字符的最长子串 **_T_**。
+示例 1:
+1 2 3  输入: s = &amp;#34;eceba&amp;#34;, k = 2 输出: 3 解释: 则 T 为 &amp;#34;ece&amp;#34;，所以长度为 3。   示例 2:
+1 2 3  输入: s = &amp;#34;aa&amp;#34;, k = 1 输出: 2 解释: 则 T 为 &amp;#34;aa&amp;#34;，所以长度为 2。   Solution 解题思路  采用双指针法，用两个指针(l, r)分别记录窗口的左右边界 用 map 来存储字符状态，以字符为 key，字符出现的次数为 value 开始遍历字符串 s，并将字符存入 map 中，如果 map 的键值个数等于 k，则说明找到了一个符合要求的子串，子串的左右边界就是 l 和 r 然后将左边界的值移出窗口，并将左边界 l++，再移动右边界 r++，直到找到下一个符合要求的子串 记录子串的长度，找出所有符合要求的最长子串，并返回该长度  代码 Language: JavaScript</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 994. 腐烂的橘子</title>
+      <link>https://goyth.cn/post/leetcode994/</link>
+      <pubDate>Thu, 05 Mar 2020 00:56:39 +0800</pubDate>
+      
+      <guid>https://goyth.cn/post/leetcode994/</guid>
+      <description>994. 腐烂的橘子 Difficulty: 简单
+在给定的网格中，每个单元格可以有以下三个值之一：
+ 值 0 代表空单元格； 值 1 代表新鲜橘子； 值 2 代表腐烂的橘子。  每分钟，任何与腐烂的橘子（在 4 个正方向上）相邻的新鲜橘子都会腐烂。
+返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 -1。
+示例 1：
+
+1 2  输入：[[2,1,1],[1,1,0],[0,1,1]] 输出：4   示例 2：
+1 2 3  输入：[[2,1,1],[0,1,1],[1,0,1]] 输出：-1 解释：左下角的橘子（第 2 行， 第 0 列）永远不会腐烂，因为腐烂只会发生在 4 个正向上。   示例 3：
+1 2 3  输入：[[0,2]] 输出：0 解释：因为 0 分钟时已经没有新鲜橘子了，所以答案就是 0 。   提示：
+ 1 &amp;lt;= grid.length &amp;lt;= 10 1 &amp;lt;= grid[0].</description>
     </item>
     
     <item>
@@ -29,50 +92,6 @@ We&amp;rsquo;ll start with creating a new site with a very basic template.</desc
       <guid>https://goyth.cn/post/leetcode30/</guid>
       <description>给定一个字符串 &lt;strong&gt;s&lt;/strong&gt; 和一些长度相同的单词 &lt;strong&gt;words&lt;/strong&gt;找出 &lt;strong&gt;s&lt;/strong&gt; 中恰好可以由 &lt;strong&gt;words&lt;/strong&gt; 中所有单词串联形成的子串的起始位置。
 注意子串要与 &lt;strong&gt;words&lt;/strong&gt; 中的单词完全匹配，中间不能有其他字符，但不需要考虑 &lt;strong&gt;words&lt;/strong&gt;中单词串联的顺序。</description>
-    </item>
-    
-    <item>
-      <title>Migrate to Hugo from Jekyll</title>
-      <link>https://goyth.cn/post/migrate-from-jekyll/</link>
-      <pubDate>Mon, 10 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://goyth.cn/post/migrate-from-jekyll/</guid>
-      <description>Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
-▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png  should become
-▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png  Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
-    </item>
-    
-    <item>
-      <title>Emoji Support</title>
-      <link>https://goyth.cn/post/emoji-support/</link>
-      <pubDate>Wed, 05 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://goyth.cn/post/emoji-support/</guid>
-      <description>&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>(Hu)go Template Primer</title>
-      <link>https://goyth.cn/post/goisforlovers/</link>
-      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://goyth.cn/post/goisforlovers/</guid>
-      <description>Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
-This document is a brief primer on using Go templates.</description>
-    </item>
-    
-    <item>
-      <title>Getting Started with Hugo</title>
-      <link>https://goyth.cn/post/hugoisforlovers/</link>
-      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://goyth.cn/post/hugoisforlovers/</guid>
-      <description>Step 1. Install Hugo Go to Hugo releases and download the appropriate version for your OS and architecture.
-Save it somewhere specific as we will be using it in the next step.
-More complete instructions are available at Install Hugo
-Step 2. Build the Docs Hugo has its own example site which happens to also be the documentation site you are reading right now.
-Follow the following steps:
- Clone the Hugo repository Go into the repo Run hugo in server mode and build the docs Open your browser to http://localhost:1313  Corresponding pseudo commands:</description>
     </item>
     
     <item>
@@ -113,6 +132,26 @@ Follow the following steps:
       
       <guid>https://goyth.cn/post/sparouter/</guid>
       <description>什么是单页面应用 ? 单页面应用（SPA）即single page application，目前在前后端分离的项目中，一般都是采用 SPA 的模式，整个应用只有一个 html 页面。后端接口只负责提供数据，而页面路由则需要前端自己完成。单页面应用的优势：1. 减少 http 请求数，降低服务器压力；2. 有利于前后端分离；3. 页面流畅度更高，用户体验更加友好。</description>
+    </item>
+    
+    <item>
+      <title>Creating a New Theme</title>
+      <link>https://goyth.cn/post/creating-a-new-theme/</link>
+      <pubDate>Mon, 11 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://goyth.cn/post/creating-a-new-theme/</guid>
+      <description>Introduction This tutorial will show you how to create a simple theme in Hugo. I assume that you are familiar with HTML, the bash command line, and that you are comfortable using Markdown to format content. I&amp;rsquo;ll explain how Hugo uses templates and how you can organize your templates to create a theme. I won&amp;rsquo;t cover using CSS to style your theme.
+We&amp;rsquo;ll start with creating a new site with a very basic template.</description>
+    </item>
+    
+    <item>
+      <title>(Hu)go Template Primer</title>
+      <link>https://goyth.cn/post/goisforlovers/</link>
+      <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://goyth.cn/post/goisforlovers/</guid>
+      <description>Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
+This document is a brief primer on using Go templates.</description>
     </item>
     
     <item>
@@ -200,6 +239,15 @@ babel-register 它在底层改写了node的require方法，引入babel-register�
       
       <guid>https://goyth.cn/post/mongodb/</guid>
       <description>MongoDB是一个基于分布式文件存储的开源数据库系统。在高负载的情况下，添加更多的节点，可以保证服务器性能。 MongoDB 旨在为WEB应用提供可扩展的高性能数据存储解决方案。 MongoDB 将数据存储为一个文档，数据结构由键值(key=&amp;gt;value)对组成。MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。</description>
+    </item>
+    
+    <item>
+      <title>Emoji Support</title>
+      <link>https://goyth.cn/post/emoji-support/</link>
+      <pubDate>Sun, 05 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://goyth.cn/post/emoji-support/</guid>
+      <description>&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -387,6 +435,17 @@ DOM 与标记之间几乎是一一对应的关系。比如下面这段标记：
     </item>
     
     <item>
+      <title>Migrate to Hugo from Jekyll</title>
+      <link>https://goyth.cn/post/migrate-from-jekyll/</link>
+      <pubDate>Thu, 10 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://goyth.cn/post/migrate-from-jekyll/</guid>
+      <description>Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
+▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png  should become
+▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png  Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
+    </item>
+    
+    <item>
       <title>JavaScript 原型链与继承</title>
       <link>https://goyth.cn/post/prototypeandextend/</link>
       <pubDate>Mon, 23 Apr 2018 21:53:54 +0800</pubDate>
@@ -396,6 +455,20 @@ DOM 与标记之间几乎是一一对应的关系。比如下面这段标记：
 1 2  function Person(){ }   当我们用构造函数创建一个实例时，也会为这个实例创建一个 __proto__ 属性，这个__proto__ 属性是一个指针指向构造函数的原型对象
 1 2 3 4  let person = new Person(); person.__proto__ === Person.prototype // true let person1 = new Person(); person1.__proto__ === Person.prototype // true   由于同一个构造函数创建的所有实例对象的__proto__ 属性都指向这个构造函数的原型对象，因此所有的实例对象都会共享构造函数的原型对象上所有的属性和方法，一旦原型对象上的属性或方法发生改变，所有的实例对象都会受到影响。
 1 2 3 4 5 6 7 8 9 10 11  function Person(){ } Person.prototype.name = &amp;#34;Luke&amp;#34;; Person.prototype.age = 18; let person1 = new Person(); let person2 = new Person(); alert(person1.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started with Hugo</title>
+      <link>https://goyth.cn/post/hugoisforlovers/</link>
+      <pubDate>Mon, 02 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://goyth.cn/post/hugoisforlovers/</guid>
+      <description>Step 1. Install Hugo Go to Hugo releases and download the appropriate version for your OS and architecture.
+Save it somewhere specific as we will be using it in the next step.
+More complete instructions are available at Install Hugo
+Step 2. Build the Docs Hugo has its own example site which happens to also be the documentation site you are reading right now.
+Follow the following steps:
+ Clone the Hugo repository Go into the repo Run hugo in server mode and build the docs Open your browser to http://localhost:1313  Corresponding pseudo commands:</description>
     </item>
     
     <item>

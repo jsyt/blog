@@ -6,7 +6,7 @@
     <description>Recent content in Categories on luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2019, Weru and the Hugo Authors; all rights reserved.</copyright>
-    <lastBuildDate>Wed, 26 Feb 2020 21:53:54 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 09 Mar 2020 09:53:57 +0800</lastBuildDate>
     
 	<atom:link href="https://goyth.cn/categories/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,27 +14,9 @@
     <item>
       <title>Algorithm</title>
       <link>https://goyth.cn/categories/algorithm/</link>
-      <pubDate>Wed, 26 Feb 2020 21:53:54 +0800</pubDate>
+      <pubDate>Mon, 09 Mar 2020 09:53:57 +0800</pubDate>
       
       <guid>https://goyth.cn/categories/algorithm/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Development</title>
-      <link>https://goyth.cn/categories/development/</link>
-      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://goyth.cn/categories/development/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>golang</title>
-      <link>https://goyth.cn/categories/golang/</link>
-      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://goyth.cn/categories/golang/</guid>
       <description></description>
     </item>
     
@@ -48,11 +30,29 @@
     </item>
     
     <item>
+      <title>Golang</title>
+      <link>https://goyth.cn/categories/golang/</link>
+      <pubDate>Sat, 08 Jun 2019 21:53:54 +0800</pubDate>
+      
+      <guid>https://goyth.cn/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>JavaScript</title>
       <link>https://goyth.cn/categories/javascript/</link>
       <pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate>
       
       <guid>https://goyth.cn/categories/javascript/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hugo</title>
+      <link>https://goyth.cn/categories/hugo/</link>
+      <pubDate>Mon, 11 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://goyth.cn/categories/hugo/</guid>
       <description></description>
     </item>
     

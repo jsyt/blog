@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Leet code 632. 最小区间 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'LeetCode 632. 最小区间' />
+<meta property = 'og:description' content = '632. 最小区间 Difficulty: 困难
+你有 k 个升序排列的整数数组。找到一个最小区间，使得 k 个列表中的每个列表至少有一个数包含在其中。
+我们定义如果 b-a &lt; d-c 或者在 b-a == d-c 时 a &lt; c，则区间 [a,b] 比 [c,d] 小。
+示例 1: …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/leetcode632/' />
+  
+  
+    
+  
+  <meta property = 'og:image' content = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/best-portland-landscape-photographers-1080x600.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://goyth.cn/post/leetcode632/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>07. March 2020</p>
+      <h1 class = 'post_title'>LeetCode 632. 最小区间</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          
+            
+          
+          <img src = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/best-portland-landscape-photographers-1080x600.jpg' alt = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/best-portland-landscape-photographers-1080x600.jpg' class = 'post_thumbnail'>
+        
+          <h3 id="632-最小区间httpsleetcode-cncomproblemssmallest-range-covering-elements-from-k-lists"><a href="https://leetcode-cn.com/problems/smallest-range-covering-elements-from-k-lists/">632. 最小区间</a></h3>
+<p>Difficulty: <strong>困难</strong></p>
+<p>你有 <code>k</code> 个升序排列的整数数组。找到一个<strong>最小</strong>区间，使得 <code>k</code> 个列表中的每个列表至少有一个数包含在其中。</p>
+<p>我们定义如果 <code>b-a &lt; d-c</code> 或者在 <code>b-a == d-c</code> 时 <code>a &lt; c</code>，则区间 [a,b] 比 [c,d] 小。</p>
+<p><strong>示例 1:</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入:[[4,10,15,24,26], [0,9,12,20], [5,18,22,30]]
+输出: [20,24]
+解释:
+列表 1：[4, 10, 15, 24, 26]，24 在区间 [20,24] 中。
+列表 2：[0, 9, 12, 20]，20 在区间 [20,24] 中。
+列表 3：[5, 18, 22, 30]，22 在区间 [20,24] 中。
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>注意:</strong></p>
+<ol>
+<li>给定的列表可能包含重复元素，所以在这里升序表示 &gt;= 。</li>
+<li>1 &lt;= <code>k</code> &lt;= 3500</li>
+<li>-10<!-- raw HTML omitted -->5<!-- raw HTML omitted --> &lt;= <code>元素的值</code> &lt;= 10<!-- raw HTML omitted -->5<!-- raw HTML omitted --></li>
+<li><strong>对于使用Java的用户，请注意传入类型已修改为List&lt;List<!-- raw HTML omitted -->&gt;。重置代码模板后可以看到这项改动。</strong></li>
+</ol>
+<h3 id="solution">Solution</h3>
+<p>Language: <strong>JavaScript</strong></p>
+<h4 id="解题思路">解题思路</h4>
+<p><strong>主要思路</strong>
+要找到一个最小区间，使得 k 个列表中的每个列表至少有一个数包含在其中，要找最小区间那么就先排序，然后再去遍历元素，要使得 k 个列表中的每个列表至少有一个数包含在其中，那么在排序之前得给每一个元素打上一个标签，标记其属于哪个列表，然后维护一个滑动窗口来遍历所有元素。</p>
+<p><strong>详细步骤</strong></p>
+<ol>
+<li>先循环列表 <code>nums</code>，将列表中的每个数字都映射成一个数组，数组的第一项是其值，第二项是该数字所在<code>nums</code> 列表中的子列表的索引，用来标记其属于哪个子列表，并将所有的映射后的数组放入一个新的数组<code>objNums</code>中</li>
+<li>对 <code>objNums</code> 中所有的数据按照其子数组中第一项数字的大小进行排序</li>
+<li>维护一个滑动窗口，开始遍历 <code>objNums</code>，从窗口右边放入元素，如果是第一次放入一个子列表的值，就将计数器 <code>count++</code></li>
+<li>如果<code>count</code> == 所有子列表的数量和，那就说明每个列表至少有一个数包含在窗口里面，那么窗口的左右边界的值，就是一个符合要求的解</li>
+<li>但是题目要求最小的区间，所以我们可以记录下区间的左边界值和区间的差值，比较每一个符合要求的解的差值，并保留差值较小的解</li>
+<li>找到符合要求的区间后，我们从窗口的左边删除一个该类型元素，如果该类型的元素全部删除完，就要更新计数器<code>count--</code>，然后再从窗口右边加入新元素。</li>
+<li>直到循环遍历结束，返回符合要求的最小区间解</li>
+</ol>
+<h4 id="代码">代码</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm"> * @param {number[][]} nums
+</span><span class="cm"> * @return {number[]}
+</span><span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">smallestRange</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">numsLen</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">needs</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">start</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ansLen</span> <span class="o">=</span> <span class="kc">Infinity</span><span class="p">;</span>
+    <span class="cm">/*****  合并数组方法一 start *****/</span>
+    <span class="c1">// let objNums = nums.reduce((accumulator, currentVal, idx) =&gt; {
+</span><span class="c1"></span>    <span class="c1">//     return accumulator.concat(currentVal.map(n =&gt; [n, idx]))
+</span><span class="c1"></span>    <span class="c1">// }, [])
+</span><span class="c1"></span>    <span class="cm">/*****  合并数组方法一 end *****/</span>
+
+    <span class="cm">/*****  合并数组方法二 start *****/</span>
+    <span class="kd">let</span> <span class="nx">objNums</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">objNums</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">])</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="cm">/*****  合并数组方法二 end *****/</span>
+
+    <span class="cm">/*****  合并数组方法三 start *****/</span>
+    <span class="c1">// let objNums = nums.reduce((accumulator, currentVal, idx) =&gt; {
+</span><span class="c1"></span>    <span class="c1">//     let t = currentVal.map(n =&gt; [n, idx])
+</span><span class="c1"></span>    <span class="c1">//     accumulator.push(...t)
+</span><span class="c1"></span>    <span class="c1">//     return accumulator;
+</span><span class="c1"></span>    <span class="c1">// }, [])
+</span><span class="c1"></span>    <span class="cm">/*****  合并数组方法三 end *****/</span>
+    <span class="nx">objNums</span><span class="p">.</span><span class="nx">sort</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">r</span> <span class="o">&lt;</span> <span class="nx">objNums</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">v1</span> <span class="o">=</span> <span class="nx">objNums</span><span class="p">[</span><span class="nx">r</span><span class="p">];</span>
+        <span class="nx">needs</span><span class="p">[</span><span class="nx">v1</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">?</span> <span class="nx">needs</span><span class="p">[</span><span class="nx">v1</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">++</span> <span class="o">:</span> <span class="p">(</span><span class="nx">needs</span><span class="p">[</span><span class="nx">v1</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">count</span> <span class="o">===</span> <span class="nx">numsLen</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">objNums</span><span class="p">[</span><span class="nx">r</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">objNums</span><span class="p">[</span><span class="nx">l</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nx">ansLen</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ansLen</span> <span class="o">=</span> <span class="nx">objNums</span><span class="p">[</span><span class="nx">r</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">objNums</span><span class="p">[</span><span class="nx">l</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
+                <span class="nx">start</span> <span class="o">=</span> <span class="nx">objNums</span><span class="p">[</span><span class="nx">l</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">--</span><span class="nx">needs</span><span class="p">[</span><span class="nx">objNums</span><span class="p">[</span><span class="nx">l</span><span class="o">++</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">count</span><span class="o">--</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">r</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">start</span><span class="p">,</span> <span class="nx">start</span> <span class="o">+</span> <span class="nx">ansLen</span><span class="p">];</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>时间复杂度</strong>：<code>O(nlog(n))</code>，<code>n</code> 为所有元素的数量和
+排序时间复杂度是<code>O(nlog(n))</code>，滑动窗口循环遍历元素的时间复杂度为<code>O(n)</code>，所以总的时间复杂度是<code>O(nlog(n))</code>
+<strong>空间复杂度</strong>：<code>O(n)</code>，<code>n</code> 为所有元素的数量和</p>
+<h4 id="性能优化">性能优化</h4>
+<p>在我上面的解法中，对于合并数组有三种方式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js">    <span class="cm">/*****  合并数组方法一 start *****/</span>
+    <span class="kd">let</span> <span class="nx">objNums</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">accumulator</span><span class="p">,</span> <span class="nx">currentVal</span><span class="p">,</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">accumulator</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">currentVal</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">n</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">n</span><span class="p">,</span> <span class="nx">idx</span><span class="p">]))</span>
+    <span class="p">},</span> <span class="p">[])</span>
+    <span class="cm">/*****  合并数组方法一 end *****/</span>
+
+    <span class="cm">/*****  合并数组方法二 start *****/</span>
+    <span class="kd">let</span> <span class="nx">objNums</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">objNums</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">])</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="cm">/*****  合并数组方法二 end *****/</span>
+
+    <span class="cm">/*****  合并数组方法三 start *****/</span>
+    <span class="kd">let</span> <span class="nx">objNums</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">accumulator</span><span class="p">,</span> <span class="nx">currentVal</span><span class="p">,</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">currentVal</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">n</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">n</span><span class="p">,</span> <span class="nx">idx</span><span class="p">])</span>
+        <span class="nx">accumulator</span><span class="p">.</span><span class="nx">push</span><span class="p">(...</span><span class="nx">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nx">accumulator</span><span class="p">;</span>
+    <span class="p">},</span> <span class="p">[])</span>
+    <span class="cm">/*****  合并数组方法三 end *****/</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>一个是使用<code>reduce</code> + <code>concat</code>，一种是直接使用<code>for</code>循环，还有一种是使用 <code>reduce</code> + <code>push</code>，但是最后发现使用<code>concat</code>的执行用时与不使用<code>concat</code>差距非常大</p>
+<p><strong>方法一：</strong>
+<img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/leetcode632ff1.png" alt="方法一"></p>
+<p><strong>方法二：</strong>
+<img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/leetcode632ff2.png" alt="方法二"></p>
+<p><strong>方法三：</strong>
+<img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/leetcode632ff3.png" alt="方法三"></p>
+<h4 id="总结">总结</h4>
+<p><code>concat</code> 的原理是申请一个新数组，然后将<code>concat</code>的两个数组都拷贝这个新数组中，这可能是其性能差的主要原因，还有个原因可能是在循环中频繁创建新对象，会多次引发 <code>js</code> 的垃圾回收机制的运行，这个也比较耗时。所以尽量少使用 <code>concat</code>，特别是在循环或迭代中最好不要使用<code>concat</code>。</p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Leet code 76. 最小覆盖子串 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'LeetCode 76. 最小覆盖子串' />
+<meta property = 'og:description' content = '76. 最小覆盖子串 Difficulty: 困难
+给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字母的最小子串。
+示例：
+1 2  输入: S = &#34;ADOBECODEBANC&#34;, T = &#34;ABC&#34; 输出: …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/leetcode76/' />
+  
+  
+    
+  
+  <meta property = 'og:image' content = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/md-al-amin-nowshad-akjK1AarY8U-unsplash.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://goyth.cn/post/leetcode76/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>09. March 2020</p>
+      <h1 class = 'post_title'>LeetCode 76. 最小覆盖子串</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          
+            
+          
+          <img src = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/md-al-amin-nowshad-akjK1AarY8U-unsplash.jpg' alt = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/md-al-amin-nowshad-akjK1AarY8U-unsplash.jpg' class = 'post_thumbnail'>
+        
+          <h3 id="76-最小覆盖子串httpsleetcode-cncomproblemsminimum-window-substring"><a href="https://leetcode-cn.com/problems/minimum-window-substring/">76. 最小覆盖子串</a></h3>
+<p>Difficulty: <strong>困难</strong></p>
+<p>给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字母的最小子串。</p>
+<p><strong>示例：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入: S = &#34;ADOBECODEBANC&#34;, T = &#34;ABC&#34;
+输出: &#34;BANC&#34;
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>说明：</strong></p>
+<ul>
+<li>如果 S 中不存这样的子串，则返回空字符串 <code>&quot;&quot;</code>。</li>
+<li>如果 S 中存在这样的子串，我们保证它是唯一的答案。</li>
+</ul>
+<h4 id="解题思路">解题思路</h4>
+<ol>
+<li>要送<code>S</code>字符串中找出包含 <code>T</code> 所有字母的最小子串，那么首先就得记录<code>T</code>中有哪些字符，然后再去遍历 <code>S</code>，从<code>S</code>中寻找包含 <code>T</code> 所有字母的子串</li>
+<li>这里我们可以先用一个<code>map</code>，<code>needs</code>来记录<code>T</code>中的字符，以及字符的数量</li>
+<li>然后维护一个窗口，用索引<code>l</code>和<code>r</code>来表示这个窗口的左右边界，刚开始窗口的大小为0，即<code>l = 0</code>、<code>r = 0</code></li>
+<li>然后开始遍历<code>S</code>，从窗口的右侧依次放入元素，也用一个<code>map</code>，<code> windows</code>来记录<code>S</code>中的字符及其字符的数量</li>
+<li>如果<code>windows[c1] === needs[c1]</code>，则说明窗口中有一个字符的数量与<code>T</code>中相等，则将计数器<code>count++</code></li>
+<li>如果<code>count</code>等于<code>needs</code>中的<code>key</code>的数量和，则说明窗口中有<code>T</code>中所有的字符串，此时窗口所包含的子串就是一个包含 <code>T</code> 所有字母的子串</li>
+<li>由于答案是要寻找最小的字串，所以可以记录下符合要求的子串的起始位置以及其长度，起始位置就是<code>l</code>，长度为<code>r - l</code></li>
+<li>找到符合要求的子串后，就开始从窗口的左侧移除字符，直到该子串不符合要求，根据将要移除的字符<code>c</code>，判断<code>windows[c] === needs[c]</code>，如果相等则要将则将计数器<code>count--</code>，然后移除该字符<code>windows[c]--</code>，最后将左边界索引<code>l++</code></li>
+<li>重复上面的逻辑找出所有可能的子串，比较每一个子串的长度，最后返回最小的子串</li>
+</ol>
+<h4 id="solution">Solution</h4>
+<p>Language: <strong>JavaScript</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">​</span><span class="cm">/**
+</span><span class="cm"> * @param {string} s
+</span><span class="cm"> * @param {string} t
+</span><span class="cm"> * @return {string}
+</span><span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">minWindow</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">windows</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">needs</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">start</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">minLen</span> <span class="o">=</span> <span class="kc">Infinity</span><span class="p">;</span>
+    <span class="p">[...</span><span class="nx">t</span><span class="p">].</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">c</span> <span class="p">=&gt;</span> <span class="nx">needs</span><span class="p">[</span><span class="nx">c</span><span class="p">]</span> <span class="o">?</span> <span class="nx">needs</span><span class="p">[</span><span class="nx">c</span><span class="p">]</span><span class="o">++</span> <span class="o">:</span> <span class="nx">needs</span><span class="p">[</span><span class="nx">c</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nx">keyLen</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">needs</span><span class="p">).</span><span class="nx">length</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">r</span> <span class="o">&lt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">c1</span> <span class="o">=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">r</span><span class="o">++</span><span class="p">];</span>
+        <span class="nx">windows</span><span class="p">[</span><span class="nx">c1</span><span class="p">]</span> <span class="o">?</span> <span class="nx">windows</span><span class="p">[</span><span class="nx">c1</span><span class="p">]</span><span class="o">++</span> <span class="o">:</span> <span class="nx">windows</span><span class="p">[</span><span class="nx">c1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">windows</span><span class="p">[</span><span class="nx">c1</span><span class="p">]</span> <span class="o">===</span> <span class="nx">needs</span><span class="p">[</span><span class="nx">c1</span><span class="p">])</span> <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">while</span><span class="p">(</span><span class="nx">count</span> <span class="o">===</span> <span class="nx">keyLen</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">r</span> <span class="o">-</span> <span class="nx">l</span> <span class="o">&lt;</span> <span class="nx">minLen</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">start</span> <span class="o">=</span> <span class="nx">l</span><span class="p">;</span>
+                <span class="nx">minLen</span> <span class="o">=</span> <span class="nx">r</span> <span class="o">-</span> <span class="nx">l</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="kd">let</span> <span class="nx">c2</span> <span class="o">=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">l</span><span class="o">++</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">windows</span><span class="p">[</span><span class="nx">c2</span><span class="p">]</span><span class="o">--</span> <span class="o">===</span> <span class="nx">needs</span><span class="p">[</span><span class="nx">c2</span><span class="p">])</span> <span class="nx">count</span><span class="o">--</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">start</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span> <span class="o">?</span> <span class="s2">&#34;&#34;</span> <span class="o">:</span> <span class="nx">s</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">minLen</span><span class="p">)</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Leet code 727. 最小窗口子序列 | luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'LeetCode 727. 最小窗口子序列' />
+<meta property = 'og:description' content = '727. 最小窗口子序列 Difficulty: 困难
+给定字符串 S and T，找出 S 中最短的（连续）子串 W ，使得 T 是 W 的 子序列 。
+如果 S 中没有窗口可以包含 T 中的所有字符，返回空字符串 &quot;&quot;。如果有不止一个最短长度的窗口，返回开始位置最靠左的那个。 …'>
+<meta property = 'og:url' content = 'https://goyth.cn/post/leetcode727/' />
+  
+  
+    
+  
+  <meta property = 'og:image' content = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/michael-milverton-o6a6H1kZCTw-unsplash.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://goyth.cn/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://goyth.cn/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://goyth.cn/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://goyth.cn/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://goyth.cn/post/leetcode727/'>
+  <link rel = 'stylesheet' href = 'https://goyth.cn/css/main.d58bbe06d10754d7b4edab546b23b3999a56f88066c07ba51197c2b267ff7dd6417af0a14d07dd1e2c4afdd53e855c813c09278e2d39f5fd2d19621f3f09afb3.css' integrity = 'sha512-1Yu&#43;BtEHVNe07atUayOzmZpW&#43;IBmwHulEZfCsmf/fdZBevChTQfdHixK/dU&#43;hVyBPAknji059f0tGWIfPwmvsw=='>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://goyth.cn/' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://goyth.cn/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://goyth.cn/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://goyth.cn/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://goyth.cn/' class = 'nav-brand nav_item'>luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>08. March 2020</p>
+      <h1 class = 'post_title'>LeetCode 727. 最小窗口子序列</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          
+            
+          
+          <img src = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/michael-milverton-o6a6H1kZCTw-unsplash.jpg' alt = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/michael-milverton-o6a6H1kZCTw-unsplash.jpg' class = 'post_thumbnail'>
+        
+          <h3 id="727-最小窗口子序列httpsleetcode-cncomproblemsminimum-window-subsequence"><a href="https://leetcode-cn.com/problems/minimum-window-subsequence/">727. 最小窗口子序列</a></h3>
+<p>Difficulty: <strong>困难</strong></p>
+<p>给定字符串 <code>S</code> and <code>T</code>，找出 <code>S</code> 中最短的（连续）<strong>子串</strong> <code>W</code> ，使得 <code>T</code> 是 <code>W</code> 的 <strong>子序列</strong> 。</p>
+<p>如果 <code>S</code> 中没有窗口可以包含 <code>T</code> 中的所有字符，返回空字符串 <code>&quot;&quot;</code>。如果有不止一个最短长度的窗口，返回开始位置最靠左的那个。</p>
+<p><strong>示例 1：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入：
+S = &#34;abcdebdde&#34;, T = &#34;bde&#34;
+输出：&#34;bcde&#34;
+解释：
+&#34;bcde&#34; 是答案，因为它在相同长度的字符串 &#34;bdde&#34; 出现之前。
+&#34;deb&#34; 不是一个更短的答案，因为在窗口中必须按顺序出现 T 中的元素。
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>注：</strong></p>
+<ul>
+<li>所有输入的字符串都只包含小写字母。All the strings in the input will only contain lowercase letters.</li>
+<li><code>S</code> 长度的范围为 <code>[1, 20000]</code>。</li>
+<li><code>T</code> 长度的范围为 <code>[1, 100]</code>。</li>
+</ul>
+<h4 id="解题思路">解题思路</h4>
+<ol>
+<li>同时遍历 <code>S</code> 和 <code>T</code>，如果 <code>S[i] === T[j]</code>，那么就 <code>++i</code> 和 <code>++j</code>，否则就只 <code>++i</code></li>
+<li>如果 <code>j === T.length</code>，则说明已经找到了符合要求的子串，此时符合要求的子串的右边界就是<code>i</code>，由于要找一个最小的区间，所以左边界的值肯定是<code>T</code>的第一个字符，即<code>T[0]</code>，但是如何确定这个<code>T[0]</code> 在<code>S</code>中的位置呢，我们可以从右边界<code>i</code>的位置往左找</li>
+<li>我们从又向左同时遍历 <code>S</code> 和 <code>T</code>，在<code>S</code>中先找出<code>T</code>中第一个字符后面的所有字符，然后继续向左遍历，当找到<code>T</code>中第一个字符时，就停止遍历，此时的位置就当前最小窗口的左边界位置</li>
+<li>记录下这个解的左边界位置，及其窗口的大小，然后从这个解的左边界的下一个位置开始，重复上面的逻辑，继续找下一个符合要求的解</li>
+<li>每当找到一个符合要求的解后，比较其窗口的的大小，保留窗口较小的那个解</li>
+<li>最后根据窗口最小解的左边界及其长度，从<code>S</code>中截取子串并返回</li>
+</ol>
+<h4 id="solution">Solution</h4>
+<p>Language: <strong>JavaScript</strong></p>
+<h5 id="滑动窗口解法">滑动窗口解法</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">​</span><span class="cm">/**
+</span><span class="cm"> * @param {string} S
+</span><span class="cm"> * @param {string} T
+</span><span class="cm"> * @return {string}
+</span><span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">minWindow</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">start</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">minLen</span> <span class="o">=</span> <span class="kc">Infinity</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">S</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">S</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">T</span><span class="p">[</span><span class="nx">j</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">++</span><span class="nx">j</span> <span class="o">===</span> <span class="nx">T</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">let</span> <span class="nx">end</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">while</span> <span class="p">(</span><span class="o">--</span><span class="nx">j</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">while</span> <span class="p">(</span><span class="nx">S</span><span class="p">[</span><span class="nx">i</span><span class="o">--</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">T</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
+                <span class="p">}</span>
+                <span class="nx">i</span><span class="o">++</span><span class="p">,</span> <span class="nx">j</span><span class="o">++</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">end</span> <span class="o">-</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">minLen</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">minLen</span> <span class="o">=</span> <span class="nx">end</span> <span class="o">-</span> <span class="nx">i</span><span class="p">;</span>
+                    <span class="nx">start</span> <span class="o">=</span> <span class="nx">i</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">start</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span> <span class="o">?</span> <span class="s2">&#34;&#34;</span> <span class="o">:</span> <span class="nx">S</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">minLen</span><span class="p">)</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="动态规划解法">动态规划解法</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="cm">/**
+</span><span class="cm"> * @param {string} S
+</span><span class="cm"> * @param {string} T
+</span><span class="cm"> * @return {string}
+</span><span class="cm"> */</span>
+<span class="c1">// dp[i][j] = index 表示T[0:j] 是 S[index: i] 的子串
+</span><span class="c1">// if S[i] === T[j] dp[i][j] = dp[i-1][j-1]
+</span><span class="c1">// else dp[i][j] = dp[i-1][j]
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">minWindow</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">S</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">T</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">minLen</span> <span class="o">=</span> <span class="kc">Infinity</span><span class="p">,</span> <span class="nx">start</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">dp</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">({</span><span class="nx">length</span><span class="o">:</span> <span class="nx">m</span><span class="o">+</span><span class="mi">1</span><span class="p">},</span> <span class="nx">_</span> <span class="p">=&gt;</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="nx">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="nx">dp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+    <span class="nx">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">S</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="nx">T</span><span class="p">[</span><span class="nx">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">dp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="nx">dp</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="nx">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">dp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="nx">dp</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="nx">j</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">dp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">n</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">-</span> <span class="nx">dp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">n</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nx">minLen</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">minLen</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">-</span> <span class="nx">dp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">n</span><span class="p">];</span>
+            <span class="nx">start</span> <span class="o">=</span> <span class="nx">dp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">n</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">start</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="nx">S</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">minLen</span><span class="p">)</span> <span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://goyth.cn/' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;luke&#39;s blog</p>
+  <p>Designed by  <a href = 'https://www.linkedin.com/in/dan-weru-profile/' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'>Weru</a></p>
+</footer>
+
+
+<script src = 'https://goyth.cn/js/index.min.341d29a1c2e2c5816ac7b1aa24689d7569bad1f956398dc4e5d86a8c6e18a91d4bfd722d60bf51e1b8ea40a2b3db9a6e66fc2ca424fa207860fe9c225ec2bff3.js'></script>
+
+  </body>
+</html>
