@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>webSocket on Luke&#39;s blog</title>
-    <link>https://ytop.net/tags/websocket/</link>
+    <link>https://www.goyth.cn/tags/websocket/</link>
     <description>Recent content in webSocket on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2019, Luke and the Hugo Authors; all rights reserved.</copyright>
     <lastBuildDate>Mon, 09 Jul 2018 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="https://ytop.net/tags/websocket/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.goyth.cn/tags/websocket/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>WebSocket知识点梳理</title>
-      <link>https://ytop.net/post/websocket/</link>
+      <link>https://www.goyth.cn/post/websocket/</link>
       <pubDate>Mon, 09 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://ytop.net/post/websocket/</guid>
+      <guid>https://www.goyth.cn/post/websocket/</guid>
       <description>什么是WebSocket WebSocket是一种在单个TCP连接上进行全双工通讯的协议。它与HTTP协一样，同属于应用层协议。
 WebSocket解决了什么问题 WebSocket使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在WebSocket API中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。 简单说就是解决了浏览器和服务器之间双向数据传输的问题。
 HTTP协议可以实现双向数据传输吗 答案肯定是可以的，在HTTP协议中我们通常使用轮询来实现双向通信。 轮询是通过在特定的的时间间隔（如每1秒），由浏览器对服务器发出HTTP请求，然后由服务器返回最新的数据给客户端的浏览器。这种传统的模式带来很明显的缺点，即浏览器需要不断的向服务器发出请求，然而HTTP请求可能包含较长的头部，其中真正有效的数据可能只是很小的一部分，显然这样会浪费很多的带宽等资源。

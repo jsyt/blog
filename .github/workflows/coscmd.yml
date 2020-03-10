@@ -1,0 +1,33 @@
+name: COSCMD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Build
+        run: hugo --minify
+
+      - name: Deploy Tencent Cloud COS
+        uses: arcsinu/actions-coscmd@v1
+        with:
+          args: upload -rs --delete ./public/ / --ignore .git
+          secret_id: ${{ secrets.TX_SECRET_ID }}
+          secret_key: ${{ secrets.TX_SECRET_KEY }}
+          bucket: ${{ secrets.TX_BUCKET }}
+          region: ${{ secrets.TX_REGION }}
