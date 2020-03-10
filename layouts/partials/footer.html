@@ -1,7 +1,6 @@
 <footer class = 'footer wrap pale'>
+  <p><a style="color: black;" href = 'http://beian.miit.gov.cn'>鄂ICP备20003010号-1</a></p>
   <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;{{ .Site.Title }}</p>
-  <p>{{ .Site.Copyright }}</p>
-  <p>{{ i18n "designed_by" .Site.Data.designer | safeHTML }}</p>
 </footer>
 {{ $scriptPath := "js/index.js" }}
 {{ $scripts := resources.Get $scriptPath | resources.ExecuteAsTemplate $scriptPath . | resources.Minify | resources.Fingerprint "sha512" }}

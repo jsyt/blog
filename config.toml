@@ -2,7 +2,8 @@ baseurl = "https://www.goyth.cn"  # Include trailing slash
 title = "Luke's blog"
 theme = "newsroom"
 author = "Luke"
-copyright = "Copyright © 2019, Luke and the Hugo Authors; all rights reserved."
+# copyright = "Copyright © 2019, Luke and the Hugo Authors; all rights reserved."
+copyright = "<a href = 'http://beian.miit.gov.cn'>鄂ICP备20003010号-1 </a>"
 canonifyurls = true
 paginate = 5
 isCJKLanguage= true

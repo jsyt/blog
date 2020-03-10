@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://www.goyth.cn/</loc>
+    <lastmod>2020-03-09T22:51:54+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://www.goyth.cn/tags/algorithm/</loc>
     <lastmod>2020-03-09T22:51:54+08:00</lastmod>
   </url>
@@ -395,16 +400,6 @@
   <url>
     <loc>https://www.goyth.cn/post/</loc>
     <lastmod>2017-03-02T12:00:00-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://www.goyth.cn/</loc>
-    <lastmod>2014-04-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://www.goyth.cn/about/</loc>
-    <lastmod>2014-04-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>
