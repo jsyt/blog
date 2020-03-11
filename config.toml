@@ -28,7 +28,7 @@ pygmentsOptions = "linenos=table"
 #     tabWidth = 2
 
 # If you want to use disqus, uncomment the line below
-# disqusShortname = "yourdiscussshortname"
+disqusShortname = "ytop"
 
 # ids used below are not valid. Replace with valid ones
 [params]

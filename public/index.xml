@@ -12,6 +12,21 @@
     
     
     <item>
+      <title>LeetCode 44. 通配符匹配</title>
+      <link>https://www.goyth.cn/post/leetcode44/</link>
+      <pubDate>Thu, 12 Mar 2020 00:21:03 +0800</pubDate>
+      
+      <guid>https://www.goyth.cn/post/leetcode44/</guid>
+      <description>44. 通配符匹配 Difficulty: 困难
+给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 &#39;?&#39; 和 &#39;*&#39; 的通配符匹配。
+1 2  &amp;#39;?&amp;#39; 可以匹配任何单个字符。 &amp;#39;*&amp;#39; 可以匹配任意字符串（包括空字符串）。   两个字符串完全匹配才算匹配成功。
+说明:
+ s 可能为空，且只包含从 a-z 的小写字母。 p 可能为空，且只包含从 a-z 的小写字母，以及字符 ? 和 *。  示例 1:
+1 2 3 4 5  输入: s = &amp;#34;aa&amp;#34; p = &amp;#34;a&amp;#34; 输出: false 解释: &amp;#34;a&amp;#34; 无法匹配 &amp;#34;aa&amp;#34; 整个字符串。   示例 2:
+1 2 3 4 5  输入: s = &amp;#34;aa&amp;#34; p = &amp;#34;*&amp;#34; 输出: true 解释: &amp;#39;*&amp;#39; 可以匹配任意字符串。   示例 3:</description>
+    </item>
+    
+    <item>
       <title>LeetCode 32. 最长有效括号</title>
       <link>https://www.goyth.cn/post/leetcode32/</link>
       <pubDate>Mon, 09 Mar 2020 22:51:54 +0800</pubDate>
