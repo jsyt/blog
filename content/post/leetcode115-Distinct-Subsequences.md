@@ -1,12 +1,12 @@
 ---
-title: "LeetCode 115. Distinct Subsequences (不同的子序列)"
+title: "LeetCode 115. 不同的子序列"
 date: 2020-03-13T15:07:48+08:00
 categories: ["Algorithm"]
 tags : ["Algorithm", "LeetCode"]
 image: "https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/samuele-errico-piccarini-JEBqFu2AOOA-unsplash.jpg"
 ---
 
-### [115\. 不同的子序列](https://leetcode-cn.com/problems/distinct-subsequences/)
+### [115\. 不同的子序列 (Distinct Subsequences)](https://leetcode-cn.com/problems/distinct-subsequences/)
 
 Difficulty: **困难**
 
