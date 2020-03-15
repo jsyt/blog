@@ -138,6 +138,37 @@
     </item>
     
     <item>
+      <title>LeetCode 695. 岛屿的最大面积</title>
+      <link>https://www.goyth.cn/post/leetcode695-max-area-of-island/</link>
+      <pubDate>Tue, 18 Feb 2020 22:36:16 +0800</pubDate>
+      
+      <guid>https://www.goyth.cn/post/leetcode695-max-area-of-island/</guid>
+      <description>695. 岛屿的最大面积(Max Area of Island) Difficulty: 中等
+给定一个包含了一些 0 和 1的非空二维数组 grid , 一个 岛屿 是由四个方向 (水平或垂直) 的 1 (代表土地) 构成的组合。你可以假设二维矩阵的四个边缘都被水包围着。
+找到给定的二维数组中最大的岛屿面积。(如果没有岛屿，则返回面积为0。)
+示例 1:
+1 2 3 4 5 6 7 8  [[0,0,1,0,0,0,0,1,0,0,0,0,0], [0,0,0,0,0,0,0,1,1,1,0,0,0], [0,1,1,0,1,0,0,0,0,0,0,0,0], [0,1,0,0,1,1,0,0,1,0,1,0,0], [0,1,0,0,1,1,0,0,1,1,1,0,0], [0,0,0,0,0,0,0,0,0,0,1,0,0], [0,0,0,0,0,0,0,1,1,1,0,0,0], [0,0,0,0,0,0,0,1,1,0,0,0,0]]   对于上面这个给定矩阵应返回 6。注意答案不应该是11，因为岛屿只能包含水平或垂直的四个方向的‘1’。
+示例 2:
+1  [[0,0,0,0,0,0,0,0]]   对于上面这个给定的矩阵, 返回 0。
+注意: 给定的矩阵grid 的长度和宽度都不超过 50。
+Solution 解题思路：
+ 要找出最大岛屿的面积，那肯定需要遍历所有的岛屿，这里可以选深度优先或者广度优先来进行遍历 当遍历到当前坐标为 1 时，我们同时需要对当前左边上下左右四个方向进行判断，判断其是否为是岛屿 为了防止岛屿间的重复遍历，每当遍历到当前坐标为 1 后，就将其置为 0  代码 Language: JavaScript</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 208. 实现 Trie (前缀树)</title>
+      <link>https://www.goyth.cn/post/leetcode208-implement-trie/</link>
+      <pubDate>Sat, 15 Feb 2020 12:51:39 +0800</pubDate>
+      
+      <guid>https://www.goyth.cn/post/leetcode208-implement-trie/</guid>
+      <description>208. 实现 Trie (前缀树) Difficulty: 中等
+实现一个 Trie (前缀树)，包含 insert, search, 和 startsWith 这三个操作。
+示例:
+1 2 3 4 5 6 7 8  Trie trie = new Trie(); trie.insert(&amp;#34;apple&amp;#34;); trie.search(&amp;#34;apple&amp;#34;); // 返回 true trie.search(&amp;#34;app&amp;#34;); // 返回 false trie.startsWith(&amp;#34;app&amp;#34;); // 返回 true trie.insert(&amp;#34;app&amp;#34;); trie.search(&amp;#34;app&amp;#34;); // 返回 true   说明:
+ 你可以假设所有的输入都是由小写字母 a-z 构成的。 保证所有输入均为非空字符串。  Trie 基本结构  字典树，即 Trie 树，又称单词查找树或键树，是一种树形结构。典型应用是用于统计和排序大量的字符串(但不仅限于 字符串)，所以经常被搜索引擎系统用于文本词频统计。 它的优点是:最大限度地减少 无谓的字符串比较，查询效率 比哈希表高。  Trie 基本性质  结点本身不存完整单词; 从根结点到某一结点，路径上经过的字符连接起来，为该结点对应的 字符串; 每个结点的所有子结点路径代表的字符都不相同。  Trie 核心思想  Trie 树的核心思想是空间换时间。 利用字符串的公共前缀来降低查询时间的开销以达到提高效率的目的。  Solution Language: JavaScript</description>
+    </item>
+    
+    <item>
       <title>Express路由与中间件原理（中间件篇）</title>
       <link>https://www.goyth.cn/post/expressmiddleware/</link>
       <pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate>

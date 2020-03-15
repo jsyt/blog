@@ -24,8 +24,8 @@ pygmentsOptions = "linenos=table"
 #     lineNos = true
 #     lineNumbersInTable = true
 #     noClasses = false
-#     # style = "monokai"
-#     tabWidth = 2
+#     style = "monokai"
+#     tabWidth = 4
 
 # If you want to use disqus, uncomment the line below
 disqusShortname = "ytop"
