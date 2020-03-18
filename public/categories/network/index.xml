@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Network on Luke&#39;s blog</title>
-    <link>http://www.ytop.net/categories/network/</link>
+    <link>http://ytop.net/categories/network/</link>
     <description>Recent content in Network on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
     <lastBuildDate>Wed, 11 Jul 2018 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="http://www.ytop.net/categories/network/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://ytop.net/categories/network/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>HTTP知识点整理</title>
-      <link>http://www.ytop.net/post/http2/</link>
+      <link>http://ytop.net/post/http2/</link>
       <pubDate>Wed, 11 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>http://www.ytop.net/post/http2/</guid>
+      <guid>http://ytop.net/post/http2/</guid>
       <description>HTTP/2是HTTP协议自1999年HTTP 1.1发布后的首个更新，主要基于SPDY协议。于2015年正式发布，HTTP/2解决了HTTP1.1线头阻塞、重复建立TCP连接等问题，充分利用TCP连接的高效传输，使得网络延迟大幅下降，网络传输速度大幅提升。
 HTTP/0.9 - 1991 第一版的HTTP文档是1991年提出来的 HTTP/0.9。这是有史以来最简单的协议；它仅有一个GET方法。如果客户端要访问服务器上的一些网页，它会作出如下的简单请求：
 1  GET /index.html   并且来自服务器的响应内容如下：
@@ -30,10 +30,10 @@ HTTP/0.9 - 1991 第一版的HTTP文档是1991年提出来的 HTTP/0.9。这是�
     
     <item>
       <title>WebSocket知识点梳理</title>
-      <link>http://www.ytop.net/post/websocket/</link>
+      <link>http://ytop.net/post/websocket/</link>
       <pubDate>Mon, 09 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>http://www.ytop.net/post/websocket/</guid>
+      <guid>http://ytop.net/post/websocket/</guid>
       <description>什么是WebSocket WebSocket是一种在单个TCP连接上进行全双工通讯的协议。它与HTTP协一样，同属于应用层协议。
 WebSocket解决了什么问题 WebSocket使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在WebSocket API中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。 简单说就是解决了浏览器和服务器之间双向数据传输的问题。
 HTTP协议可以实现双向数据传输吗 答案肯定是可以的，在HTTP协议中我们通常使用轮询来实现双向通信。 轮询是通过在特定的的时间间隔（如每1秒），由浏览器对服务器发出HTTP请求，然后由服务器返回最新的数据给客户端的浏览器。这种传统的模式带来很明显的缺点，即浏览器需要不断的向服务器发出请求，然而HTTP请求可能包含较长的头部，其中真正有效的数据可能只是很小的一部分，显然这样会浪费很多的带宽等资源。
@@ -49,10 +49,10 @@ Websocket 通过 HTTP/1.1 协议的101状态码进行握手。
     
     <item>
       <title>DNS知识点梳理</title>
-      <link>http://www.ytop.net/post/dns/</link>
+      <link>http://ytop.net/post/dns/</link>
       <pubDate>Sat, 07 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>http://www.ytop.net/post/dns/</guid>
+      <guid>http://ytop.net/post/dns/</guid>
       <description>DNS 服务器 DNS( Domain Name System)是“域名系统”的英文缩写，是一种组织成域层次结构的计算机和网络服务命名系统，它用于TCP/IP网络，它所提供的服务是用来将主机名和域名转换为IP地址的工作。DNS就是这样的一位“翻译官”，它的基本工作原理可用下图来表示。
 全世界所有的人每天上网都会使用DNS服务器，如果大家都去同一个地方访问某一台服务器，时延将会非常大，所以DNS服务器的架构必须是分布式、高并发、高可用，如下图：
  根 DNS 服务器 ：返回顶级域 DNS 服务器的 IP 地址 顶级域 DNS 服务器：返回权威 DNS 服务器的 IP 地址 权威 DNS 服务器 ：返回相应主机的 IP 地址  DNS域名解析过程 当用户在浏览器中输入www.abc.com并按下回车键后：
@@ -67,10 +67,10 @@ DNS有关的网络性能优化 1、减少DNS查找，避免重定向，浏览器
     
     <item>
       <title>TCP/IP 协议知识点梳理</title>
-      <link>http://www.ytop.net/post/tcpip/</link>
+      <link>http://ytop.net/post/tcpip/</link>
       <pubDate>Wed, 04 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>http://www.ytop.net/post/tcpip/</guid>
+      <guid>http://ytop.net/post/tcpip/</guid>
       <description>TCP/IP协议 TCP/IP协议模型（Transmission Control Protocol/Internet Protocol），包含了一系列构成互联网基础的网络协议，是Internet的核心协议。
 TCP/IP 协议分层模型 基于TCP/IP的参考模型将协议分成四个层次，它们分别是链路层、网络层、传输层和应用层。下图表示TCP/IP模型与OSI模型各层的对照关系。
  物理层将二进制的0和1和电压高低，光的闪灭和电波的强弱信号进行转换 链路层代表驱动 网络层  使用 IP 协议，IP 协议基于 IP 转发分包数据 IP 协议是个不可靠协议，不会重发 IP 协议发送失败会使用ICMP 协议通知失败 ARP 解析 IP 中的 MAC 地址，MAC 地址由网卡出厂提供 IP 还隐含链路层的功能，不管双方底层的链路层是啥，都能通信   传输层  通用的 TCP 和 UDP 协议  TCP 协议面向有连接，能正确处理丢包，传输顺序错乱的问题，但是为了建立与断开连接，需要至少7次的发包收包，资源浪费 UDP 面向无连接，不管对方有没有收到，如果要得到通知，需要通过应用层     会话层以上分层  TCP/IP 分层中，会话层，表示层，应用层集中在一起 网络管理通过 SNMP 协议    TCP/IP 协议模型封包解包 TCP/IP协议族按照层次由上到下，层层包装。最上面的是应用层，这里面有http，ftp,等等我们熟悉的协议。而第二层则是传输层，著名的TCP和UDP协议就在这个层次。第三层是网络层，IP协议就在这里，它负责对数据加上IP地址和其他的数据以确定传输的目标。第四层是数据链路层，这个层次为待传送的数据加入一个以太网协议头，并进行CRC编码，为最后的数据传输做准备。

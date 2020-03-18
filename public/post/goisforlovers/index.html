@@ -10,35 +10,35 @@
 <meta property = 'og:type' content = 'article' />
 <meta property = 'og:title' content = '(Hu)go Template Primer' />
 <meta property = 'og:description' content = 'Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of …'>
-<meta property = 'og:url' content = 'http://www.ytop.net/post/goisforlovers/' />
+<meta property = 'og:url' content = 'http://ytop.net/post/goisforlovers/' />
   
   
     
   
-  <meta property = 'og:image' content = 'http://www.ytop.net/images/artist.jpg'/>
-<link rel='apple-touch-icon' sizes='180x180' href='http://www.ytop.net/images/icons/apple-touch-icon.png'>
-<link rel='icon' type='image/png' sizes='32x32' href='http://www.ytop.net/images/icons/favicon-32x32.png'>
-<link rel='icon' type='image/png' sizes='16x16' href='http://www.ytop.net/images/icons/favicon-16x16.png'>
-<link rel='manifest' href='http://www.ytop.net/images/icons/site.webmanifest'>
+  <meta property = 'og:image' content = 'http://ytop.net/images/artist.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='http://ytop.net/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='http://ytop.net/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='http://ytop.net/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='http://ytop.net/images/icons/site.webmanifest'>
 <meta name='msapplication-TileColor' content='#da532c'>
 <meta name='theme-color' content='#ffffff'>
 
-  <link rel='canonical' href='http://www.ytop.net/post/goisforlovers/'>
+  <link rel='canonical' href='http://ytop.net/post/goisforlovers/'>
   
-  <link rel = 'stylesheet' href = 'http://www.ytop.net/css/main.d04b196130c747a0d717ed4f3cb6b3feab09912c6eb83f4b9231a26aa0c98a9ebf4b6196e93f82f8d8fce5036c3340891060627046a9c02583cbbfc80396cdd2.css'>
+  <link rel = 'stylesheet' href = 'http://ytop.net/css/main.c679a11c4c567e10a5d7966f81feb0060bd3f95a606917c75c45034ccaec15f6f5b9f7cbe39d45be9c2182a4acb053ce0c8334f71ea7df0cd2efa86a21921ed5.css'>
 </head>
 
   <body>
     <div class = 'nav-drop'>
   <div class = 'nav-body'>
     
-      <a href = 'http://www.ytop.net' class = 'nav_item'>Home</a>
+      <a href = 'http://ytop.net' class = 'nav_item'>Home</a>
     
-      <a href = 'http://www.ytop.net/categories' class = 'nav_item'>Category</a>
+      <a href = 'http://ytop.net/categories' class = 'nav_item'>Category</a>
     
-      <a href = 'http://www.ytop.net/tags' class = 'nav_item'>Tag</a>
+      <a href = 'http://ytop.net/tags' class = 'nav_item'>Tag</a>
     
-      <a href = 'http://www.ytop.net/about/' class = 'nav_item'>About</a>
+      <a href = 'http://ytop.net/about/' class = 'nav_item'>About</a>
     
     <div class = 'nav-close'></div>
     <div class = 'color_mode'>
@@ -50,7 +50,7 @@
 </div>
 <header class = 'nav' >
   <nav class = 'nav-menu'>
-    <a href='http://www.ytop.net' class = 'nav-brand nav_item'>Luke&#39;s blog</a>
+    <a href='http://ytop.net' class = 'nav-brand nav_item'>Luke&#39;s blog</a>
     <div class = 'nav_bar-wrap'>
       <div class = 'nav_bar'></div>
     </div>
@@ -70,7 +70,7 @@
           
             
           
-          <img src = 'http://www.ytop.net/images/artist.jpg' alt = 'artist.jpg' class = 'post_thumbnail'>
+          <img src = 'http://ytop.net/images/artist.jpg' alt = 'artist.jpg' class = 'post_thumbnail'>
         
           <p>Hugo uses the excellent <a href="https://golang.org/">Go</a> <a href="https://golang.org/pkg/html/template/">html/template</a> library for
 its template engine. It is an extremely lightweight engine that provides a very
@@ -109,7 +109,7 @@ functions.</p>
 <p>Each Go template has a struct (object) made available to it. In hugo each
 template is passed either a page or a node struct depending on which type of
 page you are rendering. More details are available on the
-<a href="http://www.ytop.net/layout/variables">variables</a> page.</p>
+<a href="http://ytop.net/layout/variables">variables</a> page.</p>
 <p>A variable is accessed by referencing the variable name.</p>
 <pre><code>&lt;title&gt;{{ .Title }}&lt;/title&gt;
 </code></pre>
@@ -120,7 +120,7 @@ page you are rendering. More details are available on the
 <h2 id="functions">Functions</h2>
 <p>Go template ship with a few functions which provide basic functionality. The Go
 template system also provides a mechanism for applications to extend the
-available functions with their own. <a href="http://www.ytop.net/layout/functions">Hugo template
+available functions with their own. <a href="http://ytop.net/layout/functions">Hugo template
 functions</a> provide some additional functionality we believe
 are useful for building websites. Functions are called by using their name
 followed by the required parameters separated by spaces. Template
@@ -251,7 +251,7 @@ type (supported by your front matter/config format) and use them however
 you want to inside of your templates.</p>
 <h2 id="using-content-page-parameters">Using Content (page) Parameters</h2>
 <p>In each piece of content you can provide variables to be used by the
-templates. This happens in the <a href="http://www.ytop.net/content/front-matter">front matter</a>.</p>
+templates. This happens in the <a href="http://ytop.net/content/front-matter">front matter</a>.</p>
 <p>An example of this is used in this documentation site. Most of the pages
 benefit from having the table of contents provided. Sometimes the TOC just
 doesn&rsquo;t make a lot of sense. We&rsquo;ve defined a variable in our front matter
@@ -411,7 +411,7 @@ so, such as in this example:</p>
       </div>
     </div>
   </div>
-  <a href = 'http://www.ytop.net' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+  <a href = 'http://ytop.net' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
 
     </main>
     <footer class = 'footer wrap pale'>
@@ -420,7 +420,7 @@ so, such as in this example:</p>
 </footer>
 
 
-<script src = 'http://www.ytop.net/js/index.min.608c49e9f95a010225bca8d37be2d76e24aedbf4ecb8d97780a297c2d844bebcde5c0beea5d0ad0935f1ea2bc6e06a78451deb0fdc08298f4e5ffc45cf1772aa.js'></script>
+<script src = 'http://ytop.net/js/index.min.9361a6619b44dfbcb8372e6a7081f7f68386e4e83cf89f959f03a199058ff675e66cad8fa4273316b8c7492fe57e880cf183647dbbb66fa18d5ffb858649e2fb.js'></script>
 
   </body>
 </html>

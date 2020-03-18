@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Golang on Luke&#39;s blog</title>
-    <link>http://www.ytop.net/categories/golang/</link>
+    <link>http://ytop.net/categories/golang/</link>
     <description>Recent content in Golang on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
     <lastBuildDate>Sat, 08 Jun 2019 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="http://www.ytop.net/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://ytop.net/categories/golang/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>golang 学习笔记（一）——语法篇</title>
-      <link>http://www.ytop.net/post/golanglearning01/</link>
+      <link>http://ytop.net/post/golanglearning01/</link>
       <pubDate>Sat, 08 Jun 2019 21:53:54 +0800</pubDate>
       
-      <guid>http://www.ytop.net/post/golanglearning01/</guid>
+      <guid>http://ytop.net/post/golanglearning01/</guid>
       <description>golang 应⽤程序⼊⼝  必须是 main 包：package main 必须是 main ⽅法：func main() ⽂件名不⼀定是 main.go  退出返回值 与其他主要编程语⾔的差异
  Go 中 main 函数不⽀持任何返回值 通过 os.Exit 来返回状态  获取命令⾏参数 与其他主要编程语⾔的差异
  main 函数不⽀持传⼊参数 func main(arg []string) 在程序中直接通过 os.Args 获取命令⾏参数  变量量赋值 与其他主要编程语⾔言的差异
