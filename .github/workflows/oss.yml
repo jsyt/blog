@@ -30,4 +30,4 @@ jobs:
           access-key-secret: ${{ secrets.ALI_SECRET_KEY }}
 
       - name: Deply To OSS
-      run: ossutil cp public oss://ytop/ -rf
+      run: ossutil cp -rf public oss://ytop/
