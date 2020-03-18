@@ -30,4 +30,4 @@ jobs:
           access-key-id: ${{ secrets.ALI_SECRET_ID }}
           access-key-secret: ${{ secrets.ALI_SECRET_KEY }}
 
-      - run: ossutil cp -rf test.txt oss://bucket/path
+      - run: ossutil cp -rf public oss://bucket/path ossutil
