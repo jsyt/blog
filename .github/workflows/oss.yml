@@ -23,11 +23,11 @@ jobs:
       - name: Build
         run: hugo --minify
 
-      - name: Deply To OSS
-        uses: manyuanrong/setup-ossutil@v1.0
+      - uses: manyuanrong/setup-ossutil@v1.0
         with:
           endpoint: "oss-cn-shanghai.aliyuncs.com"
           access-key-id: ${{ secrets.ALI_SECRET_ID }}
           access-key-secret: ${{ secrets.ALI_SECRET_KEY }}
 
-      - run: ossutil cp -rf public oss://bucket/path ossutil
+      - name: Deply To OSS
+      run: ossutil cp public oss://ytop/ -rf
