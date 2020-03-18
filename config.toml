@@ -1,4 +1,4 @@
-baseurl = "https://www.goyth.cn"  # Include trailing slash
+baseurl = "http://www.ytop.net"  # Include trailing slash
 title = "Luke's blog"
 theme = "newsroom"
 author = "Luke"

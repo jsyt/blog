@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Browser on Luke&#39;s blog</title>
-    <link>https://www.goyth.cn/tags/browser/</link>
+    <link>http://www.ytop.net/tags/browser/</link>
     <description>Recent content in Browser on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
     <lastBuildDate>Sun, 02 Dec 2018 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="https://www.goyth.cn/tags/browser/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://www.ytop.net/tags/browser/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>JavaScript垃圾回收机制与内存泄漏</title>
-      <link>https://www.goyth.cn/post/v8gc/</link>
+      <link>http://www.ytop.net/post/v8gc/</link>
       <pubDate>Sun, 02 Dec 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/v8gc/</guid>
+      <guid>http://www.ytop.net/post/v8gc/</guid>
       <description>程序的运行需要分配内存，内存资源是有限的，当程序运行结束后，就应该回收其内存资源。JavaScript使用自动内存管理，也称为垃圾回收机制（garbage collector）。自动垃圾回收的优点是可以简化开发，不用时刻惦记着回收不再使用的变量，降低内存泄漏的可能性；缺点是无法完全的掌握内存的分配以及回收的具体过程。</description>
     </item>
     
     <item>
       <title>浏览器的缓存机制梳理</title>
-      <link>https://www.goyth.cn/post/browsecache/</link>
+      <link>http://www.ytop.net/post/browsecache/</link>
       <pubDate>Sun, 01 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/browsecache/</guid>
+      <guid>http://www.ytop.net/post/browsecache/</guid>
       <description>概述 浏览器的缓存机制也就是我们说的HTTP缓存机制，其机制是根据HTTP报文的缓存标识进行的，所以在分析浏览器缓存机制之前，我们先使用图文简单介绍一下HTTP报文，HTTP报文分为两种：
 HTTP请求(Request)报文，报文格式为：请求行 – HTTP头(通用信息头，请求头，实体头) – 请求报文主体(只有POST才有报文主体)，如下图
 HTTP响应(Response)报文，报文格式为：状态行 – HTTP头(通用信息头，响应头，实体头) – 响应报文主体，如下图
@@ -55,10 +55,10 @@ Cache-Control 在HTTP/1.1中，Cache-Control是最重要的规则，主要用于
     
     <item>
       <title>浏览器常见跨域方式梳理</title>
-      <link>https://www.goyth.cn/post/crossdomain/</link>
+      <link>http://www.ytop.net/post/crossdomain/</link>
       <pubDate>Fri, 29 Jun 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/crossdomain/</guid>
+      <guid>http://www.ytop.net/post/crossdomain/</guid>
       <description>跨域是由于浏览器同源策略导致的，所以跨域只存在于浏览器端，非浏览器端不存在跨域问题，浏览器对跨域的请求、应答都能正常发送接收，只是浏览器在接收跨域应答时，将应答拦截了，所以我们需要一些额外的处理或设置让浏览器将跨域的应答返回给我们。
 常见的跨域处理方式有：  jsonp CORS iframe + postMessage iframe + window.name iframe + location.hash iframe + domain nginx代理 Nodejs中间件 WebSocket  jsonp 跨域 jsonp 跨域是利用script标签天生具备跨域的特性，script的src属性发起的请求不受浏览器同源策略的限制，所以我们可以动态生成一个script标签对象，将要请求数据的url赋值给script标签的src属性，然后将此script标签append到body中。但是服务端怎么返回数据呢，返回的数据又如何处理呢？此时我们还需要预先写好一个解析数据的函数analyzeData，并将这个函数名通过请求的url一并传给后端，后端收到后，直接请求的数据放在解析函数analyzeData的参数中analyzeData({a:1,b:2,c:3})并返回，当次script标签加载完毕后就会直接执行analyzeData({a:1,b:2,c:3})方法。
 1 2 3 4 5 6 7 8  // 预先写好一个解析数据的函数 function analyzeData(data) { console.log(data) } var sct = document.createElement(&amp;#39;script&amp;#39;) sct.src = &amp;#39;http://goyth.com/json?callback=analyzeData&amp;#39; document.body.appendChild(sct)   jsop 的优点是兼容性好，能兼容低版本的浏览器，缺点是只支持get请求，不支持其他方式的请求，并且对回调函数的错误处理不太友好。
@@ -70,19 +70,19 @@ CORS(跨域资源共享) CORS 全称为跨域资源共享（Cross-origin resourc
     
     <item>
       <title>浏览器渲染之回流（Reflow）与重绘（Repaint）</title>
-      <link>https://www.goyth.cn/post/reflowandrepaint/</link>
+      <link>http://www.ytop.net/post/reflowandrepaint/</link>
       <pubDate>Fri, 25 May 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/reflowandrepaint/</guid>
+      <guid>http://www.ytop.net/post/reflowandrepaint/</guid>
       <description>回流（Reflow）和重绘（Repaint）的定义 回流（Reflow） 对于DOM结构中的各个元素都有自己的盒子（模型），这些都需要浏览器根据各种样式（浏览器的、开发人员定义的等）来计算，并根据计算结果将元素放到它该出现的位置，这个过程称之为reflow。 重绘（Repaint） 当各种盒子的位置、大小以及其他属性，例如颜色、字体大小等都确定下来后，浏览器于是便把这些元素都按照各自的特性绘制了一遍，于是页面的内容出现了，这个过程称之为 repaint。</description>
     </item>
     
     <item>
       <title>浏览器页面渲染流程梳理</title>
-      <link>https://www.goyth.cn/post/browserrendering/</link>
+      <link>http://www.ytop.net/post/browserrendering/</link>
       <pubDate>Wed, 23 May 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/browserrendering/</guid>
+      <guid>http://www.ytop.net/post/browserrendering/</guid>
       <description>浏览器渲染基本流程 浏览器渲染流程如下图所示：
 大概可以划分成以下几个步骤：
  通过HTML解析器解析HTML文本并构建DOM tree 通过CSS解析器解析CSS样式表并构建CSSOM tree 根据DOM tree 和 CSSOM tree 构建 Render tree Render tree 刚构建完后是没有元素节点坐标、尺寸大小等信息的，此时需要通过Layout(Reflow)进行布局处理，计算出元素在屏幕上显示的位置，尺寸大小等信息。 遍历渲染树，对每一个元素节点进行绘制（Painting）  解析（Parsing） 解析的过程分为两个步骤：词法分析和语法分析。 词法分析负责将输入内容分解成一个个有效标记；而语法分析负责根据语言的语法规则分析文档的结构，从而构建解析树。通过词法分析可以将无关的字符（比如空格和换行符）分离出来。

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>LeetCode on Luke&#39;s blog</title>
-    <link>https://www.goyth.cn/tags/leetcode/</link>
+    <link>http://www.ytop.net/tags/leetcode/</link>
     <description>Recent content in LeetCode on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
     <lastBuildDate>Fri, 13 Mar 2020 15:07:48 +0800</lastBuildDate>
     
-	<atom:link href="https://www.goyth.cn/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://www.ytop.net/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>LeetCode 115. 不同的子序列</title>
-      <link>https://www.goyth.cn/post/leetcode115-distinct-subsequences/</link>
+      <link>http://www.ytop.net/post/leetcode115-distinct-subsequences/</link>
       <pubDate>Fri, 13 Mar 2020 15:07:48 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode115-distinct-subsequences/</guid>
+      <guid>http://www.ytop.net/post/leetcode115-distinct-subsequences/</guid>
       <description>115. 不同的子序列 (Distinct Subsequences) Difficulty: 困难
 给定一个字符串 S和一个字符串 T，计算在 S 的子序列中 T 出现的个数。
 一个字符串的一个子序列是指，通过删除一些（也可以不删除）字符且不干扰剩余字符相对位置所组成的新字符串。（例如，&amp;quot;ACE&amp;quot; 是 &amp;quot;ABCDE&amp;quot; 的一个子序列，而 &amp;quot;AEC&amp;quot; 不是）
@@ -27,10 +27,10 @@
     
     <item>
       <title>LeetCode 44. 通配符匹配</title>
-      <link>https://www.goyth.cn/post/leetcode44/</link>
+      <link>http://www.ytop.net/post/leetcode44/</link>
       <pubDate>Thu, 12 Mar 2020 00:21:03 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode44/</guid>
+      <guid>http://www.ytop.net/post/leetcode44/</guid>
       <description>44. 通配符匹配 Difficulty: 困难
 给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 &#39;?&#39; 和 &#39;*&#39; 的通配符匹配。
 1 2  &amp;#39;?&amp;#39; 可以匹配任何单个字符。 &amp;#39;*&amp;#39; 可以匹配任意字符串（包括空字符串）。   两个字符串完全匹配才算匹配成功。
@@ -42,10 +42,10 @@
     
     <item>
       <title>LeetCode 32. 最长有效括号</title>
-      <link>https://www.goyth.cn/post/leetcode32/</link>
+      <link>http://www.ytop.net/post/leetcode32/</link>
       <pubDate>Mon, 09 Mar 2020 22:51:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode32/</guid>
+      <guid>http://www.ytop.net/post/leetcode32/</guid>
       <description>32. 最长有效括号 Difficulty: 困难
 给定一个只包含 &#39;(&#39; 和 &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。
 示例 1:
@@ -56,10 +56,10 @@
     
     <item>
       <title>LeetCode 76. 最小覆盖子串</title>
-      <link>https://www.goyth.cn/post/leetcode76/</link>
+      <link>http://www.ytop.net/post/leetcode76/</link>
       <pubDate>Mon, 09 Mar 2020 09:53:57 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode76/</guid>
+      <guid>http://www.ytop.net/post/leetcode76/</guid>
       <description>76. 最小覆盖子串 Difficulty: 困难
 给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字母的最小子串。
 示例：
@@ -70,10 +70,10 @@
     
     <item>
       <title>LeetCode 727. 最小窗口子序列</title>
-      <link>https://www.goyth.cn/post/leetcode727/</link>
+      <link>http://www.ytop.net/post/leetcode727/</link>
       <pubDate>Sun, 08 Mar 2020 17:33:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode727/</guid>
+      <guid>http://www.ytop.net/post/leetcode727/</guid>
       <description>727. 最小窗口子序列 Difficulty: 困难
 给定字符串 S and T，找出 S 中最短的（连续）子串 W ，使得 T 是 W 的 子序列 。
 如果 S 中没有窗口可以包含 T 中的所有字符，返回空字符串 &amp;quot;&amp;quot;。如果有不止一个最短长度的窗口，返回开始位置最靠左的那个。
@@ -84,10 +84,10 @@
     
     <item>
       <title>LeetCode 632. 最小区间</title>
-      <link>https://www.goyth.cn/post/leetcode632/</link>
+      <link>http://www.ytop.net/post/leetcode632/</link>
       <pubDate>Sat, 07 Mar 2020 10:21:01 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode632/</guid>
+      <guid>http://www.ytop.net/post/leetcode632/</guid>
       <description>632. 最小区间 Difficulty: 困难
 你有 k 个升序排列的整数数组。找到一个最小区间，使得 k 个列表中的每个列表至少有一个数包含在其中。
 我们定义如果 b-a &amp;lt; d-c 或者在 b-a == d-c 时 a &amp;lt; c，则区间 [a,b] 比 [c,d] 小。
@@ -98,10 +98,10 @@
     
     <item>
       <title>LeetCode 340. 至多包含 K 个不同字符的最长子串</title>
-      <link>https://www.goyth.cn/post/leetcode340/</link>
+      <link>http://www.ytop.net/post/leetcode340/</link>
       <pubDate>Fri, 06 Mar 2020 02:18:30 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode340/</guid>
+      <guid>http://www.ytop.net/post/leetcode340/</guid>
       <description>340. 至多包含 K 个不同字符的最长子串 Difficulty: 困难
 给定一个字符串** _s_** ，找出 **至多 **包含 _k_ 个不同字符的最长子串 **_T_**。
 示例 1:
@@ -111,10 +111,10 @@
     
     <item>
       <title>LeetCode 994. 腐烂的橘子</title>
-      <link>https://www.goyth.cn/post/leetcode994/</link>
+      <link>http://www.ytop.net/post/leetcode994/</link>
       <pubDate>Thu, 05 Mar 2020 00:56:39 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode994/</guid>
+      <guid>http://www.ytop.net/post/leetcode994/</guid>
       <description>994. 腐烂的橘子 Difficulty: 简单
 在给定的网格中，每个单元格可以有以下三个值之一：
  值 0 代表空单元格； 值 1 代表新鲜橘子； 值 2 代表腐烂的橘子。  每分钟，任何与腐烂的橘子（在 4 个正方向上）相邻的新鲜橘子都会腐烂。
@@ -129,20 +129,20 @@
     
     <item>
       <title>LeetCode 30. 串联所有单词的子串</title>
-      <link>https://www.goyth.cn/post/leetcode30/</link>
+      <link>http://www.ytop.net/post/leetcode30/</link>
       <pubDate>Wed, 26 Feb 2020 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode30/</guid>
+      <guid>http://www.ytop.net/post/leetcode30/</guid>
       <description>给定一个字符串 &lt;strong&gt;s&lt;/strong&gt; 和一些长度相同的单词 &lt;strong&gt;words&lt;/strong&gt;找出 &lt;strong&gt;s&lt;/strong&gt; 中恰好可以由 &lt;strong&gt;words&lt;/strong&gt; 中所有单词串联形成的子串的起始位置。
 注意子串要与 &lt;strong&gt;words&lt;/strong&gt; 中的单词完全匹配，中间不能有其他字符，但不需要考虑 &lt;strong&gt;words&lt;/strong&gt;中单词串联的顺序。</description>
     </item>
     
     <item>
       <title>LeetCode 695. 岛屿的最大面积</title>
-      <link>https://www.goyth.cn/post/leetcode695-max-area-of-island/</link>
+      <link>http://www.ytop.net/post/leetcode695-max-area-of-island/</link>
       <pubDate>Tue, 18 Feb 2020 22:36:16 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode695-max-area-of-island/</guid>
+      <guid>http://www.ytop.net/post/leetcode695-max-area-of-island/</guid>
       <description>695. 岛屿的最大面积(Max Area of Island) Difficulty: 中等
 给定一个包含了一些 0 和 1的非空二维数组 grid , 一个 岛屿 是由四个方向 (水平或垂直) 的 1 (代表土地) 构成的组合。你可以假设二维矩阵的四个边缘都被水包围着。
 找到给定的二维数组中最大的岛屿面积。(如果没有岛屿，则返回面积为0。)
@@ -157,10 +157,10 @@ Solution 解题思路：
     
     <item>
       <title>LeetCode 208. 实现 Trie (前缀树)</title>
-      <link>https://www.goyth.cn/post/leetcode208-implement-trie/</link>
+      <link>http://www.ytop.net/post/leetcode208-implement-trie/</link>
       <pubDate>Sat, 15 Feb 2020 12:51:39 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/leetcode208-implement-trie/</guid>
+      <guid>http://www.ytop.net/post/leetcode208-implement-trie/</guid>
       <description>208. 实现 Trie (前缀树) Difficulty: 中等
 实现一个 Trie (前缀树)，包含 insert, search, 和 startsWith 这三个操作。
 示例:

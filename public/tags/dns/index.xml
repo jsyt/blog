@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>DNS on Luke&#39;s blog</title>
-    <link>https://www.goyth.cn/tags/dns/</link>
+    <link>http://www.ytop.net/tags/dns/</link>
     <description>Recent content in DNS on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
     <lastBuildDate>Sat, 07 Jul 2018 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="https://www.goyth.cn/tags/dns/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://www.ytop.net/tags/dns/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>DNS知识点梳理</title>
-      <link>https://www.goyth.cn/post/dns/</link>
+      <link>http://www.ytop.net/post/dns/</link>
       <pubDate>Sat, 07 Jul 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/dns/</guid>
+      <guid>http://www.ytop.net/post/dns/</guid>
       <description>DNS 服务器 DNS( Domain Name System)是“域名系统”的英文缩写，是一种组织成域层次结构的计算机和网络服务命名系统，它用于TCP/IP网络，它所提供的服务是用来将主机名和域名转换为IP地址的工作。DNS就是这样的一位“翻译官”，它的基本工作原理可用下图来表示。
 全世界所有的人每天上网都会使用DNS服务器，如果大家都去同一个地方访问某一台服务器，时延将会非常大，所以DNS服务器的架构必须是分布式、高并发、高可用，如下图：
  根 DNS 服务器 ：返回顶级域 DNS 服务器的 IP 地址 顶级域 DNS 服务器：返回权威 DNS 服务器的 IP 地址 权威 DNS 服务器 ：返回相应主机的 IP 地址  DNS域名解析过程 当用户在浏览器中输入www.abc.com并按下回车键后：

@@ -1,4 +1,4 @@
-name: COSCMD
+name: OSS
 
 on:
   push:
@@ -23,11 +23,11 @@ jobs:
       - name: Build
         run: hugo --minify
 
-      - name: Deploy Tencent Cloud COS
-        uses: arcsinu/actions-coscmd@v1
+      - name: Deply To OSS
+        uses: manyuanrong/setup-ossutil@v1.0
         with:
-          args: upload -rs --delete ./public/ / --ignore .git
-          secret_id: ${{ secrets.TX_SECRET_ID }}
-          secret_key: ${{ secrets.TX_SECRET_KEY }}
-          bucket: ${{ secrets.TX_BUCKET }}
-          region: ${{ secrets.TX_REGION }}
+          endpoint: "oss-cn-shanghai.aliyuncs.com"
+          access-key-id: ${{ secrets.ALI_SECRET_ID }}
+          access-key-secret: ${{ secrets.ALI_SECRET_KEY }}
+
+      - run: ossutil cp -rf test.txt oss://bucket/path

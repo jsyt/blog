@@ -2,57 +2,57 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nodejs on Luke&#39;s blog</title>
-    <link>https://www.goyth.cn/categories/nodejs/</link>
+    <link>http://www.ytop.net/categories/nodejs/</link>
     <description>Recent content in Nodejs on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
     <lastBuildDate>Sat, 20 Jul 2019 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="https://www.goyth.cn/categories/nodejs/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://www.ytop.net/categories/nodejs/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Express路由与中间件原理（中间件篇）</title>
-      <link>https://www.goyth.cn/post/expressmiddleware/</link>
+      <link>http://www.ytop.net/post/expressmiddleware/</link>
       <pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/expressmiddleware/</guid>
+      <guid>http://www.ytop.net/post/expressmiddleware/</guid>
       <description>&lt;code&gt;Express&lt;/code&gt; 路由原理见 &lt;a href=&#34;http://www.goyth.com/2019/07/20/expressRouter/&#34;&gt;Express路由与中间件原理（路由篇）&lt;/a&gt; &lt;code&gt;Express&lt;/code&gt; 中间件通常用来一些公用的逻辑，并可以将处理的结果挂载在 &lt;code&gt;req&lt;/code&gt;、&lt;code&gt;res&lt;/code&gt; 上，以供后面的中间件函数，或路由函数使用。因此通常情况下中间件函数会放在路由的前面。在 &lt;code&gt;Express&lt;/code&gt; 中，注册一个中间件与注册一个路由一样，也是放在 &lt;code&gt;app.routes&lt;/code&gt; 中，只是中间件的 &lt;code&gt;method&lt;/code&gt; 为 middle。</description>
     </item>
     
     <item>
       <title>Express路由与中间件原理（路由篇）</title>
-      <link>https://www.goyth.cn/post/expressrouter/</link>
+      <link>http://www.ytop.net/post/expressrouter/</link>
       <pubDate>Sat, 20 Jul 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/expressrouter/</guid>
+      <guid>http://www.ytop.net/post/expressrouter/</guid>
       <description>导入 &lt;code&gt;express&lt;/code&gt; 后会得到一个 &lt;code&gt;express&lt;/code&gt; 函数，执行这个函数后返回一个 &lt;code&gt;app&lt;/code&gt; &lt;code&gt;函数，app&lt;/code&gt; 上有一个 &lt;code&gt;listen&lt;/code&gt; 函数，执行这个 &lt;code&gt;listen&lt;/code&gt; 函数就会启一个 &lt;code&gt;http&lt;/code&gt; 服务，通过 &lt;code&gt;app.get&lt;/code&gt;、&lt;code&gt;app.post&lt;/code&gt;、&lt;code&gt;app.all&lt;/code&gt;等函数来注册监听函数，如果 &lt;code&gt;http server&lt;/code&gt; 监听到有请求到来，就会调用在 &lt;code&gt;app&lt;/code&gt; 上注册的相应的回调函数。</description>
     </item>
     
     <item>
       <title>Webpack 工作原理（三）</title>
-      <link>https://www.goyth.cn/post/webpackloader/</link>
+      <link>http://www.ytop.net/post/webpackloader/</link>
       <pubDate>Sat, 12 Jan 2019 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/webpackloader/</guid>
+      <guid>http://www.ytop.net/post/webpackloader/</guid>
       <description>webpack Loader 是一个符合 &lt;code&gt;commonjs&lt;/code&gt; 规范的模块，这个模块导出一个函数，它的主要作用是对源码进行转换，webpack 在调用 Loader时，会将源代码作为参数传递给这个Loader，然后该loader会对源码进行转换，并且返回转换后的内容。</description>
     </item>
     
     <item>
       <title>Webpack 工作原理（二）——打包构建流程分析</title>
-      <link>https://www.goyth.cn/post/webpackflow/</link>
+      <link>http://www.ytop.net/post/webpackflow/</link>
       <pubDate>Mon, 10 Dec 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/webpackflow/</guid>
+      <guid>http://www.ytop.net/post/webpackflow/</guid>
       <description>webpack 主要工作流程 Webpack 的运行流程是一个串行的过程，从启动到结束会依次执行以下流程： &lt;strong&gt;初始化参数&lt;/strong&gt;：从配置文件和 Shell 语句中读取与合并参数，得出最终的参数； - &lt;strong&gt;开始编译&lt;/strong&gt;：用上一步得到的参数初始化 Compiler 对象，加载所有配置的插件，执行对象的run方法开始执行编译； 确定入口：根据配置中的 entry 找出所有的入口文件 - &lt;strong&gt;编译模块&lt;/strong&gt;：从入口文件出发，调用所有配置的 Loader 对模块进行编译，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理；</description>
     </item>
     
     <item>
       <title>Webpack 工作原理（一）——配置篇</title>
-      <link>https://www.goyth.cn/post/webpackconfig/</link>
+      <link>http://www.ytop.net/post/webpackconfig/</link>
       <pubDate>Sat, 17 Nov 2018 21:53:54 +0800</pubDate>
       
-      <guid>https://www.goyth.cn/post/webpackconfig/</guid>
+      <guid>http://www.ytop.net/post/webpackconfig/</guid>
       <description>WebPack可以看做是模块打包机：它做的事情是，分析你的项目结构，找到JavaScript模块以及其它的一些浏览器不能直接运行的拓展语言（Scss，TypeScript等），并将其打包为合适的格式以供浏览器使用。构建就是把源代码转换成发布到线上的可执行 JavaScrip、CSS、HTML 代码，包括如下内容。</description>
     </item>
     
