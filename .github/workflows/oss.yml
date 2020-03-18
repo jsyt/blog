@@ -26,8 +26,8 @@ jobs:
       - uses: manyuanrong/setup-ossutil@v1.0
         with:
           endpoint: "oss-cn-shanghai.aliyuncs.com"
-          access-key-id: ${{ secrets.ALI_SECRET_ID }}
-          access-key-secret: ${{ secrets.ALI_SECRET_KEY }}
+          access-key-id: ${{ secrets.YTOP_SECRET_ID }}
+          access-key-secret: ${{ secrets.YTOP_SECRET_KEY }}
 
       - name: Deply To OSS
         run: ossutil cp -rf public oss://ytop/
