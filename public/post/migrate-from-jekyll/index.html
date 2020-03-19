@@ -10,35 +10,35 @@
 <meta property = 'og:type' content = 'article' />
 <meta property = 'og:title' content = 'Migrate to Hugo from Jekyll' />
 <meta property = 'og:description' content = 'Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static …'>
-<meta property = 'og:url' content = 'http://ytop.net/post/migrate-from-jekyll/' />
+<meta property = 'og:url' content = 'https://ytop.net/post/migrate-from-jekyll/' />
   
   
     
   
-  <meta property = 'og:image' content = 'http://ytop.net/images/speakers.jpg'/>
-<link rel='apple-touch-icon' sizes='180x180' href='http://ytop.net/images/icons/apple-touch-icon.png'>
-<link rel='icon' type='image/png' sizes='32x32' href='http://ytop.net/images/icons/favicon-32x32.png'>
-<link rel='icon' type='image/png' sizes='16x16' href='http://ytop.net/images/icons/favicon-16x16.png'>
-<link rel='manifest' href='http://ytop.net/images/icons/site.webmanifest'>
+  <meta property = 'og:image' content = 'https://ytop.net/images/speakers.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://ytop.net/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://ytop.net/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://ytop.net/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://ytop.net/images/icons/site.webmanifest'>
 <meta name='msapplication-TileColor' content='#da532c'>
 <meta name='theme-color' content='#ffffff'>
 
-  <link rel='canonical' href='http://ytop.net/post/migrate-from-jekyll/'>
+  <link rel='canonical' href='https://ytop.net/post/migrate-from-jekyll/'>
   
-  <link rel = 'stylesheet' href = 'http://ytop.net/css/main.c679a11c4c567e10a5d7966f81feb0060bd3f95a606917c75c45034ccaec15f6f5b9f7cbe39d45be9c2182a4acb053ce0c8334f71ea7df0cd2efa86a21921ed5.css'>
+  <link rel = 'stylesheet' href = 'https://ytop.net/css/main.c27df37d931115a0916acf72f6f3275a77ac0f1e8a210ad1d1b209296c887f63ba506c4568bd171cdca9becd738fd1b213ccfd942aeec9ae6a2977981b19a413.css'>
 </head>
 
   <body>
     <div class = 'nav-drop'>
   <div class = 'nav-body'>
     
-      <a href = 'http://ytop.net' class = 'nav_item'>Home</a>
+      <a href = 'https://ytop.net' class = 'nav_item'>Home</a>
     
-      <a href = 'http://ytop.net/categories' class = 'nav_item'>Category</a>
+      <a href = 'https://ytop.net/categories' class = 'nav_item'>Category</a>
     
-      <a href = 'http://ytop.net/tags' class = 'nav_item'>Tag</a>
+      <a href = 'https://ytop.net/tags' class = 'nav_item'>Tag</a>
     
-      <a href = 'http://ytop.net/about/' class = 'nav_item'>About</a>
+      <a href = 'https://ytop.net/about/' class = 'nav_item'>About</a>
     
     <div class = 'nav-close'></div>
     <div class = 'color_mode'>
@@ -50,7 +50,7 @@
 </div>
 <header class = 'nav' >
   <nav class = 'nav-menu'>
-    <a href='http://ytop.net' class = 'nav-brand nav_item'>Luke&#39;s blog</a>
+    <a href='https://ytop.net' class = 'nav-brand nav_item'>Luke&#39;s blog</a>
     <div class = 'nav_bar-wrap'>
       <div class = 'nav_bar'></div>
     </div>
@@ -70,7 +70,7 @@
           
             
           
-          <img src = 'http://ytop.net/images/speakers.jpg' alt = 'speakers.jpg' class = 'post_thumbnail'>
+          <img src = 'https://ytop.net/images/speakers.jpg' alt = 'speakers.jpg' class = 'post_thumbnail'>
         
           <h2 id="move-static-content-to-static">Move static content to <code>static</code></h2>
 <p>Jekyll has a rule that any directory not starting with <code>_</code> will be copied as-is to the <code>_site</code> output. Hugo keeps all static content under <code>static</code>. You should therefore move it all there.
@@ -87,7 +87,7 @@ With Jekyll, something that looked like</p>
 </code></pre>
 <p>Additionally, you&rsquo;ll want any files that should reside at the root (such as <code>CNAME</code>) to be moved to <code>static</code>.</p>
 <h2 id="create-your-hugo-configuration-file">Create your Hugo configuration file</h2>
-<p>Hugo can read your configuration as JSON, YAML or TOML. Hugo supports parameters custom configuration too. Refer to the <a href="http://ytop.net/overview/configuration/">Hugo configuration documentation</a> for details.</p>
+<p>Hugo can read your configuration as JSON, YAML or TOML. Hugo supports parameters custom configuration too. Refer to the <a href="https://ytop.net/overview/configuration/">Hugo configuration documentation</a> for details.</p>
 <h2 id="set-your-configuration-publish-folder-to-_site">Set your configuration publish folder to <code>_site</code></h2>
 <p>The default is for Jekyll to publish to <code>_site</code> and for Hugo to publish to <code>public</code>. If, like me, you have <a href="http://blog.blindgaenger.net/generate_github_pages_in_a_submodule.html"><code>_site</code> mapped to a git submodule on the <code>gh-pages</code> branch</a>, you&rsquo;ll want to do one of two alternatives:</p>
 <ol>
@@ -117,10 +117,10 @@ With Jekyll, something that looked like</p>
 </li>
 </ol>
 <h2 id="convert-jekyll-templates-to-hugo-templates">Convert Jekyll templates to Hugo templates</h2>
-<p>That&rsquo;s the bulk of the work right here. The documentation is your friend. You should refer to <a href="http://jekyllrb.com/docs/templates/">Jekyll&rsquo;s template documentation</a> if you need to refresh your memory on how you built your blog and <a href="http://ytop.net/layout/templates/">Hugo&rsquo;s template</a> to learn Hugo&rsquo;s way.</p>
+<p>That&rsquo;s the bulk of the work right here. The documentation is your friend. You should refer to <a href="http://jekyllrb.com/docs/templates/">Jekyll&rsquo;s template documentation</a> if you need to refresh your memory on how you built your blog and <a href="https://ytop.net/layout/templates/">Hugo&rsquo;s template</a> to learn Hugo&rsquo;s way.</p>
 <p>As a single reference data point, converting my templates for <a href="http://heyitsalex.net/">heyitsalex.net</a> took me no more than a few hours.</p>
 <h2 id="convert-jekyll-plugins-to-hugo-shortcodes">Convert Jekyll plugins to Hugo shortcodes</h2>
-<p>Jekyll has <a href="http://jekyllrb.com/docs/plugins/">plugins</a>; Hugo has <a href="http://ytop.net/doc/shortcodes/">shortcodes</a>. It&rsquo;s fairly trivial to do a port.</p>
+<p>Jekyll has <a href="http://jekyllrb.com/docs/plugins/">plugins</a>; Hugo has <a href="https://ytop.net/doc/shortcodes/">shortcodes</a>. It&rsquo;s fairly trivial to do a port.</p>
 <h3 id="implementation">Implementation</h3>
 <p>As an example, I was using a custom <a href="https://github.com/alexandre-normand/alexandre-normand/blob/74bb12036a71334fdb7dba84e073382fc06908ec/_plugins/image_tag.rb"><code>image_tag</code></a> plugin to generate figures with caption when running Jekyll. As I read about shortcodes, I found Hugo had a nice built-in shortcode that does exactly the same thing.</p>
 <h4 id="jekylls-plugin">Jekyll&rsquo;s plugin:</h4>
@@ -325,7 +325,7 @@ With Jekyll, something that looked like</p>
       </div>
     </div>
   </div>
-  <a href = 'http://ytop.net' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+  <a href = 'https://ytop.net' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
 
     </main>
     <footer class = 'footer wrap pale'>
@@ -334,7 +334,7 @@ With Jekyll, something that looked like</p>
 </footer>
 
 
-<script src = 'http://ytop.net/js/index.min.9361a6619b44dfbcb8372e6a7081f7f68386e4e83cf89f959f03a199058ff675e66cad8fa4273316b8c7492fe57e880cf183647dbbb66fa18d5ffb858649e2fb.js'></script>
+<script src = 'https://ytop.net/js/index.min.3fb2d93226caee76d973a8553fd18e0e2f90e9901bcfd7a626bac6741e418b8bc5be16b73031251410da54554de3c64b91dda6df7bdda7e83ad5f99eb2acaf54.js'></script>
 
   </body>
 </html>

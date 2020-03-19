@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Promise on Luke&#39;s blog</title>
-    <link>http://ytop.net/tags/promise/</link>
+    <link>https://ytop.net/tags/promise/</link>
     <description>Recent content in Promise on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
     <lastBuildDate>Fri, 03 Aug 2018 21:53:54 +0800</lastBuildDate>
     
-	<atom:link href="http://ytop.net/tags/promise/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ytop.net/tags/promise/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Promise实现原理</title>
-      <link>http://ytop.net/post/promise/</link>
+      <link>https://ytop.net/post/promise/</link>
       <pubDate>Fri, 03 Aug 2018 21:53:54 +0800</pubDate>
       
-      <guid>http://ytop.net/post/promise/</guid>
+      <guid>https://ytop.net/post/promise/</guid>
       <description>1.&lt;code&gt;promise&lt;/code&gt; 函数的参数（executor）是一个函数，这个函数有两个参数&lt;code&gt;resolve&lt;/code&gt;和&lt;code&gt;reject&lt;/code&gt;，这两个参数也都是函数，分别在&lt;code&gt;promise&lt;/code&gt;成功和失败时调用。 2. 当构建一个&lt;code&gt;promise&lt;/code&gt;实例时，会自动调用这个函数（executor） 3. 每个&lt;code&gt;promise&lt;/code&gt;对象都有一个&lt;code&gt;onFulfilledCallback&lt;/code&gt;队列和一个&lt;code&gt;onRejectedCallback&lt;/code&gt;队列，用来分别存储成功和失败时调用的回调函数</description>
     </item>
     
