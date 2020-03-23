@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Leetcode365 water and jug problem | Luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'Luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'Leetcode365 Water and Jug Problem' />
+<meta property = 'og:description' content = '365. 水壶问题 Difficulty: 中等
+有两个容量分别为 x 升 和 y 升 的水壶以及无限多的水。请判断能否通过使用这两个水壶，从而可以得到恰好 z 升 的水？
+如果可以，最后请用以上水壶中的一或两个来盛放取得的 z 升水。
+你允许：
+ 装满任意一个水壶 清空任意一个水壶 从一个水壶向另 …'>
+<meta property = 'og:url' content = 'https://ytop.net/post/leetcode365-water-and-jug-problem/' />
+  
+  
+    
+  
+  <meta property = 'og:image' content = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/dan-magatti-krhOf7RaeDs-unsplash.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://ytop.net/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://ytop.net/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://ytop.net/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://ytop.net/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://ytop.net/post/leetcode365-water-and-jug-problem/'>
+  
+  <link rel = 'stylesheet' href = 'https://ytop.net/css/main.c27df37d931115a0916acf72f6f3275a77ac0f1e8a210ad1d1b209296c887f63ba506c4568bd171cdca9becd738fd1b213ccfd942aeec9ae6a2977981b19a413.css'>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://ytop.net' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://ytop.net/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://ytop.net/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://ytop.net/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://ytop.net' class = 'nav-brand nav_item'>Luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>22. March 2020</p>
+      <h1 class = 'post_title'>Leetcode365 Water and Jug Problem</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          
+            
+          
+          <img src = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/dan-magatti-krhOf7RaeDs-unsplash.jpg' alt = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/dan-magatti-krhOf7RaeDs-unsplash.jpg' class = 'post_thumbnail'>
+        
+          <h3 id="365-水壶问题httpsleetcode-cncomproblemswater-and-jug-problem"><a href="https://leetcode-cn.com/problems/water-and-jug-problem/">365. 水壶问题</a></h3>
+<p>Difficulty: <strong>中等</strong></p>
+<p>有两个容量分别为 <em>x</em> 升 和 <em>y</em> 升 的水壶以及无限多的水。请判断能否通过使用这两个水壶，从而可以得到恰好 <em>z</em> 升 的水？</p>
+<p>如果可以，最后请用以上水壶中的一或两个来盛放取得的 <em>z</em> 升水。</p>
+<p>你允许：</p>
+<ul>
+<li>装满任意一个水壶</li>
+<li>清空任意一个水壶</li>
+<li>从一个水壶向另外一个水壶倒水，直到装满或者倒空</li>
+</ul>
+<p><strong>示例 1:</strong> (From the famous )</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入: x = 3, y = 5, z = 4
+输出: True
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例 2:</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入: x = 2, y = 6, z = 5
+输出: False
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="solution">Solution</h4>
+<p>Language: <strong>JavaScript</strong></p>
+<h4 id="一dfs解法">一、DFS解法</h4>
+<p><strong>解题思路：</strong></p>
+<p>我们要通过 <code>X</code> 升水壶和 <code>Y</code> 升水壶来得到 <code>Z</code> 升水，而根据题意我们对 <code>X</code> 水壶和 <code>Y</code> 水壶操作限制如下：</p>
+<ul>
+<li>装满任意一个水壶</li>
+<li>清空任意一个水壶</li>
+<li>从一个水壶向另外一个水壶倒水，直到装满</li>
+</ul>
+<p>那么我们所有能做的操作如下：</p>
+<ul>
+<li>将 <code>X</code> 水壶装满</li>
+<li>将 <code>X</code> 水壶倒空</li>
+<li>将 <code>Y</code> 水壶装满</li>
+<li>将 <code>Y</code> 水壶倒空</li>
+<li>将 <code>X</code> 水壶的水倒向 <code>Y</code> 水壶，直至 <code>Y</code> 水壶倒满或者 <code>X</code> 水壶倒空</li>
+<li>将 <code>Y</code> 水壶的水倒向 <code>X</code> 水壶，直至 <code>X</code> 水壶倒满或者 <code>Y</code> 水壶倒空</li>
+</ul>
+<p>那么不同的操作会得到不同的储水状态，我们可以用深度优先遍历的方法，来遍历所有的储水状态，如果能够得到 Z 升水，则返回 <code>true</code>，否则返回 <code>false</code>。另外这里我们可以用 <code>map</code> 或者 <code>set</code> 来记录遍历过的储水状态，防止重复遍历以及可能出现的无限循环。</p>
+<p><strong>代码</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm"> * @param {number} x
+</span><span class="cm"> * @param {number} y
+</span><span class="cm"> * @param {number} z
+</span><span class="cm"> * @return {boolean}
+</span><span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">canMeasureWater</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">stack</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">();</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="p">[</span><span class="nx">remainX</span><span class="p">,</span> <span class="nx">remainY</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">remainX</span> <span class="o">===</span> <span class="nx">z</span> <span class="o">||</span> <span class="nx">remainY</span> <span class="o">===</span> <span class="nx">z</span> <span class="o">||</span> <span class="nx">remainX</span> <span class="o">+</span> <span class="nx">remainY</span> <span class="o">===</span> <span class="nx">z</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">set</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">remainX</span> <span class="o">+</span> <span class="s2">&#34;#&#34;</span> <span class="o">+</span> <span class="nx">remainY</span><span class="p">))</span> <span class="k">continue</span><span class="p">;</span>
+        <span class="nx">set</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">remainX</span> <span class="o">+</span> <span class="s2">&#34;#&#34;</span> <span class="o">+</span> <span class="nx">remainY</span><span class="p">);</span>
+        <span class="c1">// 把 x 壶倒满
+</span><span class="c1"></span>        <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">x</span><span class="p">,</span> <span class="nx">remainY</span><span class="p">]);</span>
+        <span class="c1">// 把 y 壶倒满
+</span><span class="c1"></span>        <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">remainX</span><span class="p">,</span> <span class="nx">y</span><span class="p">]);</span>
+        <span class="c1">// 把 x 壶倒空
+</span><span class="c1"></span>        <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">remainY</span><span class="p">]);</span>
+        <span class="c1">// 把 y 壶倒空
+</span><span class="c1"></span>        <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">remainX</span><span class="p">,</span> <span class="mi">0</span><span class="p">]);</span>
+        <span class="c1">// 把 x 壶水倒向 y 壶，直至 x 壶倒空，或者 y 壶倒满
+</span><span class="c1"></span>        <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">remainX</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">remainX</span><span class="p">,</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">remainY</span><span class="p">),</span> <span class="nx">remainY</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">remainX</span><span class="p">,</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">remainY</span><span class="p">)])</span>
+        <span class="c1">// 把 y 壶水倒向 x 壶，直至 y 壶倒空，或者 x 壶倒满
+</span><span class="c1"></span>        <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">remainX</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">remainY</span><span class="p">,</span> <span class="nx">x</span> <span class="o">-</span> <span class="nx">remainX</span><span class="p">),</span> <span class="nx">remainY</span> <span class="o">-</span>  <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">remainY</span><span class="p">,</span> <span class="nx">x</span> <span class="o">-</span> <span class="nx">remainX</span><span class="p">)])</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>复杂度分析</strong></p>
+<ul>
+<li>时间复杂度：<code>O(x*y)</code>，所有的状态数和为 <code>x * y</code>种</li>
+<li>空间复杂度：<code>O(x*y)</code>，所有的状态数和为 <code>x * y</code>种，哈希集合最多存储<code>O(x*y)</code>项</li>
+</ul>
+<!-- raw HTML omitted -->
+<h4 id="二数学解法贝祖定理">二、数学解法（贝祖定理）</h4>
+<p><strong>解题思路：</strong></p>
+<p>由题意可知我们的操作只能是增加 <code>X</code> 升水、减少 <code>X</code> 升水、增加 <code>Y</code> 升水、减少 <code>Y</code> 升水。那么如果存在<code>ax + by = z</code>，<code>a、b</code> 为整数，则可以得到 <code>Z</code> 升水。
+根据 <a href="https://zh.wikipedia.org/wiki/%E8%B2%9D%E7%A5%96%E7%AD%89%E5%BC%8F">贝祖定理</a>，如果<code>ax + by = z</code>，<code>a、b</code> 为整数，存在解，那么 <code>z</code> 一定是 <code>x</code> 与 <code>y</code> 的最大公约数的倍数。</p>
+<p><strong>代码</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="err">​</span><span class="cm">/**
+</span><span class="cm"> * @param {number} x
+</span><span class="cm"> * @param {number} y
+</span><span class="cm"> * @param {number} z
+</span><span class="cm"> * @return {boolean}
+</span><span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">canMeasureWater</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="nx">z</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span>  <span class="nx">z</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">||</span> <span class="p">(</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">===</span> <span class="nx">z</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">gcd</span> <span class="o">=</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">b</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">a</span> <span class="o">:</span> <span class="nx">gcd</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="nx">a</span> <span class="o">%</span> <span class="nx">b</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">z</span> <span class="o">%</span> <span class="nx">gcd</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>复杂度分析</strong></p>
+<ul>
+<li>
+<p>时间复杂度：<code>O(log(min(x,y)))</code>，取决于计算最大公约数所使用的辗转相除法。</p>
+</li>
+<li>
+<p>空间复杂度：<code>O(1)</code>，只需要常数个变量。</p>
+</li>
+</ul>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "ytop" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://ytop.net' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p style="vertical-align:middle;"><a style="color: black;" href = 'http://beian.miit.gov.cn'>鄂ICP备20003010号-2</a>&nbsp;&nbsp;</p>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;Luke&#39;s blog</p>
+</footer>
+
+
+<script src = 'https://ytop.net/js/index.min.3fb2d93226caee76d973a8553fd18e0e2f90e9901bcfd7a626bac6741e418b8bc5be16b73031251410da54554de3c64b91dda6df7bdda7e83ad5f99eb2acaf54.js'></script>
+
+  </body>
+</html>
