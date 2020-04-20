@@ -113,21 +113,6 @@
   </url>
   
   <url>
-    <loc>https://ytop.net/categories/golang/</loc>
-    <lastmod>2019-06-08T21:53:54+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/tags/golang/</loc>
-    <lastmod>2019-06-08T21:53:54+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/post/golanglearning01/</loc>
-    <lastmod>2019-06-08T21:53:54+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ytop.net/tags/javascript/</loc>
     <lastmod>2019-05-25T21:53:54+08:00</lastmod>
   </url>
@@ -149,6 +134,11 @@
   
   <url>
     <loc>https://ytop.net/post/creating-a-new-theme/</loc>
+    <lastmod>2019-02-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ytop.net/tags/golang/</loc>
     <lastmod>2019-02-11T00:00:00+00:00</lastmod>
   </url>
   

@@ -5,6 +5,7 @@ date = "2019-02-01"
 tags = ["golang","hugo"]
 categories = ["hugo"]
 image = "artist.jpg"
+draft = true
 +++
 
 Hugo uses the excellent [Go](https://golang.org/) [html/template](https://golang.org/pkg/html/template/) library for

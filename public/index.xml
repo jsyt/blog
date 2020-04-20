@@ -203,19 +203,6 @@ Solution 解题思路：
     </item>
     
     <item>
-      <title>golang 学习笔记（一）——语法篇</title>
-      <link>https://ytop.net/post/golanglearning01/</link>
-      <pubDate>Sat, 08 Jun 2019 21:53:54 +0800</pubDate>
-      
-      <guid>https://ytop.net/post/golanglearning01/</guid>
-      <description>golang 应⽤程序⼊⼝  必须是 main 包：package main 必须是 main ⽅法：func main() ⽂件名不⼀定是 main.go  退出返回值 与其他主要编程语⾔的差异
- Go 中 main 函数不⽀持任何返回值 通过 os.Exit 来返回状态  获取命令⾏参数 与其他主要编程语⾔的差异
- main 函数不⽀持传⼊参数 func main(arg []string) 在程序中直接通过 os.Args 获取命令⾏参数  变量量赋值 与其他主要编程语⾔言的差异
- 赋值可以进⾏行行⾃自动类型推断 在⼀一个赋值语句句中可以对多个变量量进⾏行行同时赋值  常量量定义 与其他主要编程语⾔言的差异
- 快速设置连续值  1 2 3 4 5 6 7 8 9 10 11 12 13 14  const ( Monday = iota + 1	//Monday = 0 + 1  Tuesday	//Tuesday = iota + 1 = 1 + 1  Wednesday	//Wednesday = iota + 1 = 2 + 1  Thursday	//Thursday = iota + 1 = 3 + 1  Friday	//Friday = iota + 1 = 4 + 1  Saturday	//Saturday = iota + 1 = 5 + 1  Sunday	//Sunday = iota + 1 = 6 + 1 ) const ( Open = 1 &amp;lt;&amp;lt; iota Close Pending )   iota是golang语言的常量计数器,只能在常量的表达式中使用。 iota在const关键字出现时将被重置为0(const内部的第一行之前)，const中每新增一行常量声明将使iota计数一次(iota可理解为const语句块中的行索引)。 使用iota能简化定义，在定义枚举时很有用。</description>
-    </item>
-    
-    <item>
       <title>单页面（SPA）路由实现原理</title>
       <link>https://ytop.net/post/sparouter/</link>
       <pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate>

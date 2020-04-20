@@ -5,6 +5,7 @@ date = "2018-04-02"
 tags = ["golang","hugo"]
 categories = ["hugo"]
 image = "stuck.jpg"
+draft = true
 +++
 
 ## Step 1. Install Hugo

@@ -29,7 +29,9 @@ description : "浏览器页面渲染流程梳理"
 解析的过程分为两个步骤：词法分析和语法分析。
 词法分析负责将输入内容分解成一个个有效标记；而语法分析负责根据语言的语法规则分析文档的结构，从而构建解析树。通过词法分析可以将无关的字符（比如空格和换行符）分离出来。
 
-![从源文档到解析树](https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browserRendering-parsing.png)
+
+<!-- ![](https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browserRendering-parsing.png) -->
+
 
 解析是一个迭代的过程。通常，解析器会向词法分析器请求一个新标记，并尝试将其与某条语法规则进行匹配。如果发现了匹配规则，解析器会将一个对应于该标记的节点添加到解析树中，然后继续请求下一个标记。
 
@@ -39,7 +41,7 @@ description : "浏览器页面渲染流程梳理"
 ### 转译(Translation)
 很多时候，解析树还不是最终产品。解析通常是在转译过程中使用的，而转译是指将输入文档转换成另一种格式。编译就是这样一个例子。编译器可将源代码编译成机器代码，具体过程是首先将源代码解析成解析树，然后将解析树翻译成机器代码文档。
 
-![编译流程](https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browserRendering-translate.png)
+<!-- ![](https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/browserRendering-translate.png) -->
 
 ### HTML解析
 解析器的输出“解析树”是由 DOM 元素和属性节点构成的树结构。DOM 是文档对象模型 (Document Object Model) 的缩写。它是 HTML 文档的对象表示，同时也是外部内容（例如 JavaScript）与 HTML 元素之间的接口。

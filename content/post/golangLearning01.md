@@ -7,6 +7,7 @@ toc: true
 # featured_image : ""
 keywords: ["Golang"]
 description : "golang 学习笔记（一）——语法篇"
+draft: true
 ---
 
 ## golang 应⽤程序⼊⼝
