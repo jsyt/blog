@@ -155,6 +155,17 @@ DOM 与标记之间几乎是一一对应的关系。比如下面这段标记：
     </item>
     
     <item>
+      <title>Redux 详细介绍</title>
+      <link>https://ytop.net/post/redux/</link>
+      <pubDate>Sat, 12 May 2018 08:26:40 +0800</pubDate>
+      
+      <guid>https://ytop.net/post/redux/</guid>
+      <description>Redux Redux 解决的问题 随着 JavaScript 单页应用开发日趋复杂，JavaScript 需要管理比任何时候都要多的 state （状态）。管理不断变化的 state 非常困难。如果一个 model 的变化会引起另一个 model 变化，那么当 view 变化时，就可能引起对应 model 以及另一个 model 的变化，依次地，可能会引起另一个 view 的变化。直至你搞不清楚到底发生了什么。state 在什么时候，由于什么原因，如何变化已然不受控制。 当系统变得错综复杂的时候，想重现问题或者添加新功能就会变得举步维艰。而这些就是Redux要解决的问题。
+Redux 设计思想 Redux 的设计思想很简单，就两句话。
+ Web 应用是一个状态机，视图与状态是一一对应的。 所有的状态，保存在一个对象里面。  Redux 三大原则  整个应用的 state 被储存在一棵 object tree 中，并且这个 object tree 只存在于唯一一个 store 中 State 是只读的，惟一改变 state 的方法就是触发 action，action 是一个用于描述已发生事件的普通对象 使用纯函数来执行修改，为了描述action如何改变state tree ，你需要编写 reducers，Reducer 是纯函数，它接收先前的 state 和 action，并返回新的 state。  基本概念和 API Store Store 就是保存数据的地方，你可以把它看成一个容器。整个应用只能有一个 Store。</description>
+    </item>
+    
+    <item>
       <title>JavaScript 之函数防抖与节流</title>
       <link>https://ytop.net/post/debounceandthrottle/</link>
       <pubDate>Thu, 10 May 2018 21:53:54 +0800</pubDate>

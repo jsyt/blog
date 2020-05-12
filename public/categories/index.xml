@@ -6,10 +6,19 @@
     <description>Recent content in Categories on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
-    <lastBuildDate>Sun, 22 Mar 2020 17:30:43 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 20 Apr 2020 14:59:35 +0800</lastBuildDate>
     
 	<atom:link href="https://ytop.net/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Software Architecture</title>
+      <link>https://ytop.net/categories/software-architecture/</link>
+      <pubDate>Mon, 20 Apr 2020 14:59:35 +0800</pubDate>
+      
+      <guid>https://ytop.net/categories/software-architecture/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Algorithm</title>
@@ -35,15 +44,6 @@
       <pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate>
       
       <guid>https://ytop.net/categories/javascript/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hugo</title>
-      <link>https://ytop.net/categories/hugo/</link>
-      <pubDate>Mon, 11 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://ytop.net/categories/hugo/</guid>
       <description></description>
     </item>
     

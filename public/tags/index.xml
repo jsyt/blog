@@ -6,10 +6,19 @@
     <description>Recent content in Tags on Luke&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2020 Luke. All rights reserved.</copyright>
-    <lastBuildDate>Sun, 22 Mar 2020 17:30:43 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 20 Apr 2020 14:59:35 +0800</lastBuildDate>
     
 	<atom:link href="https://ytop.net/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Software Architecture</title>
+      <link>https://ytop.net/tags/software-architecture/</link>
+      <pubDate>Mon, 20 Apr 2020 14:59:35 +0800</pubDate>
+      
+      <guid>https://ytop.net/tags/software-architecture/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Algorithm</title>
@@ -62,24 +71,6 @@
       <pubDate>Sat, 25 May 2019 21:53:54 +0800</pubDate>
       
       <guid>https://ytop.net/tags/router/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>golang</title>
-      <link>https://ytop.net/tags/golang/</link>
-      <pubDate>Mon, 11 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://ytop.net/tags/golang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hugo</title>
-      <link>https://ytop.net/tags/hugo/</link>
-      <pubDate>Mon, 11 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://ytop.net/tags/hugo/</guid>
       <description></description>
     </item>
     
@@ -179,6 +170,15 @@
       <pubDate>Sat, 07 Jul 2018 21:53:54 +0800</pubDate>
       
       <guid>https://ytop.net/tags/dns/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Redux</title>
+      <link>https://ytop.net/tags/redux/</link>
+      <pubDate>Sat, 12 May 2018 08:26:40 +0800</pubDate>
+      
+      <guid>https://ytop.net/tags/redux/</guid>
       <description></description>
     </item>
     

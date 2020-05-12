@@ -3,6 +3,36 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://ytop.net/categories/</loc>
+    <lastmod>2020-04-20T14:59:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ytop.net/tags/software-architecture/</loc>
+    <lastmod>2020-04-20T14:59:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ytop.net/categories/software-architecture/</loc>
+    <lastmod>2020-04-20T14:59:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ytop.net/tags/</loc>
+    <lastmod>2020-04-20T14:59:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ytop.net/post/object-oriented-programming/</loc>
+    <lastmod>2020-04-20T14:59:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ytop.net/post/object-oriented-programming2/</loc>
+    <lastmod>2020-04-20T13:12:34+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://ytop.net/tags/algorithm/</loc>
     <lastmod>2020-03-22T17:30:43+08:00</lastmod>
   </url>
@@ -13,22 +43,12 @@
   </url>
   
   <url>
-    <loc>https://ytop.net/categories/</loc>
-    <lastmod>2020-03-22T17:30:43+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ytop.net/tags/leetcode/</loc>
     <lastmod>2020-03-22T17:30:43+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://ytop.net/post/leetcode365-water-and-jug-problem/</loc>
-    <lastmod>2020-03-22T17:30:43+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/tags/</loc>
     <lastmod>2020-03-22T17:30:43+08:00</lastmod>
   </url>
   
@@ -133,31 +153,6 @@
   </url>
   
   <url>
-    <loc>https://ytop.net/post/creating-a-new-theme/</loc>
-    <lastmod>2019-02-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/tags/golang/</loc>
-    <lastmod>2019-02-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/tags/hugo/</loc>
-    <lastmod>2019-02-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/categories/hugo/</loc>
-    <lastmod>2019-02-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/post/goisforlovers/</loc>
-    <lastmod>2019-02-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ytop.net/tags/webpack/</loc>
     <lastmod>2019-01-12T21:53:54+08:00</lastmod>
   </url>
@@ -235,11 +230,6 @@
   <url>
     <loc>https://ytop.net/post/mongodb/</loc>
     <lastmod>2018-10-12T21:53:54+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/post/emoji-support/</loc>
-    <lastmod>2018-08-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -328,6 +318,16 @@
   </url>
   
   <url>
+    <loc>https://ytop.net/tags/redux/</loc>
+    <lastmod>2018-05-12T08:26:40+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ytop.net/post/redux/</loc>
+    <lastmod>2018-05-12T08:26:40+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://ytop.net/tags/debounce/</loc>
     <lastmod>2018-05-10T21:53:54+08:00</lastmod>
   </url>
@@ -343,18 +343,8 @@
   </url>
   
   <url>
-    <loc>https://ytop.net/post/migrate-from-jekyll/</loc>
-    <lastmod>2018-05-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ytop.net/post/prototypeandextend/</loc>
     <lastmod>2018-04-23T21:53:54+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ytop.net/post/hugoisforlovers/</loc>
-    <lastmod>2018-04-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>

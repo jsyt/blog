@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Redux 详细介绍 | Luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'Luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = 'Redux 详细介绍' />
+<meta property = 'og:description' content = 'Redux Redux 解决的问题 随着 JavaScript 单页应用开发日趋复杂，JavaScript 需要管理比任何时候都要多的 state （状态）。管理不断变化的 state 非常困难。如果一个 model 的变化会引起另一个 model 变化，那么当 view 变化时， …'>
+<meta property = 'og:url' content = 'https://ytop.net/post/redux/' />
+<meta property = 'og:image' content = 'images/%!s()'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://ytop.net/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://ytop.net/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://ytop.net/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://ytop.net/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://ytop.net/post/redux/'>
+  
+  <link rel = 'stylesheet' href = 'https://ytop.net/css/main.c27df37d931115a0916acf72f6f3275a77ac0f1e8a210ad1d1b209296c887f63ba506c4568bd171cdca9becd738fd1b213ccfd942aeec9ae6a2977981b19a413.css'>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://ytop.net' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://ytop.net/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://ytop.net/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://ytop.net/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://ytop.net' class = 'nav-brand nav_item'>Luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>12. May 2018</p>
+      <h1 class = 'post_title'>Redux 详细介绍</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          <h1 id="redux">Redux</h1>
+<h2 id="redux-解决的问题">Redux 解决的问题</h2>
+<p>随着 JavaScript 单页应用开发日趋复杂，JavaScript 需要管理比任何时候都要多的 state （状态）。管理不断变化的 state 非常困难。如果一个 model 的变化会引起另一个 model 变化，那么当 view 变化时，就可能引起对应 model 以及另一个 model 的变化，依次地，可能会引起另一个 view 的变化。直至你搞不清楚到底发生了什么。state 在什么时候，由于什么原因，如何变化已然不受控制。 当系统变得错综复杂的时候，想重现问题或者添加新功能就会变得举步维艰。而这些就是Redux要解决的问题。</p>
+<h2 id="redux-设计思想">Redux 设计思想</h2>
+<p>Redux 的设计思想很简单，就两句话。</p>
+<ul>
+<li>Web 应用是一个状态机，视图与状态是一一对应的。</li>
+<li>所有的状态，保存在一个对象里面。</li>
+</ul>
+<h2 id="redux-三大原则">Redux 三大原则</h2>
+<ul>
+<li>整个应用的 state 被储存在一棵 object tree 中，并且这个 object tree 只存在于唯一一个 store 中</li>
+<li>State 是只读的，惟一改变 state 的方法就是触发 action，action 是一个用于描述已发生事件的普通对象</li>
+<li>使用纯函数来执行修改，为了描述action如何改变state tree ，你需要编写 reducers，Reducer 是纯函数，它接收先前的 state 和 action，并返回新的 state。</li>
+</ul>
+<h2 id="基本概念和-api">基本概念和 API</h2>
+<h3 id="store">Store</h3>
+<p>Store 就是保存数据的地方，你可以把它看成一个容器。整个应用只能有一个 Store。</p>
+<p>Redux 提供createStore这个函数，用来生成 Store。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，createStore函数接受另一个函数作为参数，返回新生成的 Store 对象。</p>
+<h3 id="state">State</h3>
+<p>Store对象包含所有数据。如果想得到某个时点的数据，就要对 Store 生成快照。这种时点的数据集合，就叫做 State。</p>
+<p>当前时刻的 State，可以通过<code>store.getState()</code>拿到。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Redux 规定， 一个 State 对应一个 View。只要 State 相同，View 就相同。你知道 State，就知道 View 是什么样，反之亦然。</p>
+<h3 id="action">Action</h3>
+<p>State 的变化，会导致 View 的变化。但是，用户接触不到 State，只能接触到 View。所以，State 的变化必须是 View 导致的。Action 就是 View 发出的通知，表示 State 应该要发生变化了。</p>
+<p>Action 是一个对象。其中的type属性是必须的，表示 Action 的名称。其他属性可以自由设置，社区有一个规范可以参考。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">action</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;ADD_TODO&#39;</span><span class="p">,</span>
+  <span class="nx">payload</span><span class="o">:</span> <span class="s1">&#39;Learn Redux&#39;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，Action 的名称是ADD_TODO，它携带的信息是字符串Learn Redux。</p>
+<p>可以这样理解，Action 描述当前发生的事情。改变 State 的唯一办法，就是使用 Action。它会运送数据到 Store。</p>
+<h3 id="action-creator">Action Creator</h3>
+<p>View 要发送多少种消息，就会有多少种 Action。如果都手写，会很麻烦。可以定义一个函数来生成 Action，这个函数就叫 Action Creator。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">ADD_TODO</span> <span class="o">=</span> <span class="s1">&#39;添加 TODO&#39;</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">addTodo</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="nx">ADD_TODO</span><span class="p">,</span>
+    <span class="nx">text</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">addTodo</span><span class="p">(</span><span class="s1">&#39;Learn Redux&#39;</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，addTodo函数就是一个 Action Creator。</p>
+<h3 id="storedispatch">store.dispatch()</h3>
+<p><code>store.dispatch()</code>是 View 发出 Action 的唯一方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+
+<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span>
+  <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;ADD_TODO&#39;</span><span class="p">,</span>
+  <span class="nx">payload</span><span class="o">:</span> <span class="s1">&#39;Learn Redux&#39;</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，store.dispatch接受一个 Action 对象作为参数，将它发送出去。</p>
+<p>结合 Action Creator，这段代码可以改写如下。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">addTodo</span><span class="p">(</span><span class="s1">&#39;Learn Redux&#39;</span><span class="p">));</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="reducer">Reducer</h3>
+<p>Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会发生变化。这种 State 的计算过程就叫做 Reducer。</p>
+<p>Reducer 是一个函数，它接受 Action 和当前 State 作为参数，返回一个新的 State。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// ...
+</span><span class="c1"></span>  <span class="k">return</span> <span class="nx">new_state</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>整个应用的初始状态，可以作为 State 的默认值。下面是一个实际的例子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">defaultState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">defaultState</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="s1">&#39;ADD&#39;</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nx">state</span> <span class="o">+</span> <span class="nx">action</span><span class="p">.</span><span class="nx">payload</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nx">state</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;ADD&#39;</span><span class="p">,</span>
+  <span class="nx">payload</span><span class="o">:</span> <span class="mi">2</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，reducer函数收到名为ADD的 Action 以后，就返回一个新的 State，作为加法的计算结果。其他运算的逻辑（比如减法），也可以根据 Action 的不同来实现。</p>
+<p>实际应用中，Reducer 函数不用像上面这样手动调用，store.dispatch方法会触发 Reducer 的自动执行。为此，Store 需要知道 Reducer 函数，做法就是在生成 Store 的时候，将 Reducer 传入createStore方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，createStore接受 Reducer 作为参数，生成一个新的 Store。以后每当store.dispatch发送过来一个新的 Action，就会自动调用 Reducer，得到新的 State。</p>
+<p>为什么这个函数叫做 Reducer 呢？因为它可以作为数组的reduce方法的参数。请看下面的例子，一系列 Action 对象按照顺序作为一个数组。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">actions</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;ADD&#39;</span><span class="p">,</span> <span class="nx">payload</span><span class="o">:</span> <span class="mi">0</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;ADD&#39;</span><span class="p">,</span> <span class="nx">payload</span><span class="o">:</span> <span class="mi">1</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;ADD&#39;</span><span class="p">,</span> <span class="nx">payload</span><span class="o">:</span> <span class="mi">2</span> <span class="p">}</span>
+<span class="p">];</span>
+
+<span class="kr">const</span> <span class="nx">total</span> <span class="o">=</span> <span class="nx">actions</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">reducer</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">// 3
+</span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，数组actions表示依次有三个 Action，分别是加0、加1和加2。数组的reduce方法接受 Reducer 函数作为参数，就可以直接得到最终的状态3。</p>
+<h3 id="纯函数">纯函数</h3>
+<p>Reducer 函数最重要的特征是，它是一个纯函数。也就是说，只要是同样的输入，必定得到同样的输出。</p>
+<p>纯函数是函数式编程的概念，必须遵守以下一些约束。</p>
+<ul>
+<li>不得改写参数</li>
+<li>不能调用系统 I/O 的API</li>
+<li>不能调用Date.now()或者Math.random()等不纯的方法，因为每次会得到不一样的结果</li>
+</ul>
+<p>由于 Reducer 是纯函数，就可以保证同样的State，必定得到同样的 View。但也正因为这一点，Reducer 函数里面不能改变 State，必须返回一个全新的对象，请参考下面的写法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// State 是一个对象
+</span><span class="c1"></span><span class="kd">function</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="p">{</span> <span class="nx">thingToChange</span> <span class="p">});</span>
+  <span class="c1">// 或者
+</span><span class="c1"></span>  <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">state</span><span class="p">,</span> <span class="p">...</span><span class="nx">newState</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="c1">// State 是一个数组
+</span><span class="c1"></span><span class="kd">function</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[...</span><span class="nx">state</span><span class="p">,</span> <span class="nx">newItem</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>最好把 State 对象设成只读。你没法改变它，要得到新的 State，唯一办法就是生成一个新对象。这样的好处是，任何时候，与某个 View 对应的 State 总是一个不变的对象。</p>
+<h3 id="storesubscribe">store.subscribe()</h3>
+<p>Store 允许使用store.subscribe方法设置监听函数，一旦 State 发生变化，就自动执行这个函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">);</span>
+
+<span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">listener</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>显然，只要把 View 的更新函数（对于 React 项目，就是组件的render方法或setState方法）放入listen，就会实现 View 的自动渲染。</p>
+<p>store.subscribe方法返回一个函数，调用这个函数就可以解除监听。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">unsubscribe</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="p">=&gt;</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">())</span>
+<span class="p">);</span>
+
+<span class="nx">unsubscribe</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="store-的实现">Store 的实现</h2>
+<p>上一节介绍了 Redux 涉及的基本概念，可以发现 Store 提供了三个方法。</p>
+<ul>
+<li>store.getState()</li>
+<li>store.dispatch()</li>
+<li>store.subscribe()</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kd">let</span> <span class="p">{</span> <span class="nx">subscribe</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>createStore方法还可以接受第二个参数，表示 State 的最初状态。这通常是服务器给出的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">todoApp</span><span class="p">,</span> <span class="nb">window</span><span class="p">.</span><span class="nx">STATE_FROM_SERVER</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，window.STATE_FROM_SERVER就是整个应用的状态初始值。注意，如果提供了这个参数，它会覆盖 Reducer 函数的默认初始值。</p>
+<p>下面是createStore方法的一个简单实现，可以了解一下 Store 是怎么生成的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">createStore</span> <span class="o">=</span> <span class="p">(</span><span class="nx">reducer</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">state</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">listeners</span> <span class="o">=</span> <span class="p">[];</span>
+
+  <span class="kr">const</span> <span class="nx">getState</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">state</span><span class="p">;</span>
+
+  <span class="kr">const</span> <span class="nx">dispatch</span> <span class="o">=</span> <span class="p">(</span><span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">state</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">);</span>
+    <span class="nx">listeners</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">listener</span> <span class="p">=&gt;</span> <span class="nx">listener</span><span class="p">());</span>
+  <span class="p">};</span>
+
+  <span class="kr">const</span> <span class="nx">subscribe</span> <span class="o">=</span> <span class="p">(</span><span class="nx">listener</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">listeners</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">listener</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+      <span class="nx">listeners</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">l</span> <span class="p">=&gt;</span> <span class="nx">l</span> <span class="o">!==</span> <span class="nx">listener</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="nx">dispatch</span><span class="p">({});</span>
+
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">getState</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">,</span> <span class="nx">subscribe</span> <span class="p">};</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="reducer-的拆分">Reducer 的拆分</h2>
+<p>Reducer 函数负责生成 State。由于整个应用只有一个 State 对象，包含所有数据，对于大型应用来说，这个 State 必然十分庞大，导致 Reducer 函数也十分庞大。</p>
+<p>请看下面的例子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">chatReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">defaultState</span><span class="p">,</span> <span class="nx">action</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="p">{</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">payload</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">action</span><span class="p">;</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nx">ADD_CHAT</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">chatLog</span><span class="o">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">chatLog</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span>
+      <span class="p">});</span>
+    <span class="k">case</span> <span class="nx">CHANGE_STATUS</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">statusMessage</span><span class="o">:</span> <span class="nx">payload</span>
+      <span class="p">});</span>
+    <span class="k">case</span> <span class="nx">CHANGE_USERNAME</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">userName</span><span class="o">:</span> <span class="nx">payload</span>
+      <span class="p">});</span>
+    <span class="k">default</span><span class="o">:</span> <span class="k">return</span> <span class="nx">state</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，三种 Action 分别改变 State 的三个属性。</p>
+<p>ADD_CHAT：chatLog属性
+CHANGE_STATUS：statusMessage属性
+CHANGE_USERNAME：userName属性
+这三个属性之间没有联系，这提示我们可以把 Reducer 函数拆分。不同的函数负责处理不同属性，最终把它们合并成一个大的 Reducer 即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">chatReducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">defaultState</span><span class="p">,</span> <span class="nx">action</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">chatLog</span><span class="o">:</span> <span class="nx">chatLog</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">chatLog</span><span class="p">,</span> <span class="nx">action</span><span class="p">),</span>
+    <span class="nx">statusMessage</span><span class="o">:</span> <span class="nx">statusMessage</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">statusMessage</span><span class="p">,</span> <span class="nx">action</span><span class="p">),</span>
+    <span class="nx">userName</span><span class="o">:</span> <span class="nx">userName</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">userName</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，Reducer 函数被拆成了三个小函数，每一个负责生成对应的属性。</p>
+<p>这样一拆，Reducer 就易读易写多了。而且，这种拆分与 React 应用的结构相吻合：一个 React 根组件由很多子组件构成。这就是说，子组件与子 Reducer 完全可以对应。</p>
+<p>Redux 提供了一个combineReducers方法，用于 Reducer 的拆分。你只要定义各个子 Reducer 函数，然后用这个方法，将它们合成一个大的 Reducer。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">combineReducers</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">chatReducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span>
+  <span class="nx">chatLog</span><span class="p">,</span>
+  <span class="nx">statusMessage</span><span class="p">,</span>
+  <span class="nx">userName</span>
+<span class="p">})</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">todoApp</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的代码通过combineReducers方法将三个子 Reducer 合并成一个大的函数。</p>
+<p>这种写法有一个前提，就是 State 的属性名必须与子 Reducer 同名。如果不同名，就要采用下面的写法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span>
+  <span class="nx">a</span><span class="o">:</span> <span class="nx">doSomethingWithA</span><span class="p">,</span>
+  <span class="nx">b</span><span class="o">:</span> <span class="nx">processB</span><span class="p">,</span>
+  <span class="nx">c</span><span class="o">:</span> <span class="nx">c</span>
+<span class="p">})</span>
+
+<span class="c1">// 等同于
+</span><span class="c1"></span><span class="kd">function</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">a</span><span class="o">:</span> <span class="nx">doSomethingWithA</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">a</span><span class="p">,</span> <span class="nx">action</span><span class="p">),</span>
+    <span class="nx">b</span><span class="o">:</span> <span class="nx">processB</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">b</span><span class="p">,</span> <span class="nx">action</span><span class="p">),</span>
+    <span class="nx">c</span><span class="o">:</span> <span class="nx">c</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">c</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>总之，combineReducers()做的就是产生一个整体的 Reducer 函数。该函数根据 State 的 key 去执行相应的子 Reducer，并将返回结果合并成一个大的 State 对象。</p>
+<p>下面是combineReducer的简单实现。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">combineReducers</span> <span class="o">=</span> <span class="nx">reducers</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">reducers</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span>
+      <span class="p">(</span><span class="nx">nextState</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">nextState</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">reducers</span><span class="p">[</span><span class="nx">key</span><span class="p">](</span><span class="nx">state</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">action</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">nextState</span><span class="p">;</span>
+      <span class="p">},</span>
+      <span class="p">{}</span>
+    <span class="p">);</span>
+  <span class="p">};</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>你可以把所有子 Reducer 放在一个文件里面，然后统一引入。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">combineReducers</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span>
+<span class="kr">import</span> <span class="o">*</span> <span class="nx">as</span> <span class="nx">reducers</span> <span class="nx">from</span> <span class="s1">&#39;./reducers&#39;</span>
+
+<span class="kr">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">(</span><span class="nx">reducers</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="redux-工作流程">Redux 工作流程</h2>
+<p>本节对 Redux 的工作流程，做一个梳理。</p>
+<p><img src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/redux-flow.jpg" alt=""></p>
+<p>首先，用户发出 Action。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后，Store 自动调用 Reducer，并且传入两个参数：当前 State 和收到的 Action。 Reducer 会返回新的 State 。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">nextState</span> <span class="o">=</span> <span class="nx">todoApp</span><span class="p">(</span><span class="nx">previousState</span><span class="p">,</span> <span class="nx">action</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>State 一旦有变化，Store 就会调用监听函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// 设置监听函数
+</span><span class="c1"></span><span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">listener</span><span class="p">);</span>
+<span class="nx">listener可以通过store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>得到当前状态。如果使用的是 React，这时可以触发重新渲染 View。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">listerner</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">newState</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">();</span>
+  <span class="nx">component</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">newState</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="redux-中间件">Redux 中间件</h2>
+<p>前面介绍的都是同步操作，那异步操作怎么办？Action 发出以后，Reducer 立即算出 State，这叫做同步；Action 发出以后，过一段时间再执行 Reducer，这就是异步。</p>
+<p>怎么才能 Reducer 在异步操作结束后自动执行呢？这就要用到新的工具：<strong>中间件（middleware）</strong>。</p>
+<h3 id="中间件的概念">中间件的概念</h3>
+<p>为了理解中间件，让我们站在框架作者的角度思考问题：如果要添加功能，你会在哪个环节添加？</p>
+<p>（1）Reducer：纯函数，只承担计算 State 的功能，不合适承担其他功能，也承担不了，因为理论上，纯函数不能进行读写操作。</p>
+<p>（2）View：与 State 一一对应，可以看作 State 的视觉层，也不合适承担其他功能。</p>
+<p>（3）Action：存放数据的对象，即消息的载体，只能被别人操作，自己不能进行任何操作。</p>
+<p>想来想去，只有发送 Action 的这个步骤，即store.dispatch()方法，可以添加功能。举例来说，要添加日志功能，把 Action 和 State 打印出来，可以对store.dispatch进行如下改造。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">next</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">;</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">dispatchAndLog</span><span class="p">(</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;dispatching&#39;</span><span class="p">,</span> <span class="nx">action</span><span class="p">);</span>
+  <span class="nx">next</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;next state&#39;</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，对store.dispatch进行了重定义，在发送 Action 前后添加了打印功能。这就是中间件的雏形。</p>
+<p>中间件就是一个函数，对store.dispatch方法进行了改造，在发出 Action 和执行 Reducer 这两步之间，添加了其他功能。</p>
+<h3 id="中间件的用法">中间件的用法</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">applyMiddleware</span><span class="p">,</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">createLogger</span> <span class="nx">from</span> <span class="s1">&#39;redux-logger&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">logger</span> <span class="o">=</span> <span class="nx">createLogger</span><span class="p">();</span>
+
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span>
+  <span class="nx">reducer</span><span class="p">,</span>
+  <span class="nx">applyMiddleware</span><span class="p">(</span><span class="nx">logger</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，redux-logger提供一个生成器createLogger，可以生成日志中间件logger。然后，将它放在applyMiddleware方法之中，传入createStore方法，就完成了store.dispatch()的功能增强。</p>
+<p>这里有两点需要注意：</p>
+<ul>
+<li>createStore方法可以接受整个应用的初始状态作为参数，那样的话，applyMiddleware就是第三个参数了。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span>
+  <span class="nx">reducer</span><span class="p">,</span>
+  <span class="nx">initial_state</span><span class="p">,</span>
+  <span class="nx">applyMiddleware</span><span class="p">(</span><span class="nx">logger</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>中间件的次序有讲究。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span>
+  <span class="nx">reducer</span><span class="p">,</span>
+  <span class="nx">applyMiddleware</span><span class="p">(</span><span class="nx">thunk</span><span class="p">,</span> <span class="nx">promise</span><span class="p">,</span> <span class="nx">logger</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，applyMiddleware方法的三个参数，就是三个中间件，中间件的执行顺序是从右往左。有的中间件有次序要求，使用前要查一下文档。比如，logger就一定要放在最后，否则输出结果会不正确。</p>
+<h3 id="中间件的写法">中间件的写法</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">middleWare</span><span class="p">({</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">})</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">fucntion</span><span class="p">(</span><span class="nx">action</span><span class="p">){</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;dispatching&#39;</span><span class="p">,</span> <span class="nx">action</span><span class="p">);</span>
+      <span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;next state&#39;</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>中间件的写法就是如上所示，它是一个函数，接受的参数是store的dispatch和getState，并且返回一个函数，这个函数的参数next表示下一个中间件，这个函数的返回值也是一个函数，它的参数是action，这个函数就是新的dispatch函数，你可以在这个函数里编写新的处理action的逻辑，并且通过next()调用原来的dispatch函数。</p>
+<h3 id="applymiddlewares">applyMiddlewares()</h3>
+<p>看到这里，你可能会问，applyMiddlewares这个方法到底是干什么的？</p>
+<p>它是 Redux 的原生方法，作用是根据传入的中间件函数来改造 dispatch 返回一个包含新的dispatch的store</p>
+<p>下面是它的源码。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">applyMiddleware</span><span class="p">(...</span><span class="nx">middlewares</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">createStore</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">reducer</span><span class="p">,</span> <span class="nx">preloadedState</span><span class="p">,</span> <span class="nx">enhancer</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">,</span> <span class="nx">preloadedState</span><span class="p">,</span> <span class="nx">enhancer</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">dispatch</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">chain</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="kd">var</span> <span class="nx">middlewareAPI</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">getState</span><span class="o">:</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">,</span>
+      <span class="nx">dispatch</span><span class="o">:</span> <span class="p">(</span><span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">)</span>
+    <span class="p">};</span>
+    <span class="nx">chain</span> <span class="o">=</span> <span class="nx">middlewares</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">middleware</span> <span class="p">=&gt;</span> <span class="nx">middleware</span><span class="p">(</span><span class="nx">middlewareAPI</span><span class="p">));</span>
+    <span class="nx">dispatch</span> <span class="o">=</span> <span class="nx">compose</span><span class="p">(...</span><span class="nx">chain</span><span class="p">)(</span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">{...</span><span class="nx">store</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，可以看到，中间件内部（middlewareAPI）可以拿到getState和dispatch这两个方法。所有中间件被放进了一个数组chain，然后通过compose函数，将中间件函数从右向左依次执行，将上一个执行函数的结果传递给下一个函数的参数执行，通过在中间件中调用next形成了一条函数调用链。其实这和koa中间件的洋葱模型是一样的。</p>
+<h3 id="异步操作的基本思路">异步操作的基本思路</h3>
+<p>理解了中间件以后，就可以处理异步操作了。</p>
+<p>同步操作只要发出一种 Action 即可，异步操作的差别是它要发出三种 Action。</p>
+<p>操作发起时的 Action
+操作成功时的 Action
+操作失败时的 Action
+以向服务器取出数据为例，三种 Action 可以有两种不同的写法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// 写法一：名称相同，参数不同
+</span><span class="c1"></span><span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;FETCH_POSTS&#39;</span> <span class="p">}</span>
+<span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;FETCH_POSTS&#39;</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;Oops&#39;</span> <span class="p">}</span>
+<span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;FETCH_POSTS&#39;</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="nx">response</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="c1">// 写法二：名称不同
+</span><span class="c1"></span><span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;FETCH_POSTS_REQUEST&#39;</span> <span class="p">}</span>
+<span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;FETCH_POSTS_FAILURE&#39;</span><span class="p">,</span> <span class="nx">error</span><span class="o">:</span> <span class="s1">&#39;Oops&#39;</span> <span class="p">}</span>
+<span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;FETCH_POSTS_SUCCESS&#39;</span><span class="p">,</span> <span class="nx">response</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>除了 Action 种类不同，异步操作的 State 也要进行改造，反映不同的操作状态。下面是 State 的一个例子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="c1">// ...
+</span><span class="c1"></span>  <span class="nx">isFetching</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">didInvalidate</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">lastUpdated</span><span class="o">:</span> <span class="s1">&#39;xxxxxxx&#39;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，State 的属性isFetching表示是否在抓取数据。didInvalidate表示数据是否过时，lastUpdated表示上一次更新时间。</p>
+<p>现在，整个异步操作的思路就很清楚了。</p>
+<p>操作开始时，送出一个 Action，触发 State 更新为&quot;正在操作&quot;状态，View 重新渲染
+操作结束后，再送出一个 Action，触发 State 更新为&quot;操作结束&quot;状态，View 再一次重新渲染</p>
+<h3 id="redux-thunk-中间件">redux-thunk 中间件</h3>
+<p>异步操作至少要送出两个 Action：用户触发第一个 Action，这个跟同步操作一样，没有问题；如何才能在操作结束时，系统自动送出第二个 Action 呢？</p>
+<p>奥妙就在 Action Creator 之中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">AsyncApp</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">dispatch</span><span class="p">,</span> <span class="nx">selectedPost</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span>
+    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">fetchPosts</span><span class="p">(</span><span class="nx">selectedPost</span><span class="p">))</span>
+  <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码是一个异步组件的例子。加载成功后（componentDidMount方法），它送出了（dispatch方法）一个 Action，向服务器要求数据 fetchPosts(selectedSubreddit)。这里的fetchPosts就是 Action Creator。</p>
+<p>下面就是fetchPosts的代码，关键之处就在里面。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">fetchPosts</span> <span class="o">=</span> <span class="nx">postTitle</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">dispatch</span><span class="p">(</span><span class="nx">requestPosts</span><span class="p">(</span><span class="nx">postTitle</span><span class="p">));</span>
+  <span class="k">return</span> <span class="nx">fetch</span><span class="p">(</span><span class="sb">`/some/API/</span><span class="si">${</span><span class="nx">postTitle</span><span class="si">}</span><span class="sb">.json`</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">json</span> <span class="p">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">receivePosts</span><span class="p">(</span><span class="nx">postTitle</span><span class="p">,</span> <span class="nx">json</span><span class="p">)));</span>
+  <span class="p">};</span>
+<span class="p">};</span>
+
+<span class="c1">// 使用方法一
+</span><span class="c1"></span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">fetchPosts</span><span class="p">(</span><span class="s1">&#39;reactjs&#39;</span><span class="p">));</span>
+<span class="c1">// 使用方法二
+</span><span class="c1"></span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">fetchPosts</span><span class="p">(</span><span class="s1">&#39;reactjs&#39;</span><span class="p">)).</span><span class="nx">then</span><span class="p">(()</span> <span class="p">=&gt;</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">())</span>
+<span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，fetchPosts是一个Action Creator（动作生成器），返回一个函数。这个函数执行后，先发出一个Action（requestPosts(postTitle)），然后进行异步操作。拿到结果后，先将结果转成 JSON 格式，然后再发出一个 Action（ receivePosts(postTitle, json)）。</p>
+<p>上面代码中，有几个地方需要注意。</p>
+<p>（1）fetchPosts返回了一个函数，而普通的 Action Creator 默认返回一个对象。</p>
+<p>（2）返回的函数的参数是dispatch和getState这两个 Redux 方法，普通的 Action Creator 的参数是 Action 的内容。</p>
+<p>（3）在返回的函数之中，先发出一个 Action（requestPosts(postTitle)），表示操作开始。</p>
+<p>（4）异步操作结束之后，再发出一个 Action（receivePosts(postTitle, json)），表示操作结束。</p>
+<p>这样的处理，就解决了自动发送第二个 Action 的问题。但是，又带来了一个新的问题，Action 是由store.dispatch方法发送的。而store.dispatch方法正常情况下，参数只能是对象，不能是函数。</p>
+<p>这时，就要使用中间件redux-thunk。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span><span class="p">,</span> <span class="nx">applyMiddleware</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">thunk</span> <span class="nx">from</span> <span class="s1">&#39;redux-thunk&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">reducer</span> <span class="nx">from</span> <span class="s1">&#39;./reducers&#39;</span><span class="p">;</span>
+
+<span class="c1">// Note: this API requires redux@&gt;=3.1.0
+</span><span class="c1"></span><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span>
+  <span class="nx">reducer</span><span class="p">,</span>
+  <span class="nx">applyMiddleware</span><span class="p">(</span><span class="nx">thunk</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码使用redux-thunk中间件，改造store.dispatch，使得后者可以接受函数作为参数。</p>
+<p>因此，异步操作的第一种解决方案就是，写出一个返回函数的 Action Creator，然后使用redux-thunk中间件改造store.dispatch。</p>
+<h3 id="redux-promise-中间件">redux-promise 中间件</h3>
+<p>既然 Action Creator 可以返回函数，当然也可以返回其他值。另一种异步操作的解决方案，就是让 Action Creator 返回一个 Promise 对象。</p>
+<p>这就需要使用redux-promise中间件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span><span class="p">,</span> <span class="nx">applyMiddleware</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">promiseMiddleware</span> <span class="nx">from</span> <span class="s1">&#39;redux-promise&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">reducer</span> <span class="nx">from</span> <span class="s1">&#39;./reducers&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span>
+  <span class="nx">reducer</span><span class="p">,</span>
+  <span class="nx">applyMiddleware</span><span class="p">(</span><span class="nx">promiseMiddleware</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个中间件使得store.dispatch方法可以接受 Promise 对象作为参数。这时，Action Creator 有两种写法。写法一，返回值是一个 Promise 对象。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">fetchPosts</span> <span class="o">=</span>
+  <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">postTitle</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nx">dispatch</span><span class="p">(</span><span class="nx">requestPosts</span><span class="p">(</span><span class="nx">postTitle</span><span class="p">));</span>
+     <span class="k">return</span> <span class="nx">fetch</span><span class="p">(</span><span class="sb">`/some/API/</span><span class="si">${</span><span class="nx">postTitle</span><span class="si">}</span><span class="sb">.json`</span><span class="p">)</span>
+       <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+         <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;FETCH_POSTS&#39;</span><span class="p">,</span>
+         <span class="nx">payload</span><span class="o">:</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span>
+       <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>写法二，Action 对象的payload属性是一个 Promise 对象。这需要从redux-actions模块引入createAction方法，并且写法也要变成下面这样。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createAction</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux-actions&#39;</span><span class="p">;</span>
+
+<span class="kr">class</span> <span class="nx">AsyncApp</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">dispatch</span><span class="p">,</span> <span class="nx">selectedPost</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span>
+    <span class="c1">// 发出同步 Action
+</span><span class="c1"></span>    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">requestPosts</span><span class="p">(</span><span class="nx">selectedPost</span><span class="p">));</span>
+    <span class="c1">// 发出异步 Action
+</span><span class="c1"></span>    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">createAction</span><span class="p">(</span>
+      <span class="s1">&#39;FETCH_POSTS&#39;</span><span class="p">,</span>
+      <span class="nx">fetch</span><span class="p">(</span><span class="sb">`/some/API/</span><span class="si">${</span><span class="nx">postTitle</span><span class="si">}</span><span class="sb">.json`</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+    <span class="p">));</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，第二个dispatch方法发出的是异步 Action，只有等到操作结束，这个 Action 才会实际发出。注意，createAction的第二个参数必须是一个 Promise 对象。</p>
+<p>看一下redux-promise的源码，就会明白它内部是怎么操作的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">promiseMiddleware</span><span class="p">({</span> <span class="nx">dispatch</span> <span class="p">})</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">next</span> <span class="p">=&gt;</span> <span class="nx">action</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isFSA</span><span class="p">(</span><span class="nx">action</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">isPromise</span><span class="p">(</span><span class="nx">action</span><span class="p">)</span>
+        <span class="o">?</span> <span class="nx">action</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">next</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">isPromise</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">payload</span><span class="p">)</span>
+      <span class="o">?</span> <span class="nx">action</span><span class="p">.</span><span class="nx">payload</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span>
+          <span class="nx">result</span> <span class="p">=&gt;</span> <span class="nx">dispatch</span><span class="p">({</span> <span class="p">...</span><span class="nx">action</span><span class="p">,</span> <span class="nx">payload</span><span class="o">:</span> <span class="nx">result</span> <span class="p">}),</span>
+          <span class="nx">error</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">dispatch</span><span class="p">({</span> <span class="p">...</span><span class="nx">action</span><span class="p">,</span> <span class="nx">payload</span><span class="o">:</span> <span class="nx">error</span><span class="p">,</span> <span class="nx">error</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+            <span class="k">return</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">)</span>
+      <span class="o">:</span> <span class="nx">next</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面代码可以看出，如果 Action 本身是一个 Promise，它 resolve 以后的值应该是一个 Action 对象，会被dispatch方法送出（action.then(dispatch)），但 reject 以后不会有任何动作；如果 Action 对象的payload属性是一个 Promise 对象，那么无论 resolve 和 reject，dispatch方法都会发出 Action。</p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "ytop" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://ytop.net' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p style="vertical-align:middle;"><a style="color: black;" href = 'http://beian.miit.gov.cn'>鄂ICP备20003010号-2</a>&nbsp;&nbsp;<img style="padding:0;margin:0;vertical-align:middle;display:inline-block;float: none;" src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/beiantubiao.png"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42090202000342" style="color: black;" >&nbsp;鄂公网安备 42090202000342号</a></p>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;Luke&#39;s blog</p>
+</footer>
+
+
+<script src = 'https://ytop.net/js/index.min.3fb2d93226caee76d973a8553fd18e0e2f90e9901bcfd7a626bac6741e418b8bc5be16b73031251410da54554de3c64b91dda6df7bdda7e83ad5f99eb2acaf54.js'></script>
+
+  </body>
+</html>

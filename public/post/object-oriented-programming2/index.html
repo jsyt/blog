@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>面向对象编程与 s o l i d 原则（二） | Luke&#39;s blog</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' /><meta name = 'keywords' content = 'Luke&#39;s blog'>
+<meta property = 'og:locale' content = 'en_US' />
+<meta property = 'og:type' content = 'article' />
+<meta property = 'og:title' content = '面向对象编程与 SOLID 原则（二）' />
+<meta property = 'og:description' content = '在文章的 第一部分，我们主要讨论了面向对象与前两个 SOLID 原则，它们分别是单一职责原则和开闭原则。在这一部分，我们将讨论接下来的三个原则。
+面向对象五大原则(SOLID)： 里氏替换原则（Liskov-Substituion Principle） 子类可以替换父类并且出现在父类能够出现的任何地 …'>
+<meta property = 'og:url' content = 'https://ytop.net/post/object-oriented-programming2/' />
+  
+  
+    
+  
+  <meta property = 'og:image' content = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/aswathy-n-hnG9DFkMLsI-unsplash.jpg'/>
+<link rel='apple-touch-icon' sizes='180x180' href='https://ytop.net/images/icons/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://ytop.net/images/icons/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://ytop.net/images/icons/favicon-16x16.png'>
+<link rel='manifest' href='https://ytop.net/images/icons/site.webmanifest'>
+<meta name='msapplication-TileColor' content='#da532c'>
+<meta name='theme-color' content='#ffffff'>
+
+  <link rel='canonical' href='https://ytop.net/post/object-oriented-programming2/'>
+  
+  <link rel = 'stylesheet' href = 'https://ytop.net/css/main.c27df37d931115a0916acf72f6f3275a77ac0f1e8a210ad1d1b209296c887f63ba506c4568bd171cdca9becd738fd1b213ccfd942aeec9ae6a2977981b19a413.css'>
+</head>
+
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+    
+      <a href = 'https://ytop.net' class = 'nav_item'>Home</a>
+    
+      <a href = 'https://ytop.net/categories' class = 'nav_item'>Category</a>
+    
+      <a href = 'https://ytop.net/tags' class = 'nav_item'>Tag</a>
+    
+      <a href = 'https://ytop.net/about/' class = 'nav_item'>About</a>
+    
+    <div class = 'nav-close'></div>
+    <div class = 'color_mode'>
+<label for = 'mode'>Toggle Dark Mode</label>
+<input type = 'checkbox' class = 'color_choice' id = 'mode'>
+</div>
+
+  </div>
+</div>
+<header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='https://ytop.net' class = 'nav-brand nav_item'>Luke&#39;s blog</a>
+    <div class = 'nav_bar-wrap'>
+      <div class = 'nav_bar'></div>
+    </div>
+  </nav>
+</header>
+
+
+    <main>
+      
+  <div class = 'wrap mt post'>
+    <div><p class = 'post_date pale'>20. April 2020</p>
+      <h1 class = 'post_title'>面向对象编程与 SOLID 原则（二）</h1>
+      <div class = 'post_body'>
+        <div class = 'post_inner'>
+        
+        
+          
+            
+          
+          <img src = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/aswathy-n-hnG9DFkMLsI-unsplash.jpg' alt = 'https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/aswathy-n-hnG9DFkMLsI-unsplash.jpg' class = 'post_thumbnail'>
+        
+          <p>在文章的 <a href="http://ytop.net/post/object-oriented-programming/">第一部分</a>，我们主要讨论了面向对象与前两个 SOLID 原则，它们分别是单一职责原则和开闭原则。在这一部分，我们将讨论接下来的三个原则。</p>
+<h2 id="面向对象五大原则solid">面向对象五大原则(SOLID)：</h2>
+<h3 id="里氏替换原则liskov-substituion-principle">里氏替换原则（Liskov-Substituion Principle）</h3>
+<p><strong>子类可以替换父类并且出现在父类能够出现的任何地方</strong></p>
+<p>在这个原则中父类应尽可能使用接口或者抽象类来实现。子类通过实现了父类接口，能够替父类的使用地方。通过这个原则，我们客户端在使用父类接口的时候，通过子类实现。</p>
+<p>意思就是说我们依赖父类接口，在客户端声明一个父类接口，通过其子类来实现</p>
+<p>这个时候就要求子类必须能够替换父类所出现的任何地方，这样做的好处就是，在根据新要求扩展父类接口的新子类的时候而不影响当前客户端的使用！</p>
+<p>让我们看一个关于多个自行车的示例。Bike 基类如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class Bike {
+  void pedal() {
+    // pedal code
+  }
+
+  void steer() {
+    // steering code
+  }
+  void handBrakeFront() {
+    // hand braking front code
+  }
+  void handBrakeBack() {
+    // hand braking back code
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>山地自行车类 MountainBike 继承自基类 Bike （山地车有通过齿轮的机械原理调整档位的特性）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class MountainBike extends Bike {
+  void changeGear() {
+    // change gear code
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>MountainBike 类遵循了里氏替换原则，因为它能够被当作一个 Bike 类的对象使用。如果我们有一个自行车类型数组，并用 Bike 和 MountainBike 的实例对象来填充它，那么我们完全可以正确无误地调用 steer() 、pedal() 等 Bike 基类的所有方法。所以，我们可以在不经过特殊处理的情况下，把 MountainBike 类型的元素当作 Bike 类型的元素来使用。</p>
+<p>现在想象一下，我们添加了一个名为 ClassicBike 的类，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class ClassicBike extends Bike {
+  void footBrake() {
+    // foot braking code
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>这个类代表了一种经典自行车，你可以通过向后踩踏板来进行制动。这种自行车没有手刹。基于此，如果我们有一个 ClassicBike 类型的元素混在了上述的自行车数组中，我们仍然能够无误地调用 steer 和 pedal 方法。但是，当我们尝试调用 handBrakeFront 或者 handBrakeBack 的时候，问题就暴露出来了。取决于具体的实现，调用这些方法可能导致系统崩溃或者什么也不会做。我们可以通过检查当前元素是否是 ClassicBike 的实例来解决这个问题：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">foreach(var bike in bikes) {
+  bike.pedal()
+  bike.steer()
+
+  if(bike is ClassicBike) {
+    bike.footBrake()
+  } else {
+    bike.handBrakeFront()
+    bike.handBrakeBack()
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>如你所见，假如没有类似上面的类型判断，我们就不能再把一个 ClassicBike 的实例看作一个 Bike 实例了。这显然违背了里氏替换原则。有多种方法可以解决这个问题，当我们讨论到 SOLID 中的 I(接口隔离) 原则时，就会看到一个解决之道。遵循里氏替换原则的一个有趣的结果，就是你编写的代码将很难不符合开闭原则。</p>
+<p>面向对象编程存在的一个问题就是我们常常忘记正在打交道的数据，以及处理这些数据和真实世界里对象的关系。现实生活中的有些事情无法在代码中直接建立模型，因此我们必须牢记：抽象本身并不神奇，底层的数据仅是数据而已（并不是一个真正的自行车）。</p>
+<h3 id="接口隔离原则interface-segregation-principle">接口隔离原则(Interface-Segregation Principle)</h3>
+<p>多个专用接口优于一个单一的通用接口。
+本原则是单一职责原则用于接口设计的自然结果。一个接口应该保证，实现该接口的实例对象可以只呈现为单一的角色；这样，当某个客户程序的要求发生变化，而迫使接口发生改变时，影响到其他客户程序的可能生性小。</p>
+<p>为了减少接口的定义，将许多类似的方法都放在一个接口中，最后发现，维护和实现接口的时候花了太多精力，而接口所定义的操作相当于对客户端的一种承诺，这种承诺当然是越少越好，越精练越好，过多的承诺带来的就是你的大量精力和时间去维护！</p>
+<p>我们应该保持接口短小，在实现时选择实现多个小接口而不是庞大的单个接口。我会再次使用自行车的例子，但是这次我用一个 Bike 接口而不是 Bike 基类：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">interface Bike {
+  void pedal()
+  void steer()
+  void handBrakeFront()
+  void handBrakeBack()
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>MountainBike 类必须实现这个接口的所有方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class MountainBike implements Bike {
+  override void pedal() {
+    // pedal implementation
+  }
+
+  override void steer() {
+    // steer implementation
+  }
+
+  override void handBrakeFront() {
+    // front hand brake implementation
+  }
+
+  override void handBrakeBack() {
+    // back hand brake implementation
+  }
+
+  void changeGear() {
+    // change gear code
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>目前尚好。对于有问题的带有脚刹功能的 ClassicBike 类，我们可以采用下面这种笨拙的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class ClassicBike implements Bike {
+  override pedal() {
+    // pedal implementation
+  }
+
+  override steer() {
+    // steer implementation
+  }
+
+  override handBrakeFront() {
+    // no code or throw an exception
+  }
+
+  override handBrakeBack() {
+    // no code or throw an exception
+  }
+
+  void brake() {
+    // foot brake code
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>在这个例子中，我们不得不重写手刹的两个方法，尽管不需要它们。正如前所述，我们打破了里氏替换原则。</p>
+<p>比较好的一个做法就是重构这个接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">interface Bike() {
+  void pedal()
+  void steer()
+}
+
+interface HandBrakeBike {
+  void handBrakeFront()
+  void handBrakeBack()
+}
+
+interface FootBrakeBike {
+  void footBrake()
+}
+
+</code></pre></td></tr></table>
+</div>
+</div><p>MountainBike 类将实现 Bike 和 HandBrakeBike 接口，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class MountainBike implements Bike, HandBrakeBike {
+  // same code as before
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>ClassicBike 将实现 Bike 和 FootBrakeBike ，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class ClassicBike implements Bike, FootBrakeBike {
+  override pedal() {
+    // pedal implementation
+  }
+  override steer() {
+    // steer implementation
+  }
+
+  override footBrake() {
+    // code that handles foot braking
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>接口隔离原则的优势之一就是我们可以在多个对象上组合匹配接口，这提高了我们代码的灵活性和模块化。</p>
+<p>我们也可以有一个 MultipleGearsBike 接口，在它里面添加 changeGear() 方法。现在，我们就可以构建一个拥有脚刹和换挡功能的自行车了。</p>
+<p>此外，我们的类现在也遵循了里氏替换原则，ClassicBike 与 MountainBike 都能够看作 Bike 而毫无问题了。如前所述，遵循里氏替换原则也有助于开闭原则的实现。</p>
+<h3 id="依赖倒置原则dependecy-inversion-principle">依赖倒置原则（Dependecy-Inversion Principle）</h3>
+<p>传统的结构化编程中，最上层的模块通常都要依赖下面的子模块来实现，也称为高层依赖低层！</p>
+<p>而DIP原则就是要逆转这种依赖关系，让高层模块不要依赖低层模块。</p>
+<p>抽象不应依赖于细节，细节应该依赖于抽象。细节依赖于抽象，就意味着后来的依赖于先前的，这是自然而然的重用之道。
+ 
+我仍将使用自行车的示例来尝试给你解释这个原则。首选看下这个 Bike 接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">interface Bike {
+  void pedal()
+  void backPedal()
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>MountainBike 和 ClassicBike 这两个类实现了上面的接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 山地车
+class MountainBike implements Bike {
+  override void pedal() {
+    // complex code that computes the inner workings of what happens
+    // when pedalling on a mountain bike, which includes taking into
+    // account the gear in which the bike currently is.
+  }
+
+  override void backPedal() {
+    // complex code that computes what happens when we back pedal
+    // on a mountain bike, which is that you pedal in the wrong
+    // direction with no discernible effect on the bike
+  }
+}
+
+// 传统自行车
+class ClassicBike implements Bike {
+  override void pedal() {
+    // the same as for the mountain bike with the distinction that
+    // there is a single gear on a classic bike
+  }
+
+  override void backPedal() {
+    // complex code that actually triggers the brake function on the
+    // bike
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>正如你所看到的，踩脚踏板（pedal）会让自行车向前行驶，但是山地车 MountainBike 因为有多个齿轮，所以它的 pedal 会更加复杂。另外，向后踩脚踏板（back pedal）时，山地车不会做任何事，而传统自行车 ClassicBike 则会触发刹车操作。</p>
+<p>我之所以在每个方法的注释中都有提到“complex code”，是因为我想指出我们应该把上述代码移动到不同的模块中。我们这样做是为了简化自行车类以及遵循单一职责原则（自行车类不应该担起在你向前或向后踩脚踏板时究竟发生了什么的计算工作，它们应该处理有关自行车的更高级别的事情）。</p>
+<p>为了做到这一点，我们将为每种类型的 pedalling 创建一些行为类。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class MountainBikePedalBehaviour {
+  void pedal() {
+    //complex code
+  }
+}
+
+class MountainBikeBackPedalBehaviour {
+  void backPedal() {
+    // complex code
+  }
+}
+
+class ClassicBikePedalBehaviour {
+  void pedal() {
+    // complex code
+  }
+}
+
+class ClassicBikeBackPedalBehaviour {
+  void backPedal() {
+    // complex code
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>然后像下面这样使用这些类：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 山地车
+class MountainBike implements Bike {
+  override void pedal() {
+    var pedalBehaviour = new MountainBikePedalBehaviour()
+    pedalBehaviour.pedal()
+  }
+
+  override void backPedal() {
+    var backPedalBehaviour = new MountainBikeBackPedalBehaviour()
+    backPedalBehaviour.backPedal()
+  }
+}
+
+// 传统自行车
+class ClassicBike implements Bike {
+  override void pedal() {
+    var pedalBehaviour = new ClassicBikePedalBehaviour()
+    pedalBehaviour.pedal()
+  }
+
+  override void backPedal() {
+    var backPedalBehaviour = new ClassicBikeBackPedalBehaviour()
+    backPedalBehaviour.backPedal()
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>这个时候，我们可以很清楚地看到高级模块 MountainBike 依赖于某些具体的低级模块 MountainBikePedalBehaviour 和 MountainBikeBackPedalBehaviour。ClassicBike 以及它的低级模块同样如此。根据依赖倒置原则，高级模块和低级模块都应该依赖抽象。为此，我们需要以下接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">interface PedalBehaviour {
+  void pedal()
+}
+
+interface BackPedalBehaviour {
+  void backPedal()
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>除了需要实现上面的接口外，行为类的代码与之前无异：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class MountainBikePedalBehaviour implements PedalBehaviour {
+  override void pedal() {
+    // same as before
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>剩下的其他行为类同上。</p>
+<p>现在我们需要一种方法将 PedalBehaviour 和 BackPedalBehaviour 传递给 MountainBike 和 ClassicBike 类。我们可以选择在构造方法、pedal() 、pedalBack() 中完成这件事。本例中，我们使用构造方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class MountainBike implements Bike {
+
+  PedalBehaviour pedalBehaviour;
+  BackPedalBehaviour backPedalBehaviour;
+
+  public MountainBike(PedalBehaviour pedalBehaviour,
+                      BackPedalBehaviour backPedalBehaviour) {
+    this.pedalBehaviour = pedalBehaviour;
+    this.backPedalBehaviour = backPedalBehaviour;
+  }
+
+  override void pedal() {
+    pedalBehaviour.pedal();
+  }
+
+  override void backPedal() {
+    backPedalBehaviour.backPedal();
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>ClassicBike 类同上。</p>
+<p>我们的高级模块（MountainBike 和 ClassicBike）不再依赖于具体的低级模块，而是依赖于抽象的 PedalBehaviour 和 BackPedalBehaviour。</p>
+<p>在我们的例子中，我们应用的主模块可能看起来向下面这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class MainModule {
+  MountainBike mountainBike;
+  ClassicBike classicBike;
+  MountainBikePedalBehaviour mountainBikePedalBehaviour;
+  ClassicBikePedalBehaviour classicBikePedalBehaviour;
+  MountainBikeBackPedalBehaviour mountainBikeBackPedalBehaviour;
+  ClassicBikeBackPedalBehaviour classicBikeBackPedalBehaviour;
+
+  public MainModule() {
+    mountainBikePedalBehaviour = new MountainBikePedalBehaviour();
+    mountainBikeBackPedalBehaviour =
+      new MountainBikeBackPedalBehaviour();
+    mountainBike = new MountainBike(mountainBikePedalBehaviour,
+                     mountainBikeBackPedalBehaviour);
+
+    classicBikePedalBehaviour = new ClassicBikePedalBehaviour();
+    classicBikeBackPedalBehaviour =
+      new ClassicBikeBackPedalBehaviour();
+    classicBike = new ClassicBike(classicBikePedalBehaviour,
+                    classicBikeBackPedalBehaviour);
+  }
+
+  public void pedalBikes() {
+    mountainBike.pedal()
+    classicBike.pedal()
+  }
+
+  public void backPedalBikes() {
+    mountainBike.backPedal();
+    classicBike.backPedal();
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，我们的 MainModule 依赖了具体的低级模块而不是抽象层。我们可以通过向构造方法中传递依赖来改善这种情况：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public MainModule(Bike mountainBike, Bike classicBike,
+ PedalBehaviour mBikePB, BackPedalBehaviour mBikeBPB,
+ PedalBehaviour cBikePB, BackPedalBehaviour cBikeBPB)...
+</code></pre></td></tr></table>
+</div>
+</div><p>现在，MainModule 部分依赖了抽象层，部分依赖了低级模块，这些低级模块也依赖了那些抽象层。所有这些模块之间的关系不再依赖于实现细节。</p>
+<p>在我们到达应用程序中的最高模块之前，为了尽可能地延迟一个具体类的实例化，我们通常要靠依赖注入和实现了依赖注入的框架。我们可以将依赖注入视为帮助我们实现依赖倒置的工具。我们不断地向依赖链中传递依赖关系以避免具体类的实例化。</p>
+<p>那么为什么要经历这一切呢？不依赖于具象的一个优点就是我们可以模拟一个类，从而使测试更容易进行。我们来看一个简单的例子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">interface Network {
+  public String getServerResponse(URL serverURL);
+}
+
+class NetworkRequestHandler implements Network {
+  override public String getServerResponse(URL serverURL) {
+    // network code implementation
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>假设我们还有一个 NetworkManager 类，它有一个公共方法，通过使用一个 Network 的实例返回服务器响应：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public String getResponse(Network networkRequestHandler, URL url) {
+  return networkRequestHandler.getServerResponse(url)
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>因为这样的代码结构，我们可以测试代码如何处理来自服务器的“404”响应。为此，我们将创 NetworkRequestHandler的模拟版本。我们之所以可以这么做，是因为 NetworkManager 依赖于抽象层，即 Network，而不是某个具体的 NetworkRequestHandler。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">class Mock404 implements Network {
+  override public String getServerResponse(URL serverURL) {
+    return &#34;404&#34;
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>通过调用 getResponse 方法，传递 Mock404 类的实例，我们可以很容易地测试我们期望的行为。</p>
+<p>除了易于测试，我们的应用在多变情景下也能应对自如。因为模块之间的关系是基于抽象的，我们可以更改具体模块的实现，而无需大范围地更改代码。</p>
+<p>最后同样重要的是这会让事情变得更简单。如果你有留意自行车的示例，你会发现 MountainBike 和 ClassicBike 类非常相似。这就意味着我们不再需要单独的类了。我们可以创建一个简单的实现了 Bike 接口的类 GenericBike，然后山地车和传统自行车的实例化就像下面这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">GenericBike mountainBike = new GenericBike(mbPedalB, mbBackPedalB);
+GenericBike classicBike = new GenericBike(cbPedalB, cbBackPedalB);
+</code></pre></td></tr></table>
+</div>
+</div><p>我们减少了一半数量的具体自行车类的实现，这意味着我们的代码更容易管理。</p>
+<h2 id="总结">总结</h2>
+<p>所有这些原则可能看起来有点矫枉过正，你可能会排斥它们。在很长的一段时间里，我和你一样。随着时间的推移，我开始逐渐把我的代码向增强可测试性和更易于维护的方向转变。渐渐地，我开始这样来思考事情：“如果只有一种方法可以把两个部分的内容分开，并将其放在不同的类中，以便我能……”。通常，答案是的确存在这样的一种方法，并且别人已经实现过了。大多数时候，这种方法都受到 SOLID 原则的启发。当然，紧迫的工期和其他现实生活中的因素可能会不允许你遵守所有这些原则。虽然很难 100% 实现 SOLID 原则，但是有比没有强吧。也许你可以尝试只在那些当需求变更时最容易受影响的部分遵守这些原则。你不必过分遵循它们，可以把这些原则视为你提高代码质量的指南。如果你不得不需要制作一个快速原型或者验证一个概念应用的可行性，那么你没有必要尽力去搭一个最佳架构。SOLID更像是一个长期策略，对于必须经得起时间考验的软件非常有用。</p>
+<p><em>参考链接：</em>
+<em><a href="https://en.wikipedia.org/wiki/Object-oriented_programming">https://en.wikipedia.org/wiki/Object-oriented_programming</a>
+<a href="https://medium.com/@razvan_57516/whats-the-deal-with-the-solid-principles-part-1-cdc4bad5d5b5">https://medium.com/@razvan_57516/whats-the-deal-with-the-solid-principles-part-1-cdc4bad5d5b5</a>
+<a href="https://medium.com/@razvan_57516/whats-the-deal-with-the-solid-principles-part-2-8ff927c52d20">https://medium.com/@razvan_57516/whats-the-deal-with-the-solid-principles-part-2-8ff927c52d20</a>
+<a href="https://medium.com/@razvan_57516/whats-the-deal-with-the-solid-principles-part-3-47dbb85af396">https://medium.com/@razvan_57516/whats-the-deal-with-the-solid-principles-part-3-47dbb85af396</a></em></p>
+
+        </div>
+        <div class ='post_extra mb-2'>
+          <div class = 'copy'></div>
+
+        </div>
+        <div>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "ytop" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href = 'https://ytop.net' class = 'post_nav'><span class = 'post_next'>The Latest</span>T</a>
+
+    </main>
+    <footer class = 'footer wrap pale'>
+  <p style="vertical-align:middle;"><a style="color: black;" href = 'http://beian.miit.gov.cn'>鄂ICP备20003010号-2</a>&nbsp;&nbsp;<img style="padding:0;margin:0;vertical-align:middle;display:inline-block;float: none;" src="https://img-1256541035.cos.ap-shanghai.myqcloud.com/imgs/beiantubiao.png"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42090202000342" style="color: black;" >&nbsp;鄂公网安备 42090202000342号</a></p>
+  <p>&copy;&nbsp;<span class = 'year'></span>&nbsp;Luke&#39;s blog</p>
+</footer>
+
+
+<script src = 'https://ytop.net/js/index.min.3fb2d93226caee76d973a8553fd18e0e2f90e9901bcfd7a626bac6741e418b8bc5be16b73031251410da54554de3c64b91dda6df7bdda7e83ad5f99eb2acaf54.js'></script>
+
+  </body>
+</html>
